@@ -2712,7 +2712,7 @@ def validate_gst_stock_for_invoice(sales_invoice):
         item_master = frappe.db.get_value(
             "Item",
             item.item_code,
-            ["has_batch_no", "has_expiry_date", "gst_hsn_code"],
+            ["has_batch_no", "has_expiry_date", "custom_gst_hsn_code"],
             as_dict=True
         ) or {}
 
@@ -2723,7 +2723,7 @@ def validate_gst_stock_for_invoice(sales_invoice):
             # Not always mandatory, but important in user's pharma setup.
             issues.append(f"{item.item_code}: item_tax_template missing on invoice row.")
 
-        if not item_master.get("gst_hsn_code"):
+        if not item_master.get("custom_gst_hsn_code"):
             issues.append(f"{item.item_code}: HSN code missing on Item master.")
 
     if inv.update_stock:
@@ -3194,7 +3194,7 @@ def bulk_item_lookup(txt=None, warehouse=None, price_list="Standard Selling", li
         values.append(modified_after)
     values.append(limit)
     rows = frappe.db.sql(f"""
-        SELECT i.item_code, i.item_name, i.stock_uom, i.item_group, i.gst_hsn_code,
+        SELECT i.item_code, i.item_name, i.stock_uom, i.item_group, i.custom_gst_hsn_code,
                i.has_batch_no, i.has_expiry_date, i.pharma_brand, i.pharma_composition,
                i.pharma_manufacturer, i.pharma_mrp, i.pharma_ptr, i.pharma_pts, i.pharma_ptd,
                ip.price_list_rate AS rate
@@ -3218,7 +3218,7 @@ def bulk_item_lookup(txt=None, warehouse=None, price_list="Standard Selling", li
         stock = stock_map.get(row.item_code, {})
         out.append({
             "item_code": row.item_code, "item_name": row.item_name, "stock_uom": row.stock_uom,
-            "item_group": row.item_group, "gst_hsn_code": row.gst_hsn_code,
+            "item_group": row.item_group, "custom_gst_hsn_code": row.custom_gst_hsn_code,
             "has_batch_no": row.has_batch_no, "has_expiry_date": row.has_expiry_date,
             "brand": row.get("pharma_brand"), "composition": row.get("pharma_composition"),
             "manufacturer": row.get("pharma_manufacturer"), "mrp": flt(row.get("pharma_mrp")),
