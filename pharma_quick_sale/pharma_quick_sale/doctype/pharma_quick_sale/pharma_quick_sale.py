@@ -68,11 +68,11 @@ class PharmaQuickSale(Document):
             available_qty = max(physical_qty - reserved_qty, 0)
             alloc.available_qty = available_qty
 
-            if available_qty < requested:
-                frappe.throw(
-                    f"Insufficient stock for {alloc.item_code}, batch {alloc.batch_no}. "
-                    f"Available: {available_qty}, Required: {requested}"
-                )
+            # if available_qty < requested:
+            #     frappe.throw(
+            #         f"Insufficient stock for {alloc.item_code}, batch {alloc.batch_no}. "
+            #         f"Available: {available_qty}, Required: {requested}"
+            #     )
 
     def _get_item_details(self, item_code, doctype):
         currency = frappe.db.get_value("Company", self.company, "default_currency") or "INR"
