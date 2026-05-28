@@ -106,7 +106,7 @@ class PharmaQuickSale(Document):
                 or row.get("item_tax_template")
                 or _get_item_tax_template_from_item(
                     item_code=row.item_code,
-                    tax_category=tax_category,
+                    tax_category=row.tax_category,
                     posting_date=data.get("posting_date") or nowdate()
                 )
             ),
