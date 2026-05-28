@@ -1,0 +1,188 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"EXytOty761\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Pharma</span>\",\"col\":12}},{\"id\":\"xtZeDEG0RF\",\"type\":\"card\",\"data\":{\"card_name\":\"Doctypes\",\"col\":3}},{\"id\":\"I4TMY1RZz2\",\"type\":\"card\",\"data\":{\"card_name\":\"Doctypes\",\"col\":3}},{\"id\":\"MeIHD3sXSB\",\"type\":\"card\",\"data\":{\"card_name\":\"Doctypes\",\"col\":3}},{\"id\":\"1xqHTPr7gY\",\"type\":\"card\",\"data\":{\"card_name\":\"Pages\",\"col\":3}}]",
+ "creation": "2026-05-28 15:37:12.091557",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "group-by",
+ "idx": 0,
+ "indicator_color": "green",
+ "is_hidden": 0,
+ "label": "Pharma",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Doctypes",
+   "link_count": 9,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Pharma MR Expense Claim",
+   "link_count": 0,
+   "link_to": "Pharma MR Expense Claim",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Pharma MR Route Plan",
+   "link_count": 0,
+   "link_to": "Pharma MR Route Plan",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Pharma Doctor",
+   "link_count": 0,
+   "link_to": "Pharma Doctor",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Pharma Distributor Inventory",
+   "link_count": 0,
+   "link_to": "Pharma Distributor Inventory",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Pharma Discount Exception",
+   "link_count": 0,
+   "link_to": "Pharma Discount Exception",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Pharma Customer Product Stats",
+   "link_count": 0,
+   "link_to": "Pharma Customer Product Stats",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Pharma Incentive Payout",
+   "link_count": 0,
+   "link_to": "Pharma Incentive Payout",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Pharma Incentive Rule",
+   "link_count": 0,
+   "link_to": "Pharma Incentive Rule",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Pharma Item Substitute",
+   "link_count": 0,
+   "link_to": "Pharma Item Substitute",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Pages",
+   "link_count": 5,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "pharma_quick_sale",
+   "link_count": 0,
+   "link_to": "pharma_quick_sale",
+   "link_type": "Page",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "pharma-billing",
+   "link_count": 0,
+   "link_to": "pharma-billing",
+   "link_type": "Page",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "pharma-operator-billing",
+   "link_count": 0,
+   "link_to": "pharma-operator-billing",
+   "link_type": "Page",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "pharma-loss-approvals",
+   "link_count": 0,
+   "link_to": "pharma-loss-approvals",
+   "link_type": "Page",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "pharma-billing",
+   "link_count": 0,
+   "link_to": "pharma-billing",
+   "link_type": "Page",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-05-28 15:53:52.238715",
+ "modified_by": "Administrator",
+ "module": "Pharma Quick Sale",
+ "name": "Pharma",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 1.0,
+ "shortcuts": [],
+ "title": "Pharma"
+}
