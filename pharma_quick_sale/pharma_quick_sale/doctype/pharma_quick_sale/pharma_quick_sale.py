@@ -5229,7 +5229,7 @@ def apply_advanced_scheme_for_invoice_submission(data):
 
     return normalize_advanced_scheme_item_rows(updated)
 
-
+@frappe.whitelist()
 def create_quick_sale(data, action="invoice"):
     """Create Pharma Quick Sale and downstream invoice/order.
 
