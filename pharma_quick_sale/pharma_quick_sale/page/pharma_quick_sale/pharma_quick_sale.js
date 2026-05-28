@@ -299,7 +299,14 @@ class PharmaQuickSalePage {
 
         this.warehouse = frappe.ui.form.make_control({
             parent: $('#pqs-warehouse'),
-            df: {fieldtype:'Link', options:'Warehouse', fieldname:'warehouse', label:'Warehouse', reqd:1, onchange: () => this.schedule_live_calculation()},
+            df: {fieldtype:'Link', options:'Warehouse', fieldname:'warehouse', label:'Warehouse', reqd:1, get_query: () => {
+                return {
+                    filters: {
+                        company: this.company.get_value()
+                    }
+                };
+            },
+            onchange: () => this.schedule_live_calculation()},
             render_input: true
         });
 
@@ -520,10 +527,11 @@ class PharmaQuickSalePage {
     }
 
     manual_batch_dialog(row) {
+        const item_code = this.get_item_code(row);
         let d = new frappe.ui.Dialog({
             title: 'Add Batch',
             fields: [
-                {fieldname:'batch_no', fieldtype:'Link', options:'Batch', label:'Batch', reqd:1},
+                {fieldname:'batch_no', fieldtype:'Link', options:'Batch', label:'Batch', reqd:1, get_query: () => { return { filters: {item: item_code} } }},
                 {fieldname:'qty', fieldtype:'Float', label:'Qty', default: flt(row.find('.qty').val())},
                 {fieldname:'free_qty', fieldtype:'Float', label:'Free Qty', default: flt(row.find('.free-qty').val())}
             ],
@@ -585,8 +593,6 @@ class PharmaQuickSalePage {
             }
         });
     }
-
-
 
 
     schedule_auto_scheme_for_row(row) {
