@@ -1,0 +1,139 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Batch Reservation",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "autoname": "PH-BRES-.YYYY.-.#####",
+  "title_field": "item_code",
+  "is_submittable": 1,
+  "fields": [
+    {
+      "fieldname": "posting_date",
+      "fieldtype": "Date",
+      "label": "Posting Date",
+      "default": "Today",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "company",
+      "fieldtype": "Link",
+      "label": "Company",
+      "options": "Company"
+    },
+    {
+      "fieldname": "customer",
+      "fieldtype": "Link",
+      "label": "Customer",
+      "options": "Customer",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "warehouse",
+      "fieldtype": "Link",
+      "label": "Warehouse",
+      "options": "Warehouse",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "item_code",
+      "fieldtype": "Link",
+      "label": "Item",
+      "options": "Item",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "batch_no",
+      "fieldtype": "Link",
+      "label": "Batch",
+      "options": "Batch",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "reserved_qty",
+      "fieldtype": "Float",
+      "label": "Reserved Qty",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "consumed_qty",
+      "fieldtype": "Float",
+      "label": "Consumed Qty",
+      "default": 0,
+      "read_only": 1
+    },
+    {
+      "fieldname": "released_qty",
+      "fieldtype": "Float",
+      "label": "Released Qty",
+      "default": 0,
+      "read_only": 1
+    },
+    {
+      "fieldname": "available_reserved_qty",
+      "fieldtype": "Float",
+      "label": "Available Reserved Qty",
+      "read_only": 1
+    },
+    {
+      "fieldname": "reserved_until",
+      "fieldtype": "Date",
+      "label": "Reserved Until",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "status",
+      "fieldtype": "Select",
+      "label": "Status",
+      "options": "Draft\nActive\nPartially Consumed\nConsumed\nReleased\nExpired\nCancelled",
+      "default": "Draft",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "reference_doctype",
+      "fieldtype": "Data",
+      "label": "Reference Doctype"
+    },
+    {
+      "fieldname": "reference_name",
+      "fieldtype": "Dynamic Link",
+      "label": "Reference Name",
+      "options": "reference_doctype"
+    },
+    {
+      "fieldname": "remarks",
+      "fieldtype": "Small Text",
+      "label": "Remarks"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "Sales Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "Sales User",
+      "read": 1,
+      "write": 1,
+      "create": 1
+    }
+  ]
+}

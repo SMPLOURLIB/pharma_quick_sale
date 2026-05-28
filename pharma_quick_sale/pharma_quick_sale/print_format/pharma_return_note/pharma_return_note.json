@@ -1,0 +1,9 @@
+{
+  "doctype": "Print Format",
+  "name": "Pharma Return Note",
+  "doc_type": "Pharma Return",
+  "module": "Pharma Quick Sale",
+  "standard": "Yes",
+  "print_format_type": "Jinja",
+  "html": "\n<h2>Pharma Return</h2>\n<p><b>Return:</b> {{ doc.name }} | <b>Customer:</b> {{ doc.customer }} | <b>Type:</b> {{ doc.return_type }}</p>\n<table class=\"table table-bordered\">\n<tr><th>Item</th><th>Batch</th><th>Expiry</th><th>Qty</th><th>Rate</th><th>Reason</th></tr>\n{% for row in doc.items %}\n<tr>\n<td>{{ row.item_code }}</td><td>{{ row.batch_no }}</td><td>{{ row.expiry_date }}</td>\n<td>{{ row.qty }}</td><td>{{ row.rate }}</td><td>{{ row.reason }}</td>\n</tr>\n{% endfor %}\n</table>\n"
+}

@@ -1,0 +1,1 @@
+frappe.query_reports["Pharma Fast Billing Cache Audit"]={filters:[{fieldname:"warehouse",label:"Warehouse",fieldtype:"Link",options:"Warehouse"},{fieldname:"limit",label:"Limit",fieldtype:"Int",default:100}]};

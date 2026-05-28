@@ -1,0 +1,5 @@
+
+.pharma-advanced-scheme-panel{position:fixed;right:14px;bottom:20px;width:360px;background:#fff;border:1px solid #d1d5db;box-shadow:0 10px 28px rgba(0,0,0,.18);z-index:9999;font-size:12px;border-radius:6px}
+.pas-head{font-weight:700;background:#f5f7fa;padding:8px 10px;border-bottom:1px solid #ddd;display:flex;justify-content:space-between;align-items:center}
+.pas-close{border:0;background:transparent;font-size:18px;line-height:18px}
+.pas-body{padding:10px}

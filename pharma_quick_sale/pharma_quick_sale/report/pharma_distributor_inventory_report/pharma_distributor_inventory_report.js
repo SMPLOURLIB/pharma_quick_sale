@@ -1,0 +1,1 @@
+frappe.query_reports["Pharma Distributor Inventory Report"]={filters:[{fieldname:"distributor",label:"Distributor",fieldtype:"Link",options:"Customer"}]};

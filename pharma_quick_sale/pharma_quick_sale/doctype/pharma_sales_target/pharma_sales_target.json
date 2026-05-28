@@ -1,0 +1,84 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Sales Target",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "is_submittable": 1,
+  "autoname": "PH-TGT-.YYYY.-.#####",
+  "title_field": "sales_person",
+  "fields": [
+    {
+      "fieldname": "sales_person",
+      "fieldtype": "Link",
+      "label": "MR / Sales Person",
+      "options": "Sales Person",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "territory",
+      "fieldtype": "Link",
+      "label": "Territory",
+      "options": "Territory"
+    },
+    {
+      "fieldname": "from_date",
+      "fieldtype": "Date",
+      "label": "From Date",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "to_date",
+      "fieldtype": "Date",
+      "label": "To Date",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "target_type",
+      "fieldtype": "Select",
+      "label": "Target Type",
+      "options": "Primary Sales\nSecondary Sales\nDoctor Visits\nProduct Promotion",
+      "default": "Primary Sales",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "item_code",
+      "fieldtype": "Link",
+      "label": "Product",
+      "options": "Item"
+    },
+    {
+      "fieldname": "target_qty",
+      "fieldtype": "Float",
+      "label": "Target Qty"
+    },
+    {
+      "fieldname": "target_amount",
+      "fieldtype": "Currency",
+      "label": "Target Amount",
+      "in_list_view": 1
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "Sales Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 0,
+      "submit": 1,
+      "cancel": 1
+    }
+  ]
+}

@@ -1,0 +1,142 @@
+{
+ "actions": [],
+ "autoname": "PH-TKPI-.YYYY.-.#####",
+ "creation": "2026-05-28 14:38:56.033254",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "territory",
+  "from_date",
+  "to_date",
+  "doctors_assigned",
+  "doctors_covered",
+  "coverage_percent",
+  "primary_sales",
+  "secondary_sales",
+  "growth_percent",
+  "potential_percent",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "territory",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Territory",
+   "options": "Territory",
+   "reqd": 1
+  },
+  {
+   "fieldname": "from_date",
+   "fieldtype": "Date",
+   "label": "From Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "to_date",
+   "fieldtype": "Date",
+   "label": "To Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "doctors_assigned",
+   "fieldtype": "Int",
+   "label": "Doctors Assigned"
+  },
+  {
+   "fieldname": "doctors_covered",
+   "fieldtype": "Int",
+   "label": "Doctors Covered"
+  },
+  {
+   "fieldname": "coverage_percent",
+   "fieldtype": "Percent",
+   "in_list_view": 1,
+   "label": "Coverage %"
+  },
+  {
+   "fieldname": "primary_sales",
+   "fieldtype": "Currency",
+   "label": "Primary Sales"
+  },
+  {
+   "fieldname": "secondary_sales",
+   "fieldtype": "Currency",
+   "label": "Secondary Sales"
+  },
+  {
+   "fieldname": "growth_percent",
+   "fieldtype": "Percent",
+   "label": "Growth %"
+  },
+  {
+   "fieldname": "potential_percent",
+   "fieldtype": "Percent",
+   "label": "Potential %"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Pharma Territory KPI",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  }
+ ],
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-05-28 14:38:56.033254",
+ "modified_by": "Administrator",
+ "module": "Pharma Quick Sale",
+ "name": "Pharma Territory KPI",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "role": "System Manager",
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "cancel": 1,
+   "create": 1,
+   "read": 1,
+   "role": "Sales Manager",
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "role": "Pharma SFA Manager",
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "role": "Pharma Regional Manager",
+   "write": 1
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "role": "Pharma Area Manager",
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Pharma MR"
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "territory"
+}

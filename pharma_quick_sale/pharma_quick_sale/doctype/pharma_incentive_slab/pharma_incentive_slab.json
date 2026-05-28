@@ -1,0 +1,36 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Incentive Slab",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "istable": 1,
+  "editable_grid": 1,
+  "fields": [
+    {
+      "fieldname": "from_score",
+      "fieldtype": "Float",
+      "label": "From Score",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "to_score",
+      "fieldtype": "Float",
+      "label": "To Score",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "incentive_percentage",
+      "fieldtype": "Percent",
+      "label": "Incentive %",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "fixed_amount",
+      "fieldtype": "Currency",
+      "label": "Fixed Amount"
+    }
+  ],
+  "permissions": []
+}

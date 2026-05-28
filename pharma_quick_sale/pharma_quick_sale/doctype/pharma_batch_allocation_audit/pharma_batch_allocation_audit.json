@@ -1,0 +1,100 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Batch Allocation Audit",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "autoname": "PH-BALLOC-.YYYY.-.#####",
+  "title_field": "item_code",
+  "fields": [
+    {
+      "fieldname": "posting_datetime",
+      "fieldtype": "Datetime",
+      "label": "Posting Datetime",
+      "default": "Now",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "customer",
+      "fieldtype": "Link",
+      "label": "Customer",
+      "options": "Customer"
+    },
+    {
+      "fieldname": "warehouse",
+      "fieldtype": "Link",
+      "label": "Warehouse",
+      "options": "Warehouse"
+    },
+    {
+      "fieldname": "item_code",
+      "fieldtype": "Link",
+      "label": "Item",
+      "options": "Item",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "requested_qty",
+      "fieldtype": "Float",
+      "label": "Requested Qty",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "allocated_qty",
+      "fieldtype": "Float",
+      "label": "Allocated Qty",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "shortage_qty",
+      "fieldtype": "Float",
+      "label": "Shortage Qty",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "allocation_policy",
+      "fieldtype": "Select",
+      "label": "Allocation Policy",
+      "options": "FEFO\nFIFO\nReserved First",
+      "default": "Reserved First"
+    },
+    {
+      "fieldname": "status",
+      "fieldtype": "Select",
+      "label": "Status",
+      "options": "Allocated\nPartial\nShortage",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "details",
+      "fieldtype": "Code",
+      "label": "Details",
+      "options": "JSON"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "Sales Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "Sales User",
+      "read": 1,
+      "write": 1,
+      "create": 1
+    }
+  ]
+}

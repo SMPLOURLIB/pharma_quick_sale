@@ -1,0 +1,36 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Scheme Benefit Item",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "istable": 1,
+  "editable_grid": 1,
+  "fields": [
+    {
+      "fieldname": "item_code",
+      "fieldtype": "Link",
+      "label": "Benefit Item",
+      "options": "Item",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "qty",
+      "fieldtype": "Float",
+      "label": "Free Qty",
+      "default": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "discount_percentage",
+      "fieldtype": "Percent",
+      "label": "Discount %"
+    },
+    {
+      "fieldname": "discount_amount",
+      "fieldtype": "Currency",
+      "label": "Discount Amount"
+    }
+  ],
+  "permissions": []
+}

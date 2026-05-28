@@ -1,0 +1,8 @@
+{
+  "doctype": "Report",
+  "name": "Pharma Return Claim Dashboard",
+  "ref_doctype": "Pharma Return",
+  "report_type": "Script Report",
+  "module": "Pharma Quick Sale",
+  "is_standard": "Yes"
+}

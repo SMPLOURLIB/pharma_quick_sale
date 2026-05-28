@@ -1,0 +1,156 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Doctor",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "autoname": "field:doctor_code",
+  "title_field": "doctor_name",
+  "fields": [
+    {
+      "fieldname": "doctor_code",
+      "fieldtype": "Data",
+      "label": "Doctor Code",
+      "reqd": 1,
+      "unique": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "doctor_name",
+      "fieldtype": "Data",
+      "label": "Doctor Name",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "specialty",
+      "fieldtype": "Data",
+      "label": "Specialty",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "qualification",
+      "fieldtype": "Data",
+      "label": "Qualification"
+    },
+    {
+      "fieldname": "doctor_class",
+      "fieldtype": "Select",
+      "label": "Class",
+      "options": "A+\nA\nB\nC",
+      "default": "B",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "clinic_name",
+      "fieldtype": "Data",
+      "label": "Clinic / Hospital"
+    },
+    {
+      "fieldname": "mobile_no",
+      "fieldtype": "Data",
+      "label": "Mobile No"
+    },
+    {
+      "fieldname": "email",
+      "fieldtype": "Data",
+      "label": "Email"
+    },
+    {
+      "fieldname": "territory",
+      "fieldtype": "Link",
+      "label": "Territory",
+      "options": "Territory",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "assigned_mr",
+      "fieldtype": "Link",
+      "label": "Assigned MR / Sales Person",
+      "options": "Sales Person",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "address",
+      "fieldtype": "Small Text",
+      "label": "Address"
+    },
+    {
+      "fieldname": "active",
+      "fieldtype": "Check",
+      "label": "Active",
+      "default": 1
+    },
+    {
+      "fieldname": "potential_value",
+      "fieldtype": "Currency",
+      "label": "Potential Value"
+    },
+    {
+      "fieldname": "notes",
+      "fieldtype": "Small Text",
+      "label": "Notes"
+    },
+    {
+      "fieldname": "potential_category",
+      "fieldtype": "Select",
+      "label": "Potential Category",
+      "options": "A+\nA\nB\nC",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "prescription_potential",
+      "fieldtype": "Currency",
+      "label": "Prescription Potential"
+    },
+    {
+      "fieldname": "competitor_share",
+      "fieldtype": "Percent",
+      "label": "Competitor Share"
+    },
+    {
+      "fieldname": "current_share",
+      "fieldtype": "Percent",
+      "label": "Current Share"
+    },
+    {
+      "fieldname": "target_share",
+      "fieldtype": "Percent",
+      "label": "Target Share"
+    },
+    {
+      "fieldname": "influence_score",
+      "fieldtype": "Float",
+      "label": "Influence Score",
+      "read_only": 1
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "Sales Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 0,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "Sales User",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 0,
+      "submit": 1,
+      "cancel": 0
+    }
+  ]
+}

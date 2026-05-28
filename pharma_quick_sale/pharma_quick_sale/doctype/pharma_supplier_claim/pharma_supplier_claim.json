@@ -1,0 +1,103 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Supplier Claim",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "is_submittable": 1,
+  "autoname": "naming_series:",
+  "title_field": "supplier",
+  "fields": [
+    {
+      "fieldname": "naming_series",
+      "fieldtype": "Select",
+      "label": "Series",
+      "options": "PH-CLM-.YYYY.-",
+      "default": "PH-CLM-.YYYY.-"
+    },
+    {
+      "fieldname": "claim_type",
+      "fieldtype": "Select",
+      "label": "Claim Type",
+      "options": "Expiry Claim\nBreakage Claim\nShortage Claim\nRecall Claim",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "supplier",
+      "fieldtype": "Link",
+      "label": "Supplier",
+      "options": "Supplier",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "company",
+      "fieldtype": "Link",
+      "label": "Company",
+      "options": "Company",
+      "reqd": 1
+    },
+    {
+      "fieldname": "posting_date",
+      "fieldtype": "Date",
+      "label": "Posting Date",
+      "default": "Today",
+      "reqd": 1
+    },
+    {
+      "fieldname": "status",
+      "fieldtype": "Select",
+      "label": "Status",
+      "options": "Draft\nSubmitted\nPending Supplier\nCredit Note Received\nReplacement Received\nRejected\nClosed",
+      "default": "Draft",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "items",
+      "fieldtype": "Table",
+      "label": "Claim Items",
+      "options": "Pharma Supplier Claim Item"
+    },
+    {
+      "fieldname": "claim_amount",
+      "fieldtype": "Currency",
+      "label": "Claim Amount",
+      "read_only": 1
+    },
+    {
+      "fieldname": "supplier_credit_note",
+      "fieldtype": "Data",
+      "label": "Supplier Credit Note Ref"
+    },
+    {
+      "fieldname": "notes",
+      "fieldtype": "Small Text",
+      "label": "Notes"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "Sales Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "Sales User",
+      "read": 1,
+      "write": 1,
+      "create": 1
+    }
+  ]
+}

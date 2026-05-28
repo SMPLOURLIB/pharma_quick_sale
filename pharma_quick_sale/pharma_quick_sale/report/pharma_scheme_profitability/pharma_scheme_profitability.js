@@ -1,0 +1,1 @@
+frappe.query_reports["Pharma Scheme Profitability"]={filters:[{fieldname:"scheme",label:"Scheme",fieldtype:"Link",options:"Pharma Advanced Scheme"},{fieldname:"from_date",label:"From Date",fieldtype:"Date"},{fieldname:"to_date",label:"To Date",fieldtype:"Date"}]};

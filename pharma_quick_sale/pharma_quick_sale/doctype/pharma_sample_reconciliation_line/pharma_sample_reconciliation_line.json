@@ -1,0 +1,66 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Sample Reconciliation Line",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "istable": 1,
+  "editable_grid": 1,
+  "fields": [
+    {
+      "fieldname": "item_code",
+      "fieldtype": "Link",
+      "label": "Item",
+      "options": "Item",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "batch_no",
+      "fieldtype": "Link",
+      "label": "Batch",
+      "options": "Batch",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "opening_qty",
+      "fieldtype": "Float",
+      "label": "Opening"
+    },
+    {
+      "fieldname": "received_qty",
+      "fieldtype": "Float",
+      "label": "Received"
+    },
+    {
+      "fieldname": "distributed_qty",
+      "fieldtype": "Float",
+      "label": "Distributed"
+    },
+    {
+      "fieldname": "returned_qty",
+      "fieldtype": "Float",
+      "label": "Returned"
+    },
+    {
+      "fieldname": "expired_qty",
+      "fieldtype": "Float",
+      "label": "Expired"
+    },
+    {
+      "fieldname": "expected_balance",
+      "fieldtype": "Float",
+      "label": "Expected Balance"
+    },
+    {
+      "fieldname": "physical_balance",
+      "fieldtype": "Float",
+      "label": "Physical Balance"
+    },
+    {
+      "fieldname": "variance_qty",
+      "fieldtype": "Float",
+      "label": "Variance",
+      "in_list_view": 1
+    }
+  ],
+  "permissions": []
+}

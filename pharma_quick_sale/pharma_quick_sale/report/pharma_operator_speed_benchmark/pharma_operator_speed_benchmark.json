@@ -1,0 +1,8 @@
+{
+  "doctype": "Report",
+  "name": "Pharma Operator Speed Benchmark",
+  "ref_doctype": "Pharma Audit Log",
+  "report_type": "Script Report",
+  "module": "Pharma Quick Sale",
+  "is_standard": "Yes"
+}

@@ -1,0 +1,59 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Fast Billing Profile",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "issingle": 1,
+  "fields": [
+    {
+      "fieldname": "default_cash_customer",
+      "fieldtype": "Link",
+      "label": "Default Cash Customer",
+      "options": "Customer"
+    },
+    {
+      "fieldname": "search_cache_limit",
+      "fieldtype": "Int",
+      "label": "Search Cache Limit",
+      "default": 5000
+    },
+    {
+      "fieldname": "enable_keyboard_mode",
+      "fieldtype": "Check",
+      "label": "Enable Keyboard Mode",
+      "default": 1
+    },
+    {
+      "fieldname": "enable_inline_suggestions",
+      "fieldtype": "Check",
+      "label": "Enable Inline Suggestions",
+      "default": 1
+    },
+    {
+      "fieldname": "auto_fefo_on_scan",
+      "fieldtype": "Check",
+      "label": "Auto FEFO on Scan",
+      "default": 1
+    },
+    {
+      "fieldname": "auto_apply_scheme_on_scan",
+      "fieldtype": "Check",
+      "label": "Auto Apply Scheme on Scan",
+      "default": 1
+    },
+    {
+      "fieldname": "compact_grid_mode",
+      "fieldtype": "Check",
+      "label": "Compact Grid Mode",
+      "default": 1
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1
+    }
+  ]
+}

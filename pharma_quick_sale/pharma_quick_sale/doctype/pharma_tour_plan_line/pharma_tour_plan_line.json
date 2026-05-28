@@ -1,0 +1,44 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Tour Plan Line",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "istable": 1,
+  "editable_grid": 1,
+  "fields": [
+    {
+      "fieldname": "visit_date",
+      "fieldtype": "Date",
+      "label": "Visit Date",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "territory",
+      "fieldtype": "Link",
+      "label": "Territory",
+      "options": "Territory",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "doctor",
+      "fieldtype": "Link",
+      "label": "Doctor",
+      "options": "Pharma Doctor",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "customer",
+      "fieldtype": "Link",
+      "label": "Distributor / Customer",
+      "options": "Customer",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "remarks",
+      "fieldtype": "Small Text",
+      "label": "Remarks"
+    }
+  ],
+  "permissions": []
+}

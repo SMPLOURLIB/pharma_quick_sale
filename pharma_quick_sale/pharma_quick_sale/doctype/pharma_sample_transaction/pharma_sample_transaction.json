@@ -1,0 +1,114 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Sample Transaction",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "autoname": "PH-SAMP-TXN-.YYYY.-.#####",
+  "title_field": "sales_person",
+  "is_submittable": 1,
+  "fields": [
+    {
+      "fieldname": "posting_date",
+      "fieldtype": "Date",
+      "label": "Posting Date",
+      "default": "Today",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "transaction_type",
+      "fieldtype": "Select",
+      "label": "Transaction Type",
+      "options": "Opening\nIssue to MR\nDistribution to Doctor\nReturn from MR\nReturn from Doctor\nExpiry Write-off\nAdjustment",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "company",
+      "fieldtype": "Link",
+      "label": "Company",
+      "options": "Company"
+    },
+    {
+      "fieldname": "sales_person",
+      "fieldtype": "Link",
+      "label": "MR / Sales Person",
+      "options": "Sales Person",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "doctor",
+      "fieldtype": "Link",
+      "label": "Doctor",
+      "options": "Pharma Doctor"
+    },
+    {
+      "fieldname": "territory",
+      "fieldtype": "Link",
+      "label": "Territory",
+      "options": "Territory"
+    },
+    {
+      "fieldname": "source_warehouse",
+      "fieldtype": "Link",
+      "label": "Source Warehouse",
+      "options": "Warehouse"
+    },
+    {
+      "fieldname": "target_warehouse",
+      "fieldtype": "Link",
+      "label": "Target Warehouse",
+      "options": "Warehouse"
+    },
+    {
+      "fieldname": "items",
+      "fieldtype": "Table",
+      "label": "Sample Items",
+      "options": "Pharma Sample Transaction Item"
+    },
+    {
+      "fieldname": "stock_entry",
+      "fieldtype": "Link",
+      "label": "Stock Entry",
+      "options": "Stock Entry",
+      "read_only": 1
+    },
+    {
+      "fieldname": "remarks",
+      "fieldtype": "Small Text",
+      "label": "Remarks"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "Sales Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "Sales User",
+      "read": 1,
+      "write": 1,
+      "create": 1
+    },
+    {
+      "role": "Pharma MR",
+      "read": 1,
+      "write": 1,
+      "create": 1
+    }
+  ]
+}

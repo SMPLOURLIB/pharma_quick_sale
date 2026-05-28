@@ -1,0 +1,8 @@
+{
+  "doctype": "Report",
+  "name": "Pharma Monthly Scorecard Report",
+  "ref_doctype": "Pharma Monthly Scorecard",
+  "report_type": "Script Report",
+  "module": "Pharma Quick Sale",
+  "is_standard": "Yes"
+}

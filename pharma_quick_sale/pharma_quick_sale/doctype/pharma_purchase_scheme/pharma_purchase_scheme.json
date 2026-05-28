@@ -1,0 +1,105 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Purchase Scheme",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "is_submittable": 0,
+  "autoname": "field:scheme_name",
+  "title_field": "scheme_name",
+  "fields": [
+    {
+      "fieldname": "scheme_name",
+      "fieldtype": "Data",
+      "label": "Scheme Name",
+      "reqd": 1,
+      "unique": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "enabled",
+      "fieldtype": "Check",
+      "label": "Enabled",
+      "default": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "supplier",
+      "fieldtype": "Link",
+      "label": "Supplier",
+      "options": "Supplier"
+    },
+    {
+      "fieldname": "valid_from",
+      "fieldtype": "Date",
+      "label": "Valid From"
+    },
+    {
+      "fieldname": "valid_to",
+      "fieldtype": "Date",
+      "label": "Valid To"
+    },
+    {
+      "fieldname": "scheme_type",
+      "fieldtype": "Select",
+      "label": "Scheme Type",
+      "options": "Free Qty\nDiscount %\nFlat Discount",
+      "default": "Free Qty"
+    },
+    {
+      "fieldname": "item_code",
+      "fieldtype": "Link",
+      "label": "Item",
+      "options": "Item"
+    },
+    {
+      "fieldname": "item_group",
+      "fieldtype": "Link",
+      "label": "Item Group",
+      "options": "Item Group"
+    },
+    {
+      "fieldname": "min_qty",
+      "fieldtype": "Float",
+      "label": "Minimum Qty",
+      "default": 0
+    },
+    {
+      "fieldname": "free_qty",
+      "fieldtype": "Float",
+      "label": "Free Qty",
+      "default": 0
+    },
+    {
+      "fieldname": "discount_percentage",
+      "fieldtype": "Percent",
+      "label": "Discount %"
+    },
+    {
+      "fieldname": "flat_discount_amount",
+      "fieldtype": "Currency",
+      "label": "Flat Discount Amount"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "Purchase Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "submit": 1
+    },
+    {
+      "role": "Purchase User",
+      "read": 1
+    }
+  ]
+}

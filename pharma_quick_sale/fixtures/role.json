@@ -1,0 +1,80 @@
+[
+  {
+    "doctype": "Role",
+    "name": "Pharma Manager",
+    "role_name": "Pharma Manager",
+    "desk_access": 1
+  },
+  {
+    "doctype": "Role",
+    "name": "Pharma Billing User",
+    "role_name": "Pharma Billing User",
+    "desk_access": 1
+  },
+  {
+    "doctype": "Role",
+    "name": "Pharma Returns User",
+    "role_name": "Pharma Returns User",
+    "desk_access": 1
+  },
+  {
+    "doctype": "Role",
+    "name": "Pharma Claims User",
+    "role_name": "Pharma Claims User",
+    "desk_access": 1
+  },
+  {
+    "doctype": "Role",
+    "name": "Pharma Auditor",
+    "role_name": "Pharma Auditor",
+    "desk_access": 1
+  },
+  {
+    "doctype": "Role",
+    "name": "Pharma MR",
+    "role_name": "Pharma MR",
+    "desk_access": 1
+  },
+  {
+    "doctype": "Role",
+    "name": "Pharma Area Manager",
+    "role_name": "Pharma Area Manager",
+    "desk_access": 1
+  },
+  {
+    "doctype": "Role",
+    "name": "Pharma Regional Manager",
+    "role_name": "Pharma Regional Manager",
+    "desk_access": 1
+  },
+  {
+    "doctype": "Role",
+    "name": "Pharma SFA Manager",
+    "role_name": "Pharma SFA Manager",
+    "desk_access": 1
+  },
+  {
+    "doctype": "Role",
+    "name": "Pharma Sample Manager",
+    "role_name": "Pharma Sample Manager",
+    "desk_access": 1
+  },
+  {
+    "doctype": "Role",
+    "name": "Pharma Zonal Manager",
+    "role_name": "Pharma Zonal Manager",
+    "desk_access": 1
+  },
+  {
+    "doctype": "Role",
+    "name": "Pharma Sales Head",
+    "role_name": "Pharma Sales Head",
+    "desk_access": 1
+  },
+  {
+    "doctype": "Role",
+    "name": "Pharma Incentive Manager",
+    "role_name": "Pharma Incentive Manager",
+    "desk_access": 1
+  }
+]

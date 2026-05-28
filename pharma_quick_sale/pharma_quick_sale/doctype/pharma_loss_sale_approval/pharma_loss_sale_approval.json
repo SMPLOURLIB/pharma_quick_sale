@@ -1,0 +1,117 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Loss Sale Approval",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "autoname": "PH-LOSS-APP-.YYYY.-.#####",
+  "title_field": "customer",
+  "is_submittable": 1,
+  "fields": [
+    {
+      "fieldname": "posting_datetime",
+      "fieldtype": "Datetime",
+      "label": "Posting Datetime",
+      "default": "Now",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "customer",
+      "fieldtype": "Link",
+      "label": "Customer",
+      "options": "Customer",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "company",
+      "fieldtype": "Link",
+      "label": "Company",
+      "options": "Company"
+    },
+    {
+      "fieldname": "status",
+      "fieldtype": "Select",
+      "label": "Status",
+      "options": "Draft\nApproved\nRejected\nUsed\nExpired",
+      "default": "Draft",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "valid_until",
+      "fieldtype": "Datetime",
+      "label": "Valid Until"
+    },
+    {
+      "fieldname": "approved_by",
+      "fieldtype": "Link",
+      "label": "Approved By",
+      "options": "User"
+    },
+    {
+      "fieldname": "approved_on",
+      "fieldtype": "Datetime",
+      "label": "Approved On"
+    },
+    {
+      "fieldname": "reason",
+      "fieldtype": "Small Text",
+      "label": "Reason"
+    },
+    {
+      "fieldname": "items",
+      "fieldtype": "Table",
+      "label": "Loss Sale Items",
+      "options": "Pharma Loss Sale Approval Item"
+    },
+    {
+      "fieldname": "approved_loss_amount",
+      "fieldtype": "Currency",
+      "label": "Approved Loss Amount",
+      "read_only": 1
+    },
+    {
+      "fieldname": "used_sales_invoice",
+      "fieldtype": "Link",
+      "label": "Used Sales Invoice",
+      "options": "Sales Invoice",
+      "read_only": 1
+    },
+    {
+      "fieldname": "used_by",
+      "fieldtype": "Link",
+      "label": "Used By",
+      "options": "User",
+      "read_only": 1
+    },
+    {
+      "fieldname": "used_on",
+      "fieldtype": "Datetime",
+      "label": "Used On",
+      "read_only": 1
+    },
+    {
+      "fieldname": "expired_on",
+      "fieldtype": "Datetime",
+      "label": "Expired On",
+      "read_only": 1
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1
+    },
+    {
+      "role": "Sales Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1
+    },
+    {
+      "role": "Sales User",
+      "read": 1
+    }
+  ]
+}

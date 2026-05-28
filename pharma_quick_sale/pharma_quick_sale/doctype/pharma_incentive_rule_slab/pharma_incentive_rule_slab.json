@@ -1,0 +1,35 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Incentive Rule Slab",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "istable": 1,
+  "editable_grid": 1,
+  "fields": [
+    {
+      "fieldname": "from_percent",
+      "fieldtype": "Percent",
+      "label": "From %",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "to_percent",
+      "fieldtype": "Percent",
+      "label": "To %",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "incentive_percentage",
+      "fieldtype": "Percent",
+      "label": "Incentive %"
+    },
+    {
+      "fieldname": "fixed_amount",
+      "fieldtype": "Currency",
+      "label": "Fixed Amount"
+    }
+  ],
+  "permissions": []
+}

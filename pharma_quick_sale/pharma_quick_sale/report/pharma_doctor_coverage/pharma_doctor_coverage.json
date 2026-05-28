@@ -1,0 +1,8 @@
+{
+  "doctype": "Report",
+  "name": "Pharma Doctor Coverage",
+  "ref_doctype": "Pharma DCR",
+  "report_type": "Script Report",
+  "module": "Pharma Quick Sale",
+  "is_standard": "Yes"
+}

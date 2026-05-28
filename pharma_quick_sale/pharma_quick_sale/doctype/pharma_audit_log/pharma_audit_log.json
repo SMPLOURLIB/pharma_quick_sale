@@ -1,0 +1,72 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Audit Log",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "autoname": "PH-AUD-.YYYY.-.#####",
+  "title_field": "action",
+  "fields": [
+    {
+      "fieldname": "posting_datetime",
+      "fieldtype": "Datetime",
+      "label": "Posting Datetime",
+      "default": "Now",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "user",
+      "fieldtype": "Link",
+      "label": "User",
+      "options": "User",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "action",
+      "fieldtype": "Data",
+      "label": "Action",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "reference_doctype",
+      "fieldtype": "Data",
+      "label": "Reference DocType"
+    },
+    {
+      "fieldname": "reference_name",
+      "fieldtype": "Dynamic Link",
+      "label": "Reference Name",
+      "options": "reference_doctype"
+    },
+    {
+      "fieldname": "severity",
+      "fieldtype": "Select",
+      "label": "Severity",
+      "options": "Info\nWarning\nCritical",
+      "default": "Info",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "details",
+      "fieldtype": "Code",
+      "label": "Details"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1
+    },
+    {
+      "role": "Sales Manager",
+      "read": 1
+    },
+    {
+      "role": "Accounts Manager",
+      "read": 1
+    }
+  ]
+}

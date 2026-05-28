@@ -1,0 +1,1 @@
+frappe.query_reports["Pharma Dead Stock Analysis"]={filters:[{fieldname:"days",label:"No Sale Days",fieldtype:"Int",default:90},{fieldname:"warehouse",label:"Warehouse",fieldtype:"Link",options:"Warehouse"}]};

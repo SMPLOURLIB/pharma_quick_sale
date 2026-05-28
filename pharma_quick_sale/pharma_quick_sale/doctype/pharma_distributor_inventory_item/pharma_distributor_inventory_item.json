@@ -1,0 +1,50 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Distributor Inventory Item",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "istable": 1,
+  "editable_grid": 1,
+  "fields": [
+    {
+      "fieldname": "item_code",
+      "fieldtype": "Link",
+      "label": "Item",
+      "options": "Item",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "batch_no",
+      "fieldtype": "Link",
+      "label": "Batch",
+      "options": "Batch",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "opening_qty",
+      "fieldtype": "Float",
+      "label": "Opening Qty",
+      "default": 0
+    },
+    {
+      "fieldname": "primary_qty",
+      "fieldtype": "Float",
+      "label": "Primary Purchase Qty",
+      "default": 0
+    },
+    {
+      "fieldname": "secondary_qty",
+      "fieldtype": "Float",
+      "label": "Secondary Sale Qty",
+      "default": 0
+    },
+    {
+      "fieldname": "closing_qty",
+      "fieldtype": "Float",
+      "label": "Closing Qty",
+      "in_list_view": 1
+    }
+  ],
+  "permissions": []
+}

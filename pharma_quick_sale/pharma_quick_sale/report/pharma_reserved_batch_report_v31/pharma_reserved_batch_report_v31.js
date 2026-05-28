@@ -1,0 +1,1 @@
+frappe.query_reports["Pharma Reserved Batch Report V31"]={filters:[{fieldname:"customer",label:"Customer",fieldtype:"Link",options:"Customer"},{fieldname:"item_code",label:"Item",fieldtype:"Link",options:"Item"},{fieldname:"warehouse",label:"Warehouse",fieldtype:"Link",options:"Warehouse"}]};

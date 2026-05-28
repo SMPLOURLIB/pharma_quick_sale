@@ -1,0 +1,1 @@
+frappe.query_reports["Pharma Quarterly Scheme Progress"]={filters:[{fieldname:"scheme",label:"Scheme",fieldtype:"Link",options:"Pharma Advanced Scheme"},{fieldname:"customer",label:"Customer",fieldtype:"Link",options:"Customer"}]};

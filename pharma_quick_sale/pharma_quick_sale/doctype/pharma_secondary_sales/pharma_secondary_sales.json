@@ -1,0 +1,93 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Secondary Sales",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "is_submittable": 1,
+  "autoname": "PH-SEC-.YYYY.-.#####",
+  "title_field": "distributor",
+  "fields": [
+    {
+      "fieldname": "posting_date",
+      "fieldtype": "Date",
+      "label": "Posting Date",
+      "default": "Today",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "period_from",
+      "fieldtype": "Date",
+      "label": "Period From",
+      "reqd": 1
+    },
+    {
+      "fieldname": "period_to",
+      "fieldtype": "Date",
+      "label": "Period To",
+      "reqd": 1
+    },
+    {
+      "fieldname": "distributor",
+      "fieldtype": "Link",
+      "label": "Distributor",
+      "options": "Customer",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "territory",
+      "fieldtype": "Link",
+      "label": "Territory",
+      "options": "Territory"
+    },
+    {
+      "fieldname": "sales_person",
+      "fieldtype": "Link",
+      "label": "MR / Sales Person",
+      "options": "Sales Person"
+    },
+    {
+      "fieldname": "items",
+      "fieldtype": "Table",
+      "label": "Secondary Sales Items",
+      "options": "Pharma Secondary Sales Item"
+    },
+    {
+      "fieldname": "total_amount",
+      "fieldtype": "Currency",
+      "label": "Total Amount",
+      "read_only": 1,
+      "in_list_view": 1
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "Sales Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 0,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "Sales User",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 0,
+      "submit": 1,
+      "cancel": 0
+    }
+  ]
+}

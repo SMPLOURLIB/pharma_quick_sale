@@ -1,0 +1,8 @@
+{
+  "doctype": "Report",
+  "name": "Pharma Secondary Sales Report",
+  "ref_doctype": "Pharma Secondary Sales",
+  "report_type": "Script Report",
+  "module": "Pharma Quick Sale",
+  "is_standard": "Yes"
+}

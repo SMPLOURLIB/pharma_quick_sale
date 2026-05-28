@@ -1,0 +1,93 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Pricing Memory",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "autoname": "format:{customer}-{item_code}",
+  "title_field": "customer",
+  "fields": [
+    {
+      "fieldname": "customer",
+      "fieldtype": "Link",
+      "label": "Customer",
+      "options": "Customer",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "item_code",
+      "fieldtype": "Link",
+      "label": "Item",
+      "options": "Item",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "last_rate",
+      "fieldtype": "Currency",
+      "label": "Last Rate",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "last_discount_percentage",
+      "fieldtype": "Percent",
+      "label": "Last Discount %"
+    },
+    {
+      "fieldname": "last_margin_percent",
+      "fieldtype": "Percent",
+      "label": "Last Margin %"
+    },
+    {
+      "fieldname": "last_sale_date",
+      "fieldtype": "Date",
+      "label": "Last Sale Date",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "last_invoice",
+      "fieldtype": "Link",
+      "label": "Last Invoice",
+      "options": "Sales Invoice"
+    },
+    {
+      "fieldname": "avg_rate_90d",
+      "fieldtype": "Currency",
+      "label": "Avg Rate 90D"
+    },
+    {
+      "fieldname": "avg_discount_90d",
+      "fieldtype": "Percent",
+      "label": "Avg Discount 90D"
+    },
+    {
+      "fieldname": "typical_qty",
+      "fieldtype": "Float",
+      "label": "Typical Qty"
+    },
+    {
+      "fieldname": "last_updated",
+      "fieldtype": "Datetime",
+      "label": "Last Updated"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1
+    },
+    {
+      "role": "Sales Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1
+    },
+    {
+      "role": "Sales User",
+      "read": 1
+    }
+  ]
+}

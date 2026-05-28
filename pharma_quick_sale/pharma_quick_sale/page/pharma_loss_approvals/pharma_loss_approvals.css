@@ -1,0 +1,6 @@
+
+.pla31-toolbar{display:flex;gap:8px;margin-bottom:12px}
+.pla31-card{border:1px solid #e5e7eb;border-radius:8px;padding:12px;margin-bottom:12px;background:#fff}
+.pla31-head{display:flex;gap:16px;align-items:center;margin-bottom:8px}
+.pla31-status-pill{background:#eef2ff;border-radius:999px;padding:2px 8px;font-size:12px}
+.pla31-actions{display:flex;gap:8px;justify-content:flex-end}

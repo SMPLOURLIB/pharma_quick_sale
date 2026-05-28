@@ -1,0 +1,8 @@
+{
+  "doctype": "Report",
+  "name": "Pharma Profitability Summary",
+  "ref_doctype": "Pharma Product Profitability Snapshot",
+  "report_type": "Script Report",
+  "module": "Pharma Quick Sale",
+  "is_standard": "Yes"
+}

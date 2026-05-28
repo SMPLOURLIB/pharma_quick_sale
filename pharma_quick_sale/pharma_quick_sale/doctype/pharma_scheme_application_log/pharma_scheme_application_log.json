@@ -1,0 +1,99 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Scheme Application Log",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "autoname": "PH-SCH-LOG-.YYYY.-.#####",
+  "title_field": "scheme",
+  "fields": [
+    {
+      "fieldname": "posting_date",
+      "fieldtype": "Date",
+      "label": "Posting Date",
+      "default": "Today",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "scheme",
+      "fieldtype": "Link",
+      "label": "Scheme",
+      "options": "Pharma Advanced Scheme",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "customer",
+      "fieldtype": "Link",
+      "label": "Customer",
+      "options": "Customer"
+    },
+    {
+      "fieldname": "sales_invoice",
+      "fieldtype": "Link",
+      "label": "Sales Invoice",
+      "options": "Sales Invoice"
+    },
+    {
+      "fieldname": "benefit_type",
+      "fieldtype": "Select",
+      "label": "Benefit Type",
+      "options": "Free Item\nDiscount\nQuarterly Reward"
+    },
+    {
+      "fieldname": "benefit_amount",
+      "fieldtype": "Currency",
+      "label": "Benefit Amount",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "free_item_code",
+      "fieldtype": "Link",
+      "label": "Free Item",
+      "options": "Item"
+    },
+    {
+      "fieldname": "free_qty",
+      "fieldtype": "Float",
+      "label": "Free Qty"
+    },
+    {
+      "fieldname": "margin_before",
+      "fieldtype": "Currency",
+      "label": "Margin Before"
+    },
+    {
+      "fieldname": "margin_after",
+      "fieldtype": "Currency",
+      "label": "Margin After"
+    },
+    {
+      "fieldname": "details",
+      "fieldtype": "Code",
+      "label": "Details",
+      "options": "JSON"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "Sales Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "Sales User",
+      "read": 1
+    }
+  ]
+}

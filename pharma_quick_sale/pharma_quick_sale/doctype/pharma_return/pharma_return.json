@@ -1,0 +1,114 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Return",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "is_submittable": 1,
+  "autoname": "naming_series:",
+  "title_field": "customer",
+  "fields": [
+    {
+      "fieldname": "naming_series",
+      "fieldtype": "Select",
+      "label": "Series",
+      "options": "PH-RET-.YYYY.-",
+      "default": "PH-RET-.YYYY.-"
+    },
+    {
+      "fieldname": "return_type",
+      "fieldtype": "Select",
+      "label": "Return Type",
+      "options": "Sales Return\nExpiry Return\nBreakage Return\nRecall Return",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "customer",
+      "fieldtype": "Link",
+      "label": "Customer",
+      "options": "Customer",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "company",
+      "fieldtype": "Link",
+      "label": "Company",
+      "options": "Company",
+      "reqd": 1
+    },
+    {
+      "fieldname": "warehouse",
+      "fieldtype": "Link",
+      "label": "Return Warehouse",
+      "options": "Warehouse",
+      "reqd": 1
+    },
+    {
+      "fieldname": "posting_date",
+      "fieldtype": "Date",
+      "label": "Posting Date",
+      "default": "Today",
+      "reqd": 1
+    },
+    {
+      "fieldname": "against_sales_invoice",
+      "fieldtype": "Link",
+      "label": "Against Sales Invoice",
+      "options": "Sales Invoice"
+    },
+    {
+      "fieldname": "status",
+      "fieldtype": "Select",
+      "label": "Status",
+      "options": "Draft\nSubmitted\nCredit Note Created\nClaim Created\nClosed",
+      "default": "Draft",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "items",
+      "fieldtype": "Table",
+      "label": "Items",
+      "options": "Pharma Return Item"
+    },
+    {
+      "fieldname": "sales_return_invoice",
+      "fieldtype": "Link",
+      "label": "Sales Return Credit Note",
+      "options": "Sales Invoice",
+      "read_only": 1
+    },
+    {
+      "fieldname": "supplier_claim",
+      "fieldtype": "Link",
+      "label": "Supplier Claim",
+      "options": "Pharma Supplier Claim",
+      "read_only": 1
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "Sales Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "Sales User",
+      "read": 1,
+      "write": 1,
+      "create": 1
+    }
+  ]
+}

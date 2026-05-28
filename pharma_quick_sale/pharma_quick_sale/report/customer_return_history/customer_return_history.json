@@ -1,0 +1,8 @@
+{
+  "doctype": "Report",
+  "name": "Customer Return History",
+  "ref_doctype": "Pharma Return",
+  "report_type": "Script Report",
+  "module": "Pharma Quick Sale",
+  "is_standard": "Yes"
+}

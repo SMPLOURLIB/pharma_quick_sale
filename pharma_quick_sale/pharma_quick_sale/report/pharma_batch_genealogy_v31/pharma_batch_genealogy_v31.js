@@ -1,0 +1,1 @@
+frappe.query_reports["Pharma Batch Genealogy V31"]={filters:[{fieldname:"batch_no",label:"Batch",fieldtype:"Link",options:"Batch",reqd:1},{fieldname:"item_code",label:"Item",fieldtype:"Link",options:"Item"}]};

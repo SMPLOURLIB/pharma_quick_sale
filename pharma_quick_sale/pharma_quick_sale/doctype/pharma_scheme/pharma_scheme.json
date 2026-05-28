@@ -1,0 +1,133 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Scheme",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "autoname": "field:scheme_name",
+  "title_field": "scheme_name",
+  "fields": [
+    {
+      "fieldname": "scheme_name",
+      "fieldtype": "Data",
+      "label": "Scheme Name",
+      "reqd": 1,
+      "unique": 1
+    },
+    {
+      "fieldname": "enabled",
+      "fieldtype": "Check",
+      "label": "Enabled",
+      "default": 1
+    },
+    {
+      "fieldname": "priority",
+      "fieldtype": "Int",
+      "label": "Priority",
+      "default": 100
+    },
+    {
+      "fieldname": "valid_from",
+      "fieldtype": "Date",
+      "label": "Valid From"
+    },
+    {
+      "fieldname": "valid_to",
+      "fieldtype": "Date",
+      "label": "Valid To"
+    },
+    {
+      "fieldname": "customer",
+      "fieldtype": "Link",
+      "label": "Customer",
+      "options": "Customer"
+    },
+    {
+      "fieldname": "customer_group",
+      "fieldtype": "Link",
+      "label": "Customer Group",
+      "options": "Customer Group"
+    },
+    {
+      "fieldname": "item_group",
+      "fieldtype": "Link",
+      "label": "Item Group",
+      "options": "Item Group"
+    },
+    {
+      "fieldname": "apply_automatically",
+      "fieldtype": "Check",
+      "label": "Apply Automatically",
+      "default": 1
+    },
+    {
+      "fieldname": "items",
+      "fieldtype": "Table",
+      "label": "Scheme Items",
+      "options": "Pharma Scheme Item"
+    },
+    {
+      "fieldname": "slabs",
+      "fieldtype": "Table",
+      "label": "Scheme Slabs",
+      "options": "Pharma Scheme Slab"
+    },
+    {
+      "fieldname": "scheme_type",
+      "fieldtype": "Select",
+      "label": "Scheme Type",
+      "options": "Free Qty\nDiscount %\nFlat Discount\nMixed Bundle",
+      "default": "Free Qty",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "discount_percentage",
+      "fieldtype": "Percent",
+      "label": "Discount %"
+    },
+    {
+      "fieldname": "flat_discount_amount",
+      "fieldtype": "Currency",
+      "label": "Flat Discount Amount"
+    },
+    {
+      "fieldname": "manufacturer",
+      "fieldtype": "Data",
+      "label": "Manufacturer / Company"
+    },
+    {
+      "fieldname": "brand",
+      "fieldtype": "Data",
+      "label": "Brand"
+    },
+    {
+      "fieldname": "allow_mix_and_match",
+      "fieldtype": "Check",
+      "label": "Allow Mix and Match",
+      "default": 0
+    },
+    {
+      "fieldname": "minimum_bill_qty",
+      "fieldtype": "Float",
+      "label": "Minimum Combined Qty"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1
+    },
+    {
+      "role": "Sales Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1
+    },
+    {
+      "role": "Sales User",
+      "read": 1
+    }
+  ]
+}

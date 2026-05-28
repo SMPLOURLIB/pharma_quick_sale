@@ -1,0 +1,118 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Incentive Rule",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "autoname": "field:rule_name",
+  "title_field": "rule_name",
+  "is_submittable": 1,
+  "fields": [
+    {
+      "fieldname": "rule_name",
+      "fieldtype": "Data",
+      "label": "Rule Name",
+      "reqd": 1,
+      "unique": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "rule_type",
+      "fieldtype": "Select",
+      "label": "Rule Type",
+      "options": "MR Sales\nMR Collection\nMR Doctor Coverage\nMR Secondary Sales\nDistributor Growth\nScheme Performance",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "enabled",
+      "fieldtype": "Check",
+      "label": "Enabled",
+      "default": 1
+    },
+    {
+      "fieldname": "from_date",
+      "fieldtype": "Date",
+      "label": "From Date",
+      "reqd": 1
+    },
+    {
+      "fieldname": "to_date",
+      "fieldtype": "Date",
+      "label": "To Date",
+      "reqd": 1
+    },
+    {
+      "fieldname": "sales_person",
+      "fieldtype": "Link",
+      "label": "Sales Person",
+      "options": "Sales Person"
+    },
+    {
+      "fieldname": "distributor",
+      "fieldtype": "Link",
+      "label": "Distributor",
+      "options": "Customer"
+    },
+    {
+      "fieldname": "target_amount",
+      "fieldtype": "Currency",
+      "label": "Target Amount"
+    },
+    {
+      "fieldname": "target_qty",
+      "fieldtype": "Float",
+      "label": "Target Qty"
+    },
+    {
+      "fieldname": "slabs",
+      "fieldtype": "Table",
+      "label": "Slabs",
+      "options": "Pharma Incentive Rule Slab"
+    },
+    {
+      "fieldname": "advanced_scheme",
+      "fieldtype": "Link",
+      "label": "Advanced Scheme",
+      "options": "Pharma Advanced Scheme",
+      "depends_on": "eval:doc.rule_type=='Scheme Performance'"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "Sales Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "Pharma SFA Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "submit": 1
+    },
+    {
+      "role": "Pharma Area Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1
+    },
+    {
+      "role": "Pharma Regional Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1
+    }
+  ]
+}

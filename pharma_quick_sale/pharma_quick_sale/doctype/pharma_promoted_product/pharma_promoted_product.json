@@ -1,0 +1,31 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Promoted Product",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "istable": 1,
+  "editable_grid": 1,
+  "fields": [
+    {
+      "fieldname": "item_code",
+      "fieldtype": "Link",
+      "label": "Product",
+      "options": "Item",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "promotion_message",
+      "fieldtype": "Small Text",
+      "label": "Promotion Message"
+    },
+    {
+      "fieldname": "response",
+      "fieldtype": "Select",
+      "label": "Doctor Response",
+      "options": "Positive\nNeutral\nNegative\nFollow-up Required",
+      "in_list_view": 1
+    }
+  ],
+  "permissions": []
+}

@@ -1,0 +1,8 @@
+{
+  "doctype": "Report",
+  "name": "Pharma Scheme Profitability",
+  "ref_doctype": "Pharma Advanced Scheme",
+  "report_type": "Script Report",
+  "module": "Pharma Quick Sale",
+  "is_standard": "Yes"
+}

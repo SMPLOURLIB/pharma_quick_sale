@@ -1,0 +1,8 @@
+{
+  "doctype": "Report",
+  "name": "Pharma Slow Moving Stock",
+  "ref_doctype": "Item",
+  "report_type": "Script Report",
+  "module": "Pharma Quick Sale",
+  "is_standard": "Yes"
+}

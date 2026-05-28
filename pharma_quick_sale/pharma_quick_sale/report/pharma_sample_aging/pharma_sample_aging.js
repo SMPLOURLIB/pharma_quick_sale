@@ -1,0 +1,1 @@
+frappe.query_reports["Pharma Sample Aging"]={filters:[{fieldname:"sales_person",label:"Sales Person",fieldtype:"Link",options:"Sales Person"}]};

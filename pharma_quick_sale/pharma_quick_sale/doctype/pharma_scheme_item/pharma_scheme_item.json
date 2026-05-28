@@ -1,0 +1,25 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Scheme Item",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "istable": 1,
+  "editable_grid": 1,
+  "fields": [
+    {
+      "fieldname": "item_code",
+      "fieldtype": "Link",
+      "label": "Item",
+      "options": "Item",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "item_group",
+      "fieldtype": "Link",
+      "label": "Item Group",
+      "options": "Item Group",
+      "in_list_view": 1
+    }
+  ],
+  "permissions": []
+}

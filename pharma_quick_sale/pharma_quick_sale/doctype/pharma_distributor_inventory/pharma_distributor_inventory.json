@@ -1,0 +1,65 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Distributor Inventory",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "autoname": "PH-DINV-.YYYY.-.#####",
+  "title_field": "distributor",
+  "fields": [
+    {
+      "fieldname": "posting_date",
+      "fieldtype": "Date",
+      "label": "Posting Date",
+      "default": "Today",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "distributor",
+      "fieldtype": "Link",
+      "label": "Distributor",
+      "options": "Customer",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "territory",
+      "fieldtype": "Link",
+      "label": "Territory",
+      "options": "Territory"
+    },
+    {
+      "fieldname": "sales_person",
+      "fieldtype": "Link",
+      "label": "MR / Sales Person",
+      "options": "Sales Person"
+    },
+    {
+      "fieldname": "items",
+      "fieldtype": "Table",
+      "label": "Inventory Items",
+      "options": "Pharma Distributor Inventory Item"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "Sales Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "submit": 1
+    },
+    {
+      "role": "Sales User",
+      "read": 1
+    }
+  ]
+}

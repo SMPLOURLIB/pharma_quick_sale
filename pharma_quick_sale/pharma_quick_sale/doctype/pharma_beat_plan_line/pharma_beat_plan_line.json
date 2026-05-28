@@ -1,0 +1,64 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Beat Plan Line",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "istable": 1,
+  "editable_grid": 1,
+  "fields": [
+    {
+      "fieldname": "visit_date",
+      "fieldtype": "Date",
+      "label": "Visit Date",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "day_name",
+      "fieldtype": "Data",
+      "label": "Day"
+    },
+    {
+      "fieldname": "doctor",
+      "fieldtype": "Link",
+      "label": "Doctor",
+      "options": "Pharma Doctor",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "hospital",
+      "fieldtype": "Data",
+      "label": "Hospital"
+    },
+    {
+      "fieldname": "chemist",
+      "fieldtype": "Link",
+      "label": "Chemist/Retailer",
+      "options": "Customer"
+    },
+    {
+      "fieldname": "distributor",
+      "fieldtype": "Link",
+      "label": "Distributor",
+      "options": "Customer"
+    },
+    {
+      "fieldname": "planned_time",
+      "fieldtype": "Time",
+      "label": "Planned Time"
+    },
+    {
+      "fieldname": "priority",
+      "fieldtype": "Select",
+      "label": "Priority",
+      "options": "High\nMedium\nLow",
+      "default": "Medium"
+    },
+    {
+      "fieldname": "remarks",
+      "fieldtype": "Small Text",
+      "label": "Remarks"
+    }
+  ],
+  "permissions": []
+}

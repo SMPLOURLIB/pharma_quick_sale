@@ -1,0 +1,103 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Performance Plan",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "autoname": "field:plan_name",
+  "title_field": "plan_name",
+  "fields": [
+    {
+      "fieldname": "plan_name",
+      "fieldtype": "Data",
+      "label": "Plan Name",
+      "reqd": 1,
+      "unique": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "fiscal_year",
+      "fieldtype": "Link",
+      "label": "Fiscal Year",
+      "options": "Fiscal Year"
+    },
+    {
+      "fieldname": "enabled",
+      "fieldtype": "Check",
+      "label": "Enabled",
+      "default": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "primary_sales_weight",
+      "fieldtype": "Percent",
+      "label": "Primary Sales Weight",
+      "default": 40
+    },
+    {
+      "fieldname": "doctor_coverage_weight",
+      "fieldtype": "Percent",
+      "label": "Doctor Coverage Weight",
+      "default": 30
+    },
+    {
+      "fieldname": "secondary_sales_weight",
+      "fieldtype": "Percent",
+      "label": "Secondary Sales Weight",
+      "default": 20
+    },
+    {
+      "fieldname": "product_promotion_weight",
+      "fieldtype": "Percent",
+      "label": "Product Promotion Weight",
+      "default": 10
+    },
+    {
+      "fieldname": "slabs",
+      "fieldtype": "Table",
+      "label": "Incentive Slabs",
+      "options": "Pharma Incentive Slab"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "Sales Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "Pharma SFA Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "submit": 1
+    },
+    {
+      "role": "Pharma Regional Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1
+    },
+    {
+      "role": "Pharma Area Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1
+    },
+    {
+      "role": "Pharma MR",
+      "read": 1
+    }
+  ]
+}

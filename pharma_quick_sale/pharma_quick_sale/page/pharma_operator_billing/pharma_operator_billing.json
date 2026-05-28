@@ -1,0 +1,7 @@
+{
+  "doctype": "Page",
+  "name": "pharma-operator-billing",
+  "module": "Pharma Quick Sale",
+  "title": "Pharma Operator Billing",
+  "icon": "octicon octicon-zap"
+}

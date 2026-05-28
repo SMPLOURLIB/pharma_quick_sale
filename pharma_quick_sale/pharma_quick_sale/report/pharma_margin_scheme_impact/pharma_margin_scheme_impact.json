@@ -1,0 +1,8 @@
+{
+  "doctype": "Report",
+  "name": "Pharma Margin Scheme Impact",
+  "ref_doctype": "Sales Invoice",
+  "report_type": "Script Report",
+  "module": "Pharma Quick Sale",
+  "is_standard": "Yes"
+}

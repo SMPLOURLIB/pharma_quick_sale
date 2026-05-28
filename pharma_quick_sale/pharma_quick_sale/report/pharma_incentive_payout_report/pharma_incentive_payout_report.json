@@ -1,0 +1,8 @@
+{
+  "doctype": "Report",
+  "name": "Pharma Incentive Payout Report",
+  "ref_doctype": "Pharma Incentive Payout",
+  "report_type": "Script Report",
+  "module": "Pharma Quick Sale",
+  "is_standard": "Yes"
+}

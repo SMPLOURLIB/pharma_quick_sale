@@ -1,0 +1,49 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Loss Sale Approval Item",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "istable": 1,
+  "fields": [
+    {
+      "fieldname": "item_code",
+      "fieldtype": "Link",
+      "label": "Item",
+      "options": "Item",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "batch_no",
+      "fieldtype": "Link",
+      "label": "Batch",
+      "options": "Batch"
+    },
+    {
+      "fieldname": "qty",
+      "fieldtype": "Float",
+      "label": "Qty"
+    },
+    {
+      "fieldname": "selling_rate",
+      "fieldtype": "Currency",
+      "label": "Selling Rate"
+    },
+    {
+      "fieldname": "cost_rate",
+      "fieldtype": "Currency",
+      "label": "Cost Rate"
+    },
+    {
+      "fieldname": "loss_amount",
+      "fieldtype": "Currency",
+      "label": "Loss Amount",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "margin_percent",
+      "fieldtype": "Percent",
+      "label": "Margin %"
+    }
+  ],
+  "permissions": []
+}

@@ -1,0 +1,8 @@
+{
+  "doctype": "Report",
+  "name": "Pharma Supplier Claims",
+  "ref_doctype": "Pharma Supplier Claim",
+  "report_type": "Script Report",
+  "module": "Pharma Quick Sale",
+  "is_standard": "Yes"
+}

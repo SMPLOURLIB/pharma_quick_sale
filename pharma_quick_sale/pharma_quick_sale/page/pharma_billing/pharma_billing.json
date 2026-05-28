@@ -1,0 +1,22 @@
+{
+  "doctype": "Page",
+  "name": "pharma-billing",
+  "module": "Pharma Quick Sale",
+  "title": "Pharma Billing",
+  "page_name": "pharma-billing",
+  "standard": "Yes",
+  "roles": [
+    {
+      "role": "System Manager"
+    },
+    {
+      "role": "Sales Manager"
+    },
+    {
+      "role": "Sales User"
+    },
+    {
+      "role": "Pharma MR"
+    }
+  ]
+}

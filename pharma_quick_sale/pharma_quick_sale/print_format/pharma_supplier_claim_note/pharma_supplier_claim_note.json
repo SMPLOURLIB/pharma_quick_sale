@@ -1,0 +1,9 @@
+{
+  "doctype": "Print Format",
+  "name": "Pharma Supplier Claim Note",
+  "doc_type": "Pharma Supplier Claim",
+  "module": "Pharma Quick Sale",
+  "standard": "Yes",
+  "print_format_type": "Jinja",
+  "html": "\n<h2>Supplier Claim</h2>\n<p><b>Claim:</b> {{ doc.name }} | <b>Supplier:</b> {{ doc.supplier }} | <b>Status:</b> {{ doc.status }}</p>\n<table class=\"table table-bordered\">\n<tr><th>Item</th><th>Batch</th><th>Expiry</th><th>Qty</th><th>Rate</th><th>Amount</th></tr>\n{% for row in doc.items %}\n<tr>\n<td>{{ row.item_code }}</td><td>{{ row.batch_no }}</td><td>{{ row.expiry_date }}</td>\n<td>{{ row.qty }}</td><td>{{ row.rate }}</td><td>{{ row.amount }}</td>\n</tr>\n{% endfor %}\n</table>\n<p><b>Total Claim:</b> {{ doc.claim_amount }}</p>\n"
+}

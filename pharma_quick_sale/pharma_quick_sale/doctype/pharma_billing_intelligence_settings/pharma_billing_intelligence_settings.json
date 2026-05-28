@@ -1,0 +1,64 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Billing Intelligence Settings",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "issingle": 1,
+  "fields": [
+    {
+      "fieldname": "pricing_memory_days",
+      "fieldtype": "Int",
+      "label": "Pricing Memory Days",
+      "default": 90
+    },
+    {
+      "fieldname": "discount_warning_variance",
+      "fieldtype": "Percent",
+      "label": "Discount Warning Variance %",
+      "default": 7
+    },
+    {
+      "fieldname": "discount_block_variance",
+      "fieldtype": "Percent",
+      "label": "Discount Block Variance %",
+      "default": 15
+    },
+    {
+      "fieldname": "low_margin_warning_percent",
+      "fieldtype": "Percent",
+      "label": "Low Margin Warning %",
+      "default": 5
+    },
+    {
+      "fieldname": "block_loss_sale_without_approval",
+      "fieldtype": "Check",
+      "label": "Block Loss Sale Without Approval",
+      "default": 1
+    },
+    {
+      "fieldname": "require_manager_for_loss_sale",
+      "fieldtype": "Check",
+      "label": "Require Manager for Loss Sale",
+      "default": 1
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1
+    },
+    {
+      "role": "Sales Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1
+    },
+    {
+      "role": "Sales User",
+      "read": 1
+    }
+  ]
+}

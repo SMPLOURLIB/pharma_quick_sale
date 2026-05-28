@@ -1,0 +1,165 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Advanced Scheme",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "autoname": "field:scheme_name",
+  "title_field": "scheme_name",
+  "is_submittable": 1,
+  "fields": [
+    {
+      "fieldname": "scheme_name",
+      "fieldtype": "Data",
+      "label": "Scheme Name",
+      "reqd": 1,
+      "unique": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "scheme_type",
+      "fieldtype": "Select",
+      "label": "Scheme Type",
+      "options": "Buy X Get Y\nCross Product\nValue Based\nQuarterly Target\nInvoice Discount",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "enabled",
+      "fieldtype": "Check",
+      "label": "Enabled",
+      "default": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "from_date",
+      "fieldtype": "Date",
+      "label": "From Date",
+      "reqd": 1
+    },
+    {
+      "fieldname": "to_date",
+      "fieldtype": "Date",
+      "label": "To Date",
+      "reqd": 1
+    },
+    {
+      "fieldname": "priority",
+      "fieldtype": "Int",
+      "label": "Priority",
+      "default": 10,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "stacking_rule",
+      "fieldtype": "Select",
+      "label": "Stacking Rule",
+      "options": "Exclusive\nStackable\nBest Benefit Only",
+      "default": "Best Benefit Only"
+    },
+    {
+      "fieldname": "customer_group",
+      "fieldtype": "Link",
+      "label": "Customer Group",
+      "options": "Customer Group"
+    },
+    {
+      "fieldname": "customer",
+      "fieldtype": "Link",
+      "label": "Customer",
+      "options": "Customer"
+    },
+    {
+      "fieldname": "territory",
+      "fieldtype": "Link",
+      "label": "Territory",
+      "options": "Territory"
+    },
+    {
+      "fieldname": "trigger_items",
+      "fieldtype": "Table",
+      "label": "Trigger Items",
+      "options": "Pharma Scheme Trigger Item"
+    },
+    {
+      "fieldname": "benefit_items",
+      "fieldtype": "Table",
+      "label": "Benefit Items",
+      "options": "Pharma Scheme Benefit Item"
+    },
+    {
+      "fieldname": "min_qty",
+      "fieldtype": "Float",
+      "label": "Minimum Qty"
+    },
+    {
+      "fieldname": "min_amount",
+      "fieldtype": "Currency",
+      "label": "Minimum Amount"
+    },
+    {
+      "fieldname": "discount_percentage",
+      "fieldtype": "Percent",
+      "label": "Discount %"
+    },
+    {
+      "fieldname": "discount_amount",
+      "fieldtype": "Currency",
+      "label": "Discount Amount"
+    },
+    {
+      "fieldname": "target_qty",
+      "fieldtype": "Float",
+      "label": "Quarterly Target Qty"
+    },
+    {
+      "fieldname": "target_amount",
+      "fieldtype": "Currency",
+      "label": "Quarterly Target Amount"
+    },
+    {
+      "fieldname": "reward_amount",
+      "fieldtype": "Currency",
+      "label": "Quarterly Reward Amount"
+    },
+    {
+      "fieldname": "budget_amount",
+      "fieldtype": "Currency",
+      "label": "Budget Amount"
+    },
+    {
+      "fieldname": "consumed_amount",
+      "fieldtype": "Currency",
+      "label": "Consumed Amount",
+      "read_only": 1
+    },
+    {
+      "fieldname": "remaining_budget",
+      "fieldtype": "Currency",
+      "label": "Remaining Budget",
+      "read_only": 1
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "Sales Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "Sales User",
+      "read": 1
+    }
+  ]
+}

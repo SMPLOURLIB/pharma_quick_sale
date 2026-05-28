@@ -1,0 +1,67 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Production Settings",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "issingle": 1,
+  "fields": [
+    {
+      "fieldname": "enable_credit_hard_block",
+      "fieldtype": "Check",
+      "label": "Enable Credit Hard Block",
+      "default": 1
+    },
+    {
+      "fieldname": "enable_license_block",
+      "fieldtype": "Check",
+      "label": "Block Expired Drug Licenses",
+      "default": 1
+    },
+    {
+      "fieldname": "require_return_approval",
+      "fieldtype": "Check",
+      "label": "Require Return Approval",
+      "default": 1
+    },
+    {
+      "fieldname": "require_claim_approval",
+      "fieldtype": "Check",
+      "label": "Require Claim Approval",
+      "default": 1
+    },
+    {
+      "fieldname": "allow_scheme_override_role",
+      "fieldtype": "Link",
+      "label": "Scheme Override Role",
+      "options": "Role",
+      "default": "Sales Manager"
+    },
+    {
+      "fieldname": "allow_credit_override_role",
+      "fieldtype": "Link",
+      "label": "Credit Override Role",
+      "options": "Role",
+      "default": "Sales Manager"
+    },
+    {
+      "fieldname": "default_return_warehouse",
+      "fieldtype": "Link",
+      "label": "Default Return Warehouse",
+      "options": "Warehouse"
+    },
+    {
+      "fieldname": "default_replacement_warehouse",
+      "fieldtype": "Link",
+      "label": "Default Replacement Warehouse",
+      "options": "Warehouse"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1
+    }
+  ]
+}

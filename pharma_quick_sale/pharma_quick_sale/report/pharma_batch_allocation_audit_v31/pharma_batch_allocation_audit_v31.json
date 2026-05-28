@@ -1,0 +1,8 @@
+{
+  "doctype": "Report",
+  "name": "Pharma Batch Allocation Audit V31",
+  "ref_doctype": "Pharma Batch Allocation Audit",
+  "report_type": "Script Report",
+  "module": "Pharma Quick Sale",
+  "is_standard": "Yes"
+}

@@ -1,0 +1,107 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Product Profitability Snapshot",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "autoname": "PH-PROFIT-.YYYY.-.#####",
+  "title_field": "item_code",
+  "fields": [
+    {
+      "fieldname": "from_date",
+      "fieldtype": "Date",
+      "label": "From Date",
+      "reqd": 1
+    },
+    {
+      "fieldname": "to_date",
+      "fieldtype": "Date",
+      "label": "To Date",
+      "reqd": 1
+    },
+    {
+      "fieldname": "item_code",
+      "fieldtype": "Link",
+      "label": "Item",
+      "options": "Item",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "customer",
+      "fieldtype": "Link",
+      "label": "Customer",
+      "options": "Customer"
+    },
+    {
+      "fieldname": "territory",
+      "fieldtype": "Link",
+      "label": "Territory",
+      "options": "Territory"
+    },
+    {
+      "fieldname": "sales_amount",
+      "fieldtype": "Currency",
+      "label": "Sales Amount"
+    },
+    {
+      "fieldname": "cost_amount",
+      "fieldtype": "Currency",
+      "label": "Cost Amount"
+    },
+    {
+      "fieldname": "discount_amount",
+      "fieldtype": "Currency",
+      "label": "Discount Amount"
+    },
+    {
+      "fieldname": "scheme_cost",
+      "fieldtype": "Currency",
+      "label": "Scheme Cost"
+    },
+    {
+      "fieldname": "return_amount",
+      "fieldtype": "Currency",
+      "label": "Return Amount"
+    },
+    {
+      "fieldname": "gross_profit",
+      "fieldtype": "Currency",
+      "label": "Gross Profit",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "net_profit",
+      "fieldtype": "Currency",
+      "label": "Net Profit",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "margin_percent",
+      "fieldtype": "Percent",
+      "label": "Margin %",
+      "in_list_view": 1
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "Sales Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "submit": 1
+    },
+    {
+      "role": "Sales User",
+      "read": 1
+    }
+  ]
+}

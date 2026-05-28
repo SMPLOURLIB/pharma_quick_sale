@@ -1,0 +1,1 @@
+frappe.query_reports["Pharma Held Invoice Report"]={filters:[{fieldname:"owner_user",label:"Owner User",fieldtype:"Link",options:"User"},{fieldname:"status",label:"Status",fieldtype:"Select",options:"\nHeld\nRecalled\nCancelled"}]};

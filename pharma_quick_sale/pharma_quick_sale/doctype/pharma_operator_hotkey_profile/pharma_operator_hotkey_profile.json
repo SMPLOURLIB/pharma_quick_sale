@@ -1,0 +1,116 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Operator Hotkey Profile",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "autoname": "field:profile_name",
+  "title_field": "profile_name",
+  "fields": [
+    {
+      "fieldname": "profile_name",
+      "fieldtype": "Data",
+      "label": "Profile Name",
+      "reqd": 1,
+      "unique": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "enabled",
+      "fieldtype": "Check",
+      "label": "Enabled",
+      "default": 1
+    },
+    {
+      "fieldname": "f2_action",
+      "fieldtype": "Data",
+      "label": "F2 Action",
+      "default": "Search Item"
+    },
+    {
+      "fieldname": "f3_action",
+      "fieldtype": "Data",
+      "label": "F3 Action",
+      "default": "Batch"
+    },
+    {
+      "fieldname": "f4_action",
+      "fieldtype": "Data",
+      "label": "F4 Action",
+      "default": "Apply Scheme"
+    },
+    {
+      "fieldname": "f5_action",
+      "fieldtype": "Data",
+      "label": "F5 Action",
+      "default": "Customer"
+    },
+    {
+      "fieldname": "f6_action",
+      "fieldtype": "Data",
+      "label": "F6 Action",
+      "default": "Outstanding"
+    },
+    {
+      "fieldname": "f7_action",
+      "fieldtype": "Data",
+      "label": "F7 Action",
+      "default": "Substitute"
+    },
+    {
+      "fieldname": "f8_action",
+      "fieldtype": "Data",
+      "label": "F8 Action",
+      "default": "Hold"
+    },
+    {
+      "fieldname": "f9_action",
+      "fieldtype": "Data",
+      "label": "F9 Action",
+      "default": "Invoice"
+    },
+    {
+      "fieldname": "f10_action",
+      "fieldtype": "Data",
+      "label": "F10 Action",
+      "default": "Intelligence"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "Sales Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "Pharma SFA Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "submit": 1
+    },
+    {
+      "role": "Pharma Area Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1
+    },
+    {
+      "role": "Pharma Regional Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "doctype": "Report",
+  "name": "Pharma Discount Exception Report V31",
+  "ref_doctype": "Pharma Discount Exception",
+  "report_type": "Script Report",
+  "module": "Pharma Quick Sale",
+  "is_standard": "Yes"
+}

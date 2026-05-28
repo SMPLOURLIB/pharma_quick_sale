@@ -1,0 +1,7 @@
+
+.pharma-operator-intelligence-panel{position:fixed;right:14px;top:88px;width:380px;max-height:80vh;overflow:auto;background:#fff;border:1px solid #d1d5db;box-shadow:0 10px 28px rgba(0,0,0,.18);z-index:9999;font-size:12px;border-radius:6px}
+.poi-head{font-weight:700;background:#f5f7fa;padding:8px 10px;border-bottom:1px solid #ddd;display:flex;justify-content:space-between;align-items:center}
+.poi-close{border:0;background:transparent;font-size:18px;line-height:18px}
+.poi-body{padding:10px}
+.poi-body table{font-size:11px;margin:6px 0}
+.poi-body td,.poi-body th{padding:3px!important}

@@ -1,0 +1,84 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Loss Sale Exception",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "autoname": "PH-LOSS-.YYYY.-.#####",
+  "title_field": "customer",
+  "fields": [
+    {
+      "fieldname": "posting_datetime",
+      "fieldtype": "Datetime",
+      "label": "Posting Datetime",
+      "default": "Now",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "customer",
+      "fieldtype": "Link",
+      "label": "Customer",
+      "options": "Customer",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "item_code",
+      "fieldtype": "Link",
+      "label": "Item",
+      "options": "Item",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "batch_no",
+      "fieldtype": "Link",
+      "label": "Batch",
+      "options": "Batch"
+    },
+    {
+      "fieldname": "selling_rate",
+      "fieldtype": "Currency",
+      "label": "Selling Rate"
+    },
+    {
+      "fieldname": "cost_rate",
+      "fieldtype": "Currency",
+      "label": "Cost Rate"
+    },
+    {
+      "fieldname": "loss_amount",
+      "fieldtype": "Currency",
+      "label": "Loss Amount",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "sales_invoice",
+      "fieldtype": "Link",
+      "label": "Sales Invoice",
+      "options": "Sales Invoice"
+    },
+    {
+      "fieldname": "details",
+      "fieldtype": "Code",
+      "label": "Details",
+      "options": "JSON"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1
+    },
+    {
+      "role": "Sales Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1
+    },
+    {
+      "role": "Sales User",
+      "read": 1
+    }
+  ]
+}

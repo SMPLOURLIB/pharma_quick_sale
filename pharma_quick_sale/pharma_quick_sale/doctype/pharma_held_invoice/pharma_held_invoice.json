@@ -1,0 +1,86 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Held Invoice",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "autoname": "PH-HOLD-.YYYY.-.#####",
+  "title_field": "customer",
+  "fields": [
+    {
+      "fieldname": "customer",
+      "fieldtype": "Link",
+      "label": "Customer",
+      "options": "Customer",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "company",
+      "fieldtype": "Link",
+      "label": "Company",
+      "options": "Company"
+    },
+    {
+      "fieldname": "warehouse",
+      "fieldtype": "Link",
+      "label": "Warehouse",
+      "options": "Warehouse"
+    },
+    {
+      "fieldname": "owner_user",
+      "fieldtype": "Link",
+      "label": "Owner User",
+      "options": "User",
+      "default": "user",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "held_datetime",
+      "fieldtype": "Datetime",
+      "label": "Held Datetime",
+      "default": "Now",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "status",
+      "fieldtype": "Select",
+      "label": "Status",
+      "options": "Held\nRecalled\nCancelled",
+      "default": "Held",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "grand_total",
+      "fieldtype": "Currency",
+      "label": "Grand Total",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "payload",
+      "fieldtype": "Code",
+      "label": "Invoice Payload",
+      "options": "JSON",
+      "reqd": 1
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1
+    },
+    {
+      "role": "Sales Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1
+    },
+    {
+      "role": "Sales User",
+      "read": 1,
+      "write": 1,
+      "create": 1
+    }
+  ]
+}

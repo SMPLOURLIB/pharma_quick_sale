@@ -1,0 +1,108 @@
+{
+ "actions": [],
+ "autoname": "PH-EXP-.YYYY.-.#####",
+ "creation": "2026-05-28 14:36:49.319691",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "posting_date",
+  "sales_person",
+  "claim_status",
+  "items",
+  "total_claimed",
+  "approved_amount",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Posting Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sales_person",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "MR / Sales Person",
+   "options": "Sales Person",
+   "reqd": 1
+  },
+  {
+   "default": "Draft",
+   "fieldname": "claim_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Claim Status",
+   "options": "Draft\nSubmitted\nApproved\nRejected\nPaid"
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Expense Items",
+   "options": "Pharma MR Expense Item"
+  },
+  {
+   "fieldname": "total_claimed",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Total Claimed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "approved_amount",
+   "fieldtype": "Currency",
+   "label": "Approved Amount"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Pharma MR Expense Claim",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  }
+ ],
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-05-28 14:36:49.319691",
+ "modified_by": "Administrator",
+ "module": "Pharma Quick Sale",
+ "name": "Pharma MR Expense Claim",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "role": "System Manager",
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "cancel": 1,
+   "create": 1,
+   "read": 1,
+   "role": "Sales Manager",
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "role": "Sales User",
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "sales_person"
+}

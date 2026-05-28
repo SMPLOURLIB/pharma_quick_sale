@@ -1,0 +1,1 @@
+frappe.query_reports["Pharma Sample Balance"]={filters:[{fieldname:"sales_person",label:"Sales Person",fieldtype:"Link",options:"Sales Person"},{fieldname:"item_code",label:"Item",fieldtype:"Link",options:"Item"}]};

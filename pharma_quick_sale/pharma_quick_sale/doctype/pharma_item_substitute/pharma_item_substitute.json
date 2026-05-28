@@ -1,0 +1,64 @@
+{
+  "doctype": "DocType",
+  "name": "Pharma Item Substitute",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "autoname": "hash",
+  "fields": [
+    {
+      "fieldname": "item_code",
+      "fieldtype": "Link",
+      "label": "Item",
+      "options": "Item",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "substitute_item",
+      "fieldtype": "Link",
+      "label": "Substitute Item",
+      "options": "Item",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "substitution_type",
+      "fieldtype": "Select",
+      "label": "Type",
+      "options": "Same Composition\nSimilar Use\nManual Substitute",
+      "default": "Manual Substitute"
+    },
+    {
+      "fieldname": "priority",
+      "fieldtype": "Int",
+      "label": "Priority",
+      "default": 100,
+      "in_list_view": 1
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "Sales Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "Sales User",
+      "read": 1,
+      "write": 1,
+      "create": 1
+    }
+  ]
+}

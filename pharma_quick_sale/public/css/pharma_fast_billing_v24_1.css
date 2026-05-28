@@ -1,0 +1,8 @@
+
+.pqs-dense-mode table,.pqs-dense-mode .table{font-size:12px}
+.pqs-dense-mode .table>tbody>tr>td,.pqs-dense-mode .table>thead>tr>th{padding:3px 5px!important;vertical-align:middle}
+.pqs-dense-mode input.form-control,.pqs-dense-mode select.form-control{height:26px!important;padding:2px 6px!important;font-size:12px}
+.v241-suggestions{position:absolute;background:#fff;border:1px solid #d1d5db;z-index:9999;max-height:260px;min-width:520px;overflow:auto;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.v241-suggestion-row{display:grid;grid-template-columns:1.2fr 2fr 1fr 1fr 1fr;gap:8px;padding:5px 8px;border-bottom:1px solid #f1f1f1;cursor:pointer}
+.v241-suggestion-row:hover{background:#f6f8fa}
+.v241-badge{display:inline-block;padding:1px 5px;border-radius:4px;background:#eef2ff;font-size:11px}

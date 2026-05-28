@@ -1,0 +1,16 @@
+{
+  "doctype": "Page",
+  "name": "pharma-loss-approvals",
+  "module": "Pharma Quick Sale",
+  "title": "Pharma Loss Sale Approvals",
+  "page_name": "pharma-loss-approvals",
+  "standard": "Yes",
+  "roles": [
+    {
+      "role": "System Manager"
+    },
+    {
+      "role": "Sales Manager"
+    }
+  ]
+}

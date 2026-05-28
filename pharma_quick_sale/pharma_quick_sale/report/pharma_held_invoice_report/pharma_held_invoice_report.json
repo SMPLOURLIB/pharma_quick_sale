@@ -1,0 +1,8 @@
+{
+  "doctype": "Report",
+  "name": "Pharma Held Invoice Report",
+  "ref_doctype": "Pharma Held Invoice",
+  "report_type": "Script Report",
+  "module": "Pharma Quick Sale",
+  "is_standard": "Yes"
+}
