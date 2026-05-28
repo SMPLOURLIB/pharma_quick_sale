@@ -3,6 +3,8 @@ from frappe.model.document import Document
 from frappe.utils import flt, getdate, nowdate, now_datetime, add_days
 from erpnext.stock.get_item_details import get_item_details
 
+from frappe.utils import cint
+
 
 class PharmaQuickSale(Document):
     def validate(self):
