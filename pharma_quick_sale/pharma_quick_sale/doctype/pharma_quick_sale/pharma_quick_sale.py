@@ -4288,7 +4288,7 @@ def get_executive_cockpit(from_date=None, to_date=None):
 
 
 @frappe.whitelist()
-def get_batch_history(item_code, warehouse=None, customer=None):
+def get_batch_history_old(item_code, warehouse=None, customer=None):
     conditions = ["sle.item_code = %s", "IFNULL(sle.batch_no, '') != ''"]
     values = [item_code]
     if warehouse:
@@ -4332,7 +4332,68 @@ def get_batch_history(item_code, warehouse=None, customer=None):
         })
     return out
 
+@frappe.whitelist()
+def get_batch_history(item_code, warehouse=None, customer=None):
+    conditions = [
+        "sle.item_code = %s",
+        "IFNULL(sle.batch_no, '') != ''",
+        "sle.is_cancelled = 0"          # ← ADD: exclude cancelled SLEs
+    ]
+    values = [item_code]
+    if warehouse:
+        conditions.append("sle.warehouse = %s")
+        values.append(warehouse)
 
+    rows = frappe.db.sql(f"""
+        SELECT sle.batch_no, b.expiry_date, sle.warehouse, SUM(sle.actual_qty) AS available_qty
+        FROM `tabStock Ledger Entry` sle
+        LEFT JOIN `tabBatch` b ON b.name = sle.batch_no
+        WHERE {' AND '.join(conditions)}
+        GROUP BY sle.batch_no, b.expiry_date, sle.warehouse
+        HAVING SUM(sle.actual_qty) > 0
+        ORDER BY b.expiry_date ASC, sle.batch_no ASC
+    """, tuple(values), as_dict=True)
+
+    # ── NEW: when multiple warehouses are returned (no warehouse filter),
+    # collapse rows with the same batch_no by keeping only the highest-qty
+    # warehouse entry, so the frontend never sees the same batch twice.
+    if not warehouse:
+        seen = {}
+        for row in rows:
+            key = row.batch_no
+            if key not in seen or flt(row.available_qty) > flt(seen[key].available_qty):
+                seen[key] = row
+        rows = sorted(seen.values(), key=lambda r: (str(r.expiry_date or '9999-12-31'), r.batch_no))
+
+    out = []
+    for row in rows:
+        lp = frappe.db.sql("""
+            SELECT pri.parent AS purchase_receipt, pr.supplier, pr.posting_date, pri.rate
+            FROM `tabPurchase Receipt Item` pri
+            INNER JOIN `tabPurchase Receipt` pr ON pr.name = pri.parent
+            WHERE pri.item_code = %s AND IFNULL(pri.batch_no, '') = %s AND pr.docstatus = 1
+            ORDER BY pr.posting_date DESC, pr.modified DESC LIMIT 1
+        """, (item_code, row.batch_no), as_dict=True)
+        ls = frappe.db.sql("""
+            SELECT sii.parent AS sales_invoice, si.customer, si.posting_date, sii.rate, sii.discount_percentage
+            FROM `tabSales Invoice Item` sii
+            INNER JOIN `tabSales Invoice` si ON si.name = sii.parent
+            WHERE sii.item_code = %s AND IFNULL(sii.batch_no, '') = %s AND si.docstatus = 1
+            ORDER BY si.posting_date DESC, si.modified DESC LIMIT 1
+        """, (item_code, row.batch_no), as_dict=True)
+        p = lp[0] if lp else {}
+        s = ls[0] if ls else {}
+        days = (getdate(row.expiry_date) - getdate(nowdate())).days if row.expiry_date else None
+        out.append({
+            "batch_no": row.batch_no, "expiry_date": row.expiry_date, "warehouse": row.warehouse,
+            "available_qty": flt(row.available_qty), "purchase_rate": flt(p.get("rate")),
+            "supplier": p.get("supplier"), "purchase_date": p.get("posting_date"),
+            "last_sale_rate": flt(s.get("rate")), "last_sale_discount": flt(s.get("discount_percentage")),
+            "last_sale_customer": s.get("customer"), "last_sale_date": s.get("posting_date"),
+            "days_to_expiry": days, "near_expiry": bool(days is not None and days <= 90)
+        })
+    return out
+    
 @frappe.whitelist()
 def get_last_sale_history(item_code, customer=None, limit=5):
     conditions = ["sii.item_code = %s", "si.docstatus = 1"]
