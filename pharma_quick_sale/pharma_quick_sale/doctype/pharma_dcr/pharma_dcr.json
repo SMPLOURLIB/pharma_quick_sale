@@ -1,188 +1,139 @@
 {
- "actions": [],
- "autoname": "PH-DCR-.YYYY.-.#####",
- "creation": "2026-05-28 14:30:28.937179",
- "description": "DCR",
- "doctype": "DocType",
- "engine": "InnoDB",
- "field_order": [
-  "dcr_date",
-  "sales_person",
-  "manager",
-  "territory",
-  "status",
-  "doctor",
-  "visit_type",
-  "visit_time",
-  "products_promoted",
-  "samples_given",
-  "order_value",
-  "competitor_feedback",
-  "doctor_feedback",
-  "next_followup_date",
-  "latitude",
-  "longitude",
-  "amended_from",
-  "amended_from"
- ],
- "fields": [
-  {
-   "default": "Today",
-   "fieldname": "dcr_date",
-   "fieldtype": "Date",
-   "in_list_view": 1,
-   "label": "DCR Date",
-   "reqd": 1
-  },
-  {
-   "fieldname": "sales_person",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "MR / Sales Person",
-   "options": "Sales Person",
-   "reqd": 1
-  },
-  {
-   "fieldname": "manager",
-   "fieldtype": "Link",
-   "label": "Manager",
-   "options": "Sales Person"
-  },
-  {
-   "fieldname": "territory",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Territory",
-   "options": "Territory"
-  },
-  {
-   "default": "Draft",
-   "fieldname": "status",
-   "fieldtype": "Select",
-   "in_list_view": 1,
-   "label": "Status",
-   "options": "Draft\nSubmitted\nApproved\nRejected"
-  },
-  {
-   "fieldname": "doctor",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Doctor",
-   "options": "Pharma Doctor",
-   "reqd": 1
-  },
-  {
-   "default": "Planned",
-   "fieldname": "visit_type",
-   "fieldtype": "Select",
-   "label": "Visit Type",
-   "options": "Planned\nUnplanned\nFollow-up\nCamp\nPhone Call"
-  },
-  {
-   "fieldname": "visit_time",
-   "fieldtype": "Datetime",
-   "label": "Visit Time"
-  },
-  {
-   "fieldname": "products_promoted",
-   "fieldtype": "Table",
-   "label": "Products Promoted",
-   "options": "Pharma Promoted Product"
-  },
-  {
-   "fieldname": "samples_given",
-   "fieldtype": "Table",
-   "label": "Samples Given",
-   "options": "Pharma Sample Line"
-  },
-  {
-   "fieldname": "order_value",
-   "fieldtype": "Currency",
-   "label": "Order Value"
-  },
-  {
-   "fieldname": "competitor_feedback",
-   "fieldtype": "Small Text",
-   "label": "Competitor Feedback"
-  },
-  {
-   "fieldname": "doctor_feedback",
-   "fieldtype": "Small Text",
-   "label": "Doctor Feedback"
-  },
-  {
-   "fieldname": "next_followup_date",
-   "fieldtype": "Date",
-   "label": "Next Follow-up Date"
-  },
-  {
-   "fieldname": "latitude",
-   "fieldtype": "Float",
-   "label": "Latitude"
-  },
-  {
-   "fieldname": "longitude",
-   "fieldtype": "Float",
-   "label": "Longitude"
-  },
-  {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Pharma DCR",
-   "print_hide": 1,
-   "read_only": 1,
-   "search_index": 1
-  },
-  {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Pharma DCR",
-   "print_hide": 1,
-   "read_only": 1,
-   "search_index": 1
-  }
- ],
- "is_submittable": 1,
- "links": [],
- "modified": "2026-05-28 14:30:28.937179",
- "modified_by": "Administrator",
- "module": "Pharma Quick Sale",
- "name": "Pharma DCR",
- "naming_rule": "Expression",
- "owner": "Administrator",
- "permissions": [
-  {
-   "cancel": 1,
-   "create": 1,
-   "delete": 1,
-   "read": 1,
-   "role": "System Manager",
-   "submit": 1,
-   "write": 1
-  },
-  {
-   "cancel": 1,
-   "create": 1,
-   "read": 1,
-   "role": "Sales Manager",
-   "submit": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
-   "read": 1,
-   "role": "Sales User",
-   "submit": 1,
-   "write": 1
-  }
- ],
- "row_format": "Dynamic",
- "sort_field": "modified",
- "sort_order": "DESC",
- "states": [],
- "title_field": "sales_person"
+  "doctype": "DocType",
+  "name": "Pharma DCR",
+  "module": "Pharma Quick Sale",
+  "custom": 0,
+  "is_submittable": 1,
+  "autoname": "PH-DCR-.YYYY.-.#####",
+  "title_field": "sales_person",
+  "fields": [
+    {
+      "fieldname": "dcr_date",
+      "fieldtype": "Date",
+      "label": "DCR Date",
+      "default": "Today",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "sales_person",
+      "fieldtype": "Link",
+      "label": "MR / Sales Person",
+      "options": "Sales Person",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "manager",
+      "fieldtype": "Link",
+      "label": "Manager",
+      "options": "Sales Person"
+    },
+    {
+      "fieldname": "territory",
+      "fieldtype": "Link",
+      "label": "Territory",
+      "options": "Territory",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "status",
+      "fieldtype": "Select",
+      "label": "Status",
+      "options": "Draft\nSubmitted\nApproved\nRejected",
+      "default": "Draft",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "doctor",
+      "fieldtype": "Link",
+      "label": "Doctor",
+      "options": "Pharma Doctor",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "visit_type",
+      "fieldtype": "Select",
+      "label": "Visit Type",
+      "options": "Planned\nUnplanned\nFollow-up\nCamp\nPhone Call",
+      "default": "Planned"
+    },
+    {
+      "fieldname": "visit_time",
+      "fieldtype": "Datetime",
+      "label": "Visit Time"
+    },
+    {
+      "fieldname": "products_promoted",
+      "fieldtype": "Table",
+      "label": "Products Promoted",
+      "options": "Pharma Promoted Product"
+    },
+    {
+      "fieldname": "samples_given",
+      "fieldtype": "Table",
+      "label": "Samples Given",
+      "options": "Pharma Sample Line"
+    },
+    {
+      "fieldname": "order_value",
+      "fieldtype": "Currency",
+      "label": "Order Value"
+    },
+    {
+      "fieldname": "competitor_feedback",
+      "fieldtype": "Small Text",
+      "label": "Competitor Feedback"
+    },
+    {
+      "fieldname": "doctor_feedback",
+      "fieldtype": "Small Text",
+      "label": "Doctor Feedback"
+    },
+    {
+      "fieldname": "next_followup_date",
+      "fieldtype": "Date",
+      "label": "Next Follow-up Date"
+    },
+    {
+      "fieldname": "latitude",
+      "fieldtype": "Float",
+      "label": "Latitude"
+    },
+    {
+      "fieldname": "longitude",
+      "fieldtype": "Float",
+      "label": "Longitude"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "Sales Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 0,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "Sales User",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 0,
+      "submit": 1,
+      "cancel": 0
+    }
+  ]
 }

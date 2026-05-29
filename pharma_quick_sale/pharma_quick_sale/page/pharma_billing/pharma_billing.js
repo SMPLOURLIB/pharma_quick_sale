@@ -15,6 +15,7 @@ class PharmaBillingEngineV30 {
     };
     this.db = null;
     this.render();
+    this.make_controls();
     this.bind();
     this.initCache();
   }
@@ -23,10 +24,10 @@ class PharmaBillingEngineV30 {
     this.wrapper.find('.layout-main-section').html(`
       <div class="pb30">
         <div class="pb30-top">
-          <div><label>Company</label><input class="pb30-company" placeholder="Company"></div>
-          <div><label>Customer</label><input class="pb30-customer" list="pb30-customers" placeholder="F5 customer / distributor"><datalist id="pb30-customers"></datalist></div>
-          <div><label>Warehouse</label><input class="pb30-warehouse" placeholder="Default warehouse"></div>
-          <div><label>Tax Category</label><input class="pb30-tax-category" placeholder="GST/default"></div>
+          <div id="pb30-company-control"></div>
+          <div id="pb30-customer-control"></div>
+          <div id="pb30-warehouse-control"></div>
+          <div id="pb30-tax-category-control"></div>
           <div><label>Item / Barcode</label><input class="pb30-search" placeholder="Type item, composition, barcode…"></div>
           <button class="pb30-cache btn btn-sm btn-default">Refresh Cache</button>
         </div>
@@ -43,10 +44,84 @@ class PharmaBillingEngineV30 {
   }
 
   $search(){ return this.wrapper.find('.pb30-search'); }
-  $customer(){ return this.wrapper.find('.pb30-customer'); }
-  $warehouse(){ return this.wrapper.find('.pb30-warehouse'); }
-  $company(){ return this.wrapper.find('.pb30-company'); }
-  $taxCategory(){ return this.wrapper.find('.pb30-tax-category'); }
+  getCustomer(){ return this.customer_control ? this.customer_control.get_value() : ''; }
+  setCustomer(v){ if (this.customer_control) this.customer_control.set_value(v || ''); }
+  getWarehouse(){ return this.warehouse_control ? this.warehouse_control.get_value() : ''; }
+  setWarehouse(v){ if (this.warehouse_control) this.warehouse_control.set_value(v || ''); }
+  getCompany(){ return this.company_control ? this.company_control.get_value() : ''; }
+  setCompany(v){ if (this.company_control) this.company_control.set_value(v || ''); }
+  getTaxCategory(){ return this.tax_category_control ? this.tax_category_control.get_value() : ''; }
+  setTaxCategory(v){ if (this.tax_category_control) this.tax_category_control.set_value(v || ''); }
+  $customer(){ return this.customer_control ? this.customer_control.$input : this.wrapper.find('.pb30-customer'); }
+  $warehouse(){ return this.warehouse_control ? this.warehouse_control.$input : this.wrapper.find('.pb30-warehouse'); }
+  $company(){ return this.company_control ? this.company_control.$input : this.wrapper.find('.pb30-company'); }
+  $taxCategory(){ return this.tax_category_control ? this.tax_category_control.$input : this.wrapper.find('.pb30-tax-category'); }
+
+
+  make_controls() {
+    this.company_control = frappe.ui.form.make_control({
+      parent: this.wrapper.find('#pb30-company-control'),
+      df: {
+        fieldtype:'Link',
+        options:'Company',
+        fieldname:'company',
+        label:'Company',
+        reqd:1,
+        onchange: () => {
+          const company = this.getCompany();
+          if (this.warehouse_control) {
+            this.warehouse_control.df.get_query = () => ({ filters: { company: company } });
+          }
+          this.refreshCache(false);
+        }
+      },
+      render_input: true
+    });
+
+    this.customer_control = frappe.ui.form.make_control({
+      parent: this.wrapper.find('#pb30-customer-control'),
+      df: {
+        fieldtype:'Link',
+        options:'Customer',
+        fieldname:'customer',
+        label:'Customer',
+        reqd:1,
+        onchange: () => {
+          this.showOutstanding();
+          this.analyzeCurrentBill();
+        }
+      },
+      render_input: true
+    });
+
+    this.warehouse_control = frappe.ui.form.make_control({
+      parent: this.wrapper.find('#pb30-warehouse-control'),
+      df: {
+        fieldtype:'Link',
+        options:'Warehouse',
+        fieldname:'warehouse',
+        label:'Warehouse',
+        reqd:1,
+        get_query: () => ({ filters: { company: this.getCompany() } }),
+        onchange: () => this.refreshCache(false)
+      },
+      render_input: true
+    });
+
+    this.tax_category_control = frappe.ui.form.make_control({
+      parent: this.wrapper.find('#pb30-tax-category-control'),
+      df: {
+        fieldtype:'Link',
+        options:'Tax Category',
+        fieldname:'tax_category',
+        label:'Tax Category'
+      },
+      render_input: true
+    });
+
+    const defaultCompany = frappe.defaults.get_default('company');
+    if (defaultCompany) this.setCompany(defaultCompany);
+  }
 
   bind() {
     this.wrapper.find('.pb30-cache').on('click', () => this.refreshCache());
@@ -61,7 +136,7 @@ class PharmaBillingEngineV30 {
       if (e.key === 'F2') { e.preventDefault(); this.$search().focus().select(); }
       if (e.key === 'F3') { e.preventDefault(); this.showBatchSelectorForLastRow(); }
       if (e.key === 'F4') { e.preventDefault(); this.applyScheme(); }
-      if (e.key === 'F5') { e.preventDefault(); this.$customer().focus().select(); }
+      if (e.key === 'F5') { e.preventDefault(); this.customer_control && this.customer_control.$input.focus(); }
       if (e.key === 'F6') { e.preventDefault(); this.showOutstanding(); }
       if (e.key === 'F7') { e.preventDefault(); this.showSubstitutes(); }
       if (e.key === 'F8') { e.preventDefault(); this.holdBill(); }
@@ -81,19 +156,25 @@ class PharmaBillingEngineV30 {
         if (!db.objectStoreNames.contains(store)) db.createObjectStore(store, {keyPath: store === 'items' ? 'item_code' : store === 'customers' ? 'name' : 'key'});
       });
     };
-    req.onsuccess = e => { this.db = e.target.result; this.loadDefaults(); this.refreshCache(false); };
+    req.onsuccess = e => { this.db = e.target.result; this.loadDefaults(() => this.refreshCache(false)); };
     req.onerror = () => this.status('IndexedDB unavailable; using server search.');
   }
 
-  loadDefaults() {
+  loadDefaults(done) {
     frappe.call({
       method:'pharma_quick_sale.pharma_quick_sale.doctype.pharma_quick_sale.pharma_quick_sale.get_billing_defaults_v30',
       callback:r => {
         const d = r.message || {};
-        this.$company().val(d.company || '');
-        this.$warehouse().val(d.warehouse || '');
+        this.setCompany(d.company || this.getCompany() || frappe.defaults.get_default('company') || '');
+        this.setWarehouse(d.warehouse || this.getWarehouse() || '');
         this.state.price_list = d.price_list || 'Standard Selling';
-        this.$taxCategory().val(d.tax_category || '');
+        this.setTaxCategory(d.tax_category || '');
+        if (done) done();
+      },
+      error:err => {
+        this.status('Could not load billing defaults. Check server error log.');
+        console.error('Operator Billing defaults error', err);
+        if (done) done();
       }
     });
   }
@@ -101,13 +182,13 @@ class PharmaBillingEngineV30 {
   validatePartyInputs(cb) {
     frappe.call({
       method:'pharma_quick_sale.pharma_quick_sale.doctype.pharma_quick_sale.pharma_quick_sale.validate_billing_party_v30',
-      args:{customer:this.$customer().val(), warehouse:this.$warehouse().val(), company:this.$company().val()},
+      args:{customer:this.getCustomer(), warehouse:this.getWarehouse(), company:this.getCompany()},
       callback:r => {
         const res = r.message || {};
         if (!res.valid) { frappe.msgprint((res.errors || []).join('<br>')); cb(false); return; }
-        this.$customer().val(res.customer || this.$customer().val());
-        this.$warehouse().val(res.warehouse || this.$warehouse().val());
-        this.$company().val(res.company || this.$company().val());
+        this.setCustomer(res.customer || this.getCustomer());
+        this.setWarehouse(res.warehouse || this.getWarehouse());
+        this.setCompany(res.company || this.getCompany());
         cb(true);
       }
     });
@@ -133,20 +214,29 @@ class PharmaBillingEngineV30 {
     this.status('Refreshing local cache…');
     frappe.call({
       method:'pharma_quick_sale.pharma_quick_sale.doctype.pharma_quick_sale.pharma_quick_sale.get_billing_cache_v30',
-      args:{warehouse:this.$warehouse().val() || null, company:this.$company().val() || null, item_limit:25000, batch_limit:100000, customer_limit:25000},
+      args:{warehouse:this.getWarehouse() || null, company:this.getCompany() || null, item_limit:5000, batch_limit:25000, customer_limit:10000},
       callback:r => {
         const data = r.message || {};
+        if (data.defaults) {
+          this.$company().val(data.defaults.company || this.getCompany());
+          this.$warehouse().val(data.defaults.warehouse || this.getWarehouse());
+          this.state.price_list = data.defaults.price_list || this.state.price_list;
+        }
         this.writeStore('items', data.items || []);
         this.writeStore('customers', data.customers || []);
         this.writeStore('batches', data.batches || []);
         this.updateCustomerDatalist(data.customers || []);
-        this.status(`Cache ready: ${(data.items||[]).length} items, ${(data.batches||[]).length} batches.`);
+        this.status(`Cache ready: ${(data.items||[]).length} items, ${(data.customers||[]).length} customers, ${(data.batches||[]).length} batches.`);
+      },
+      error:err => {
+        this.status('Cache failed. Server search fallback is still active. Check browser console/server log.');
+        console.error('Operator Billing cache error', err);
       }
     });
   }
 
   updateCustomerDatalist(customers) {
-    this.wrapper.find('#pb30-customers').html((customers || []).slice(0, 5000).map(c => `<option value="${c.name}">${c.customer_name || c.name}</option>`).join(''));
+    // No-op in v31.3.4: Customer uses native Frappe Link control.
   }
 
   async search(q) {
@@ -155,7 +245,7 @@ class PharmaBillingEngineV30 {
     const rows = await this.getAll('items');
     const results = rows.filter(x => [x.item_code,x.item_name,x.barcode,x.composition,x.brand,x.manufacturer].join(' ').toLowerCase().includes(q)).slice(0, 12);
     if (!results.length) {
-      frappe.call({method:'pharma_quick_sale.pharma_quick_sale.doctype.pharma_quick_sale.pharma_quick_sale.fast_item_search_v30', args:{query:q, warehouse:this.$warehouse().val() || null}, callback:r => this.renderResults(r.message || [])});
+      frappe.call({method:'pharma_quick_sale.pharma_quick_sale.doctype.pharma_quick_sale.pharma_quick_sale.fast_item_search_v30', args:{query:q, warehouse:this.getWarehouse() || null, price_list:this.state.price_list || null}, callback:r => { const rows = r.message || []; this.renderResults(rows); if (!rows.length) this.status('No item found for: ' + q); }, error:err => { this.status('Item search failed. Check server log.'); console.error('Operator Billing search error', err); }});
       return;
     }
     this.renderResults(results);
@@ -193,7 +283,7 @@ class PharmaBillingEngineV30 {
     const all = await this.getAll('batches');
     const rows = all.filter(x => x.item_code === item_code && Number(x.available_qty || 0) > 0);
     if (rows.length) return rows;
-    return new Promise(resolve => frappe.call({method:'pharma_quick_sale.pharma_quick_sale.doctype.pharma_quick_sale.pharma_quick_sale.get_batch_history', args:{item_code, warehouse:this.$warehouse().val() || null}, callback:r => resolve(r.message || [])}));
+    return new Promise(resolve => frappe.call({method:'pharma_quick_sale.pharma_quick_sale.doctype.pharma_quick_sale.pharma_quick_sale.get_batch_history', args:{item_code, warehouse:this.getWarehouse() || null}, callback:r => resolve(r.message || [])}));
   }
 
   autoSelectBatch(batches) {
@@ -230,7 +320,7 @@ class PharmaBillingEngineV30 {
     if (!row || !row.item_code || !row.qty) return;
     frappe.call({
       method:'pharma_quick_sale.pharma_quick_sale.doctype.pharma_quick_sale.pharma_quick_sale.get_batch_allocation_preview_v31',
-      args:{item_code:row.item_code, qty:row.qty, warehouse:this.$warehouse().val() || null, customer:this.$customer().val() || null},
+      args:{item_code:row.item_code, qty:row.qty, warehouse:this.getWarehouse() || null, customer:this.getCustomer() || null},
       callback:r => {
         const d = r.message || {};
         if (d.allocations && d.allocations.length) {
@@ -268,7 +358,7 @@ class PharmaBillingEngineV30 {
     if (!barcode) return;
     frappe.call({
       method:'pharma_quick_sale.pharma_quick_sale.doctype.pharma_quick_sale.pharma_quick_sale.smart_barcode_add_v31_2',
-      args:{barcode:barcode, customer:this.$customer().val() || null, warehouse:this.$warehouse().val() || null},
+      args:{barcode:barcode, customer:this.getCustomer() || null, warehouse:this.getWarehouse() || null},
       callback:r => {
         const res = r.message || {};
         if (!res.found) { this.status(res.message || 'Barcode not found.'); return; }
@@ -312,7 +402,7 @@ class PharmaBillingEngineV30 {
   showIntelligenceForLastRow() { const row = this.state.items[this.state.items.length-1]; if (row) this.showIntelligence(row); this.analyzeCurrentBill(); }
 
   showIntelligence(row) {
-    frappe.call({method:'pharma_quick_sale.pharma_quick_sale.doctype.pharma_quick_sale.pharma_quick_sale.get_operator_decision_panel', args:{item_code:row.item_code, customer:this.$customer().val() || null, warehouse:this.$warehouse().val() || null, qty:row.qty, rate:row.rate, batch_no:row.batch_no}, callback:r => {
+    frappe.call({method:'pharma_quick_sale.pharma_quick_sale.doctype.pharma_quick_sale.pharma_quick_sale.get_operator_decision_panel', args:{item_code:row.item_code, customer:this.getCustomer() || null, warehouse:this.getWarehouse() || null, qty:row.qty, rate:row.rate, batch_no:row.batch_no}, callback:r => {
       const d = r.message || {}; const s = d.decision_summary || {};
       this.wrapper.find('.pb30-intel').html(`<h4>Intelligence</h4><div>Last Sale: ${s.last_sale_rate || '-'}</div><div>Last Purchase: ${s.last_purchase_rate || '-'}</div><div>Margin: ${Number(s.margin_percent || 0).toFixed(2)}%</div><div>Substitutes: ${s.substitute_count || 0}</div><div>Near Expiry: ${s.near_expiry_count || 0}</div>`);
     }});
@@ -328,13 +418,13 @@ class PharmaBillingEngineV30 {
   }
 
   showOutstanding() {
-    const customer = this.$customer().val(); if (!customer) return this.status('Select customer first.');
+    const customer = this.getCustomer(); if (!customer) return this.status('Select customer first.');
     frappe.call({method:'pharma_quick_sale.pharma_quick_sale.doctype.pharma_quick_sale.pharma_quick_sale.get_customer_outstanding_snapshot', args:{customer}, callback:r => this.wrapper.find('.pb30-intel').html('<pre>'+JSON.stringify(r.message||{}, null, 2)+'</pre>')});
   }
 
   showSubstitutes() {
     const row = this.state.items[this.state.items.length-1]; if (!row) return;
-    frappe.call({method:'pharma_quick_sale.pharma_quick_sale.doctype.pharma_quick_sale.pharma_quick_sale.get_commercial_substitutes', args:{item_code:row.item_code, warehouse:this.$warehouse().val()||null}, callback:r => this.wrapper.find('.pb30-intel').html('<h4>Substitutes</h4>'+(r.message||[]).map(x=>`<div>${x.item_code}</div>`).join(''))});
+    frappe.call({method:'pharma_quick_sale.pharma_quick_sale.doctype.pharma_quick_sale.pharma_quick_sale.get_commercial_substitutes', args:{item_code:row.item_code, warehouse:this.getWarehouse()||null}, callback:r => this.wrapper.find('.pb30-intel').html('<h4>Substitutes</h4>'+(r.message||[]).map(x=>`<div>${x.item_code}</div>`).join(''))});
   }
 
   holdBill() { localStorage.setItem('pharma_billing_v30_hold', JSON.stringify(this.collectPayload())); this.status('Bill held.'); }
@@ -343,7 +433,7 @@ class PharmaBillingEngineV30 {
   collectPayload() {
     const batch_allocations = [];
     this.state.items.forEach(row => (row.batch_allocations||[]).forEach(b => batch_allocations.push({item_row_id:row.row_id, item_code:row.item_code, batch_no:b.batch_no, qty:b.qty, expiry_date:b.expiry_date})));
-    return {company:this.$company().val(), customer:this.$customer().val(), warehouse:this.$warehouse().val(), tax_category:this.$taxCategory().val(), loss_sale_approval:this.state.loss_sale_approval, price_list:this.state.price_list, items:this.state.items, batch_allocations, grand_total:this.state.items.reduce((s,x)=>s+Number(x.amount||0),0)};
+    return {company:this.getCompany(), customer:this.getCustomer(), warehouse:this.getWarehouse(), tax_category:this.getTaxCategory(), loss_sale_approval:this.state.loss_sale_approval, price_list:this.state.price_list, items:this.state.items, batch_allocations, grand_total:this.state.items.reduce((s,x)=>s+Number(x.amount||0),0)};
   }
 
   requestLossApproval() {

@@ -1,9 +1,22 @@
 import frappe
 from frappe.model.document import Document
-from frappe.utils import flt, getdate, nowdate, now_datetime, add_days
+from frappe.utils import flt, getdate, nowdate, now_datetime, add_days, cint, get_datetime, add_to_date
 from erpnext.stock.get_item_details import get_item_details
 
-from frappe.utils import cint
+# v31.3.3 runtime fallback helpers for Frappe v15/v14 compatibility
+try:
+    cint
+except NameError:
+    from frappe.utils import cint
+try:
+    get_datetime
+except NameError:
+    from frappe.utils import get_datetime
+try:
+    add_to_date
+except NameError:
+    from frappe.utils import add_to_date
+
 
 
 class PharmaQuickSale(Document):
@@ -70,11 +83,11 @@ class PharmaQuickSale(Document):
             available_qty = max(physical_qty - reserved_qty, 0)
             alloc.available_qty = available_qty
 
-            # if available_qty < requested:
-            #     frappe.throw(
-            #         f"Insufficient stock for {alloc.item_code}, batch {alloc.batch_no}. "
-            #         f"Available: {available_qty}, Required: {requested}"
-            #     )
+            if available_qty < requested:
+                frappe.throw(
+                    f"Insufficient stock for {alloc.item_code}, batch {alloc.batch_no}. "
+                    f"Available: {available_qty}, Required: {requested}"
+                )
 
     def _get_item_details(self, item_code, doctype):
         currency = frappe.db.get_value("Company", self.company, "default_currency") or "INR"
@@ -107,8 +120,8 @@ class PharmaQuickSale(Document):
                 item_details.get("item_tax_template")
                 or row.get("item_tax_template")
                 or _get_item_tax_template_from_item(
-                    item_code=row.item_code,
-                    tax_category=row.tax_category,
+                    item_code,
+                    tax_category=tax_category,
                     posting_date=data.get("posting_date") or nowdate()
                 )
             ),
@@ -1086,7 +1099,9 @@ def _apply_sales_taxes_template_for_live_calc(invoice, customer=None):
             "base_total",
             "base_tax_amount_after_discount_amount",
             "item_wise_tax_detail",
-            "dont_recompute_tax"
+            "dont_recompute_tax",
+            "add_deduct_tax",
+            "category"
         ],
         order_by="idx asc"
     )
@@ -2623,10 +2638,10 @@ def validate_party_license_for_transaction(customer=None, supplier=None, posting
 
     messages = []
 
-    if customer:
-        status = check_drug_license_status("Customer", customer, posting_date)
-        if not status.get("valid"):
-            messages.append(status.get("message"))
+    #if customer:
+    #    status = check_drug_license_status("Customer", customer, posting_date)
+    #    if not status.get("valid"):
+    #        messages.append(status.get("message"))
 
     if supplier:
         status = check_drug_license_status("Supplier", supplier, posting_date)
@@ -3220,7 +3235,7 @@ def bulk_item_lookup(txt=None, warehouse=None, price_list="Standard Selling", li
         stock = stock_map.get(row.item_code, {})
         out.append({
             "item_code": row.item_code, "item_name": row.item_name, "stock_uom": row.stock_uom,
-            "item_group": row.item_group, "custom_gst_hsn_code": row.custom_gst_hsn_code,
+            "item_group": row.item_group, "custom_gst_hsn_code": row.gst_hsn_code,
             "has_batch_no": row.has_batch_no, "has_expiry_date": row.has_expiry_date,
             "brand": row.get("pharma_brand"), "composition": row.get("pharma_composition"),
             "manufacturer": row.get("pharma_manufacturer"), "mrp": flt(row.get("pharma_mrp")),
@@ -5231,7 +5246,7 @@ def apply_advanced_scheme_for_invoice_submission(data):
 
     return normalize_advanced_scheme_item_rows(updated)
 
-@frappe.whitelist()
+
 def create_quick_sale(data, action="invoice"):
     """Create Pharma Quick Sale and downstream invoice/order.
 
@@ -5847,20 +5862,6 @@ def get_fast_billing_context(customer=None, item_code=None, warehouse=None):
 
 
 @frappe.whitelist()
-def get_billing_defaults_v30(company=None):
-    company = company or frappe.db.get_single_value("Global Defaults", "default_company") or frappe.db.get_value("Company", {}, "name")
-    warehouse = None
-    if company:
-        warehouse = frappe.db.get_value("Warehouse", {"company": company, "is_group": 0}, "name")
-    return {
-        "company": company,
-        "warehouse": warehouse,
-        "price_list": frappe.db.get_single_value("Selling Settings", "selling_price_list") or "Standard Selling",
-        "tax_category": None
-    }
-
-
-@frappe.whitelist()
 def validate_billing_party_v30(customer=None, warehouse=None, company=None):
     errors = []
     if customer and not frappe.db.exists("Customer", customer):
@@ -5874,110 +5875,6 @@ def validate_billing_party_v30(customer=None, warehouse=None, company=None):
     if company and not frappe.db.exists("Company", company):
         errors.append(f"Company not found: {company}")
     return {"valid": not bool(errors), "errors": errors, "customer": customer, "warehouse": warehouse, "company": company}
-
-
-@frappe.whitelist()
-def fast_item_search_v30(query=None, warehouse=None, limit=50):
-    query = (query or "").strip()
-    if not query:
-        return []
-    like = f"%{query}%"
-    item_meta = frappe.get_meta("Item")
-    fields = ["i.item_code", "i.item_name", "i.stock_uom", "i.standard_rate"]
-    optional_fields = {
-        "pharma_composition": "composition",
-        "pharma_brand": "brand",
-        "pharma_manufacturer": "manufacturer",
-        "pharma_mrp": "mrp",
-        "pharma_ptr": "ptr",
-        "barcode": "barcode"
-    }
-    for field, alias in optional_fields.items():
-        if item_meta.has_field(field):
-            fields.append(f"i.{field} AS {alias}")
-    barcode_join = ""
-    barcode_where = ""
-    barcode_exists = frappe.db.exists("DocType", "Item Barcode")
-    if barcode_exists:
-        barcode_join = "LEFT JOIN `tabItem Barcode` ib ON ib.parent = i.name"
-        barcode_where = " OR ib.barcode LIKE %s"
-    values = [like, like]
-    if item_meta.has_field("barcode"):
-        values.append(like)
-    if item_meta.has_field("pharma_composition"):
-        values.append(like)
-    if item_meta.has_field("pharma_brand"):
-        values.append(like)
-    if barcode_exists:
-        values.append(like)
-    values += [f"{query}%", int(limit or 50)]
-    rows = frappe.db.sql(f"""
-        SELECT DISTINCT {', '.join(fields)}
-        FROM `tabItem` i
-        {barcode_join}
-        WHERE i.disabled=0
-          AND (
-            i.item_code LIKE %s
-            OR i.item_name LIKE %s
-            {"OR i.barcode LIKE %s" if item_meta.has_field("barcode") else ""}
-            {"OR i.pharma_composition LIKE %s" if item_meta.has_field("pharma_composition") else ""}
-            {"OR i.pharma_brand LIKE %s" if item_meta.has_field("pharma_brand") else ""}
-            {barcode_where}
-          )
-        ORDER BY CASE WHEN i.item_code LIKE %s THEN 0 ELSE 1 END, i.item_code
-        LIMIT %s
-    """, tuple(values), as_dict=True)
-    for r in rows:
-        r["mrp"] = r.get("mrp") or r.get("standard_rate")
-        r["ptr"] = r.get("ptr") or r.get("standard_rate")
-        r["stock_qty"] = flt(frappe.db.get_value("Bin", {"item_code": r.item_code, "warehouse": warehouse}, "actual_qty") or 0) if warehouse else 0
-    return rows
-
-
-@frappe.whitelist()
-def get_item_cache_v30(warehouse=None, limit=25000, offset=0, modified_after=None):
-    item_meta = frappe.get_meta("Item")
-    fields = ["i.item_code", "i.item_name", "i.stock_uom", "i.standard_rate", "i.modified"]
-    optional_fields = {
-        "pharma_composition": "composition",
-        "pharma_brand": "brand",
-        "pharma_manufacturer": "manufacturer",
-        "pharma_mrp": "mrp",
-        "pharma_ptr": "ptr",
-        "barcode": "barcode"
-    }
-    for field, alias in optional_fields.items():
-        if item_meta.has_field(field):
-            fields.append(f"i.{field} AS {alias}")
-    conditions = ["i.disabled=0"]
-    values = []
-    if modified_after:
-        conditions.append("i.modified >= %s")
-        values.append(modified_after)
-    values.extend([int(limit or 25000), int(offset or 0)])
-    rows = frappe.db.sql(f"""
-        SELECT {', '.join(fields)}
-        FROM `tabItem` i
-        WHERE {' AND '.join(conditions)}
-        ORDER BY i.modified DESC, i.item_code
-        LIMIT %s OFFSET %s
-    """, tuple(values), as_dict=True)
-    if frappe.db.exists("DocType", "Item Barcode") and rows:
-        item_codes = [r.item_code for r in rows]
-        barcodes = frappe.db.sql("""
-            SELECT parent AS item_code, MIN(barcode) AS barcode
-            FROM `tabItem Barcode`
-            WHERE parent IN %(items)s
-            GROUP BY parent
-        """, {"items": item_codes}, as_dict=True)
-        barcode_map = {b.item_code: b.barcode for b in barcodes}
-        for r in rows:
-            r["barcode"] = r.get("barcode") or barcode_map.get(r.item_code)
-    for r in rows:
-        r["mrp"] = r.get("mrp") or r.get("standard_rate")
-        r["ptr"] = r.get("ptr") or r.get("standard_rate")
-        r["stock_qty"] = flt(frappe.db.get_value("Bin", {"item_code": r.item_code, "warehouse": warehouse}, "actual_qty") or 0) if warehouse else 0
-    return rows
 
 
 @frappe.whitelist()
@@ -6025,16 +5922,6 @@ def get_batch_cache_v30(warehouse=None, limit=100000, offset=0, modified_after=N
         ORDER BY b.expiry_date ASC
         LIMIT %s OFFSET %s
     """, tuple(values), as_dict=True)
-
-
-@frappe.whitelist()
-def get_billing_cache_v30(warehouse=None, company=None, item_limit=25000, batch_limit=100000, customer_limit=25000):
-    return {
-        "defaults": get_billing_defaults_v30(company=company),
-        "items": get_item_cache_v30(warehouse=warehouse, limit=item_limit),
-        "customers": get_customer_cache_v30(limit=customer_limit),
-        "batches": get_batch_cache_v30(warehouse=warehouse, limit=batch_limit)
-    }
 
 
 @frappe.whitelist()
@@ -7101,3 +6988,167 @@ def mark_loss_sale_approval_used_v31_2_2(data, result=None):
         doc.add_comment("Info", f"Used for Sales Invoice {sales_invoice}")
 
     return approval
+
+
+@frappe.whitelist()
+def get_billing_defaults_v30(company=None):
+    """Safe defaults for Operator Billing page."""
+    company = company or frappe.db.get_single_value("Global Defaults", "default_company") or frappe.db.get_value("Company", {}, "name")
+    warehouse = None
+    if company:
+        warehouse = frappe.db.get_value("Warehouse", {"company": company, "is_group": 0}, "name")
+    price_list = None
+    try:
+        price_list = frappe.db.get_single_value("Selling Settings", "selling_price_list")
+    except Exception:
+        price_list = None
+    return {
+        "company": company,
+        "warehouse": warehouse,
+        "price_list": price_list or "Standard Selling",
+        "tax_category": None
+    }
+
+
+def _item_rate_for_billing_v31_3_2(item_code, price_list=None):
+    rate = None
+    if price_list and frappe.db.exists("DocType", "Item Price"):
+        rate = frappe.db.get_value("Item Price", {"item_code": item_code, "price_list": price_list, "selling": 1}, "price_list_rate")
+    if rate is None:
+        rate = frappe.db.get_value("Item", item_code, "standard_rate") if frappe.get_meta("Item").has_field("standard_rate") else None
+    if rate is None:
+        rate = frappe.db.get_value("Item", item_code, "valuation_rate") if frappe.get_meta("Item").has_field("valuation_rate") else None
+    return flt(rate or 0)
+
+
+@frappe.whitelist()
+def get_item_cache_v30(warehouse=None, limit=5000, offset=0, modified_after=None, price_list=None):
+    """Operator billing item cache. Uses safe fields only and enriches rates separately."""
+    item_meta = frappe.get_meta("Item")
+    fields = ["i.item_code", "i.item_name", "i.stock_uom", "i.modified"]
+    optional_fields = {
+        "pharma_composition": "composition",
+        "pharma_brand": "brand",
+        "pharma_manufacturer": "manufacturer",
+        "pharma_mrp": "mrp",
+        "pharma_ptr": "ptr",
+        "barcode": "barcode",
+        "standard_rate": "standard_rate"
+    }
+    for field, alias in optional_fields.items():
+        if item_meta.has_field(field):
+            fields.append(f"i.{field} AS {alias}")
+
+    conditions = ["IFNULL(i.disabled,0)=0"] if item_meta.has_field("disabled") else ["1=1"]
+    values = []
+    if modified_after:
+        conditions.append("i.modified >= %s")
+        values.append(modified_after)
+    values.extend([int(limit or 5000), int(offset or 0)])
+
+    rows = frappe.db.sql(f"""
+        SELECT {', '.join(fields)}
+        FROM `tabItem` i
+        WHERE {' AND '.join(conditions)}
+        ORDER BY i.modified DESC, i.item_code
+        LIMIT %s OFFSET %s
+    """, tuple(values), as_dict=True)
+
+    if frappe.db.exists("DocType", "Item Barcode") and rows:
+        item_codes = [r.item_code for r in rows]
+        barcodes = frappe.db.sql("""
+            SELECT parent AS item_code, MIN(barcode) AS barcode
+            FROM `tabItem Barcode`
+            WHERE parent IN %(items)s
+            GROUP BY parent
+        """, {"items": item_codes}, as_dict=True)
+        barcode_map = {b.item_code: b.barcode for b in barcodes}
+        for r in rows:
+            r["barcode"] = r.get("barcode") or barcode_map.get(r.item_code)
+
+    for r in rows:
+        price = flt(r.get("ptr") or r.get("standard_rate") or _item_rate_for_billing_v31_3_2(r.item_code, price_list))
+        r["standard_rate"] = price
+        r["mrp"] = r.get("mrp") or price
+        r["ptr"] = r.get("ptr") or price
+        r["stock_qty"] = flt(frappe.db.get_value("Bin", {"item_code": r.item_code, "warehouse": warehouse}, "actual_qty") or 0) if warehouse else 0
+    return rows
+
+
+@frappe.whitelist()
+def fast_item_search_v30(query=None, warehouse=None, limit=50, price_list=None):
+    """Server fallback search for Operator Billing; includes standard Item Barcode child table."""
+    query = (query or "").strip()
+    if not query:
+        return []
+    like = f"%{query}%"
+    item_meta = frappe.get_meta("Item")
+    fields = ["i.item_code", "i.item_name", "i.stock_uom", "i.modified"]
+    optional_fields = {
+        "pharma_composition": "composition",
+        "pharma_brand": "brand",
+        "pharma_manufacturer": "manufacturer",
+        "pharma_mrp": "mrp",
+        "pharma_ptr": "ptr",
+        "barcode": "barcode",
+        "standard_rate": "standard_rate"
+    }
+    for field, alias in optional_fields.items():
+        if item_meta.has_field(field):
+            fields.append(f"i.{field} AS {alias}")
+
+    joins = ""
+    where_bits = ["i.item_code LIKE %s", "i.item_name LIKE %s"]
+    values = [like, like]
+
+    if item_meta.has_field("barcode"):
+        where_bits.append("i.barcode LIKE %s")
+        values.append(like)
+    if item_meta.has_field("pharma_composition"):
+        where_bits.append("i.pharma_composition LIKE %s")
+        values.append(like)
+    if item_meta.has_field("pharma_brand"):
+        where_bits.append("i.pharma_brand LIKE %s")
+        values.append(like)
+    if frappe.db.exists("DocType", "Item Barcode"):
+        joins = "LEFT JOIN `tabItem Barcode` ib ON ib.parent = i.name"
+        where_bits.append("ib.barcode LIKE %s")
+        values.append(like)
+
+    disabled_clause = "IFNULL(i.disabled,0)=0" if item_meta.has_field("disabled") else "1=1"
+    values += [f"{query}%", int(limit or 50)]
+
+    rows = frappe.db.sql(f"""
+        SELECT DISTINCT {', '.join(fields)}
+        FROM `tabItem` i
+        {joins}
+        WHERE {disabled_clause}
+          AND ({' OR '.join(where_bits)})
+        ORDER BY CASE WHEN i.item_code LIKE %s THEN 0 ELSE 1 END, i.item_code
+        LIMIT %s
+    """, tuple(values), as_dict=True)
+
+    for r in rows:
+        price = flt(r.get("ptr") or r.get("standard_rate") or _item_rate_for_billing_v31_3_2(r.item_code, price_list))
+        r["standard_rate"] = price
+        r["mrp"] = r.get("mrp") or price
+        r["ptr"] = r.get("ptr") or price
+        r["stock_qty"] = flt(frappe.db.get_value("Bin", {"item_code": r.item_code, "warehouse": warehouse}, "actual_qty") or 0) if warehouse else 0
+    return rows
+
+
+@frappe.whitelist()
+def get_billing_cache_v30(warehouse=None, company=None, item_limit=5000, batch_limit=25000, customer_limit=10000):
+    """Safe Operator Billing bootstrap cache.
+
+    Reduced default limits prevent slow/hung first loads. Search still falls back
+    to fast_item_search_v30 when local cache has no result.
+    """
+    defaults = get_billing_defaults_v30(company=company)
+    warehouse = warehouse or defaults.get("warehouse")
+    return {
+        "defaults": defaults,
+        "items": get_item_cache_v30(warehouse=warehouse, limit=item_limit, price_list=defaults.get("price_list")),
+        "customers": get_customer_cache_v30(limit=customer_limit),
+        "batches": get_batch_cache_v30(warehouse=warehouse, limit=batch_limit)
+    }
