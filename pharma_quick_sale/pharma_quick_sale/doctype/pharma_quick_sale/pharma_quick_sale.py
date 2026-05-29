@@ -6027,17 +6027,21 @@ def auto_allocate_batches_v31(item_code, qty, warehouse=None, customer=None, pol
         # Still return preview instead of throw so billing page can warn.
         pass
 
-    audit = frappe.new_doc("Pharma Batch Allocation Audit")
-    audit.customer = customer
-    audit.warehouse = warehouse
-    audit.item_code = item_code
-    audit.requested_qty = requested
-    audit.allocated_qty = allocated
-    audit.shortage_qty = max(remaining, 0)
-    audit.allocation_policy = policy
-    audit.status = status
-    audit.details = frappe.as_json({"allocations": allocations}, indent=2)
-    audit.insert(ignore_permissions=True)
+    try:
+        audit = frappe.new_doc("Pharma Batch Allocation Audit")
+        audit.customer = customer
+        audit.warehouse = warehouse
+        audit.item_code = item_code
+        audit.requested_qty = requested
+        audit.allocated_qty = allocated
+        audit.shortage_qty = max(remaining, 0)
+        audit.allocation_policy = policy
+        audit.status = status
+        audit.details = frappe.as_json({"allocations": allocations}, indent=2)
+        audit.insert(ignore_permissions=True)
+        audit_name = audit.name
+    except Exception:
+        audit_name = None  
 
     return {
         "item_code": item_code,
@@ -6066,6 +6070,9 @@ def apply_auto_batch_allocation_to_payload_v31(data):
     warehouse = data.get("warehouse")
     batch_allocations = []
     errors = []
+
+    if not warehouse:
+        frappe.throw("Warehouse is required for batch allocation.")
 
     for row in data.get("items") or []:
         if row.get("is_free_item"):

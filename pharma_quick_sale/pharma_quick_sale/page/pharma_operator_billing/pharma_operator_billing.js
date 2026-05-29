@@ -1,5 +1,5 @@
 
-frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
+frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
     const page = frappe.ui.make_app_page({
         parent: wrapper,
         title: 'Pharma Operator Billing',
@@ -992,7 +992,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
     }
 
     function bindNoMouseNavigation() {
-        $(document).off('keydown.pob32nav').on('keydown.pob32nav', function(e) {
+        $(document).off('keydown.pob32nav').on('keydown.pob32nav', function (e) {
             const $target = $(e.target);
             const inOperator = $target.closest('.pob-root').length > 0;
             const inModal = $target.closest('.modal').length > 0;
@@ -1355,7 +1355,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
         const rawQty = $row.find('.pob-row-qty').val();
         const parsedQty = typeof parseQuickQty === 'function'
             ? parseQuickQty(rawQty)
-            : {qty: Number(rawQty || 0), uom: null};
+            : { qty: Number(rawQty || 0), uom: null };
 
         row.qty = Number(parsedQty.qty || 0);
         row.uom_hint = parsedQty.uom;
@@ -1461,7 +1461,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
     }
 
     function v33ReindexGrid() {
-        $tbody.find('tr').each(function(idx) {
+        $tbody.find('tr').each(function (idx) {
             $(this).attr('data-idx', idx);
             $(this).find('td:first').text(idx + 1);
             $(this).find('.pob-inline-batch').attr('data-idx', idx);
@@ -1520,30 +1520,30 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
         if (v33GridReady) return;
         v33GridReady = true;
 
-        $tbody.off('input.v33grid').on('input.v33grid', '.pob-row-qty,.pob-row-free,.pob-row-rate,.pob-row-disc', function() {
+        $tbody.off('input.v33grid').on('input.v33grid', '.pob-row-qty,.pob-row-free,.pob-row-rate,.pob-row-disc', function () {
             const idx = Number($(this).closest('tr').data('idx'));
             v33ReadRowInputs(idx);
             v33UpdateRowOnly(idx);
         });
 
-        $tbody.off('change.v33grid').on('change.v33grid', '.pob-row-qty,.pob-row-free,.pob-row-rate,.pob-row-disc', function() {
+        $tbody.off('change.v33grid').on('change.v33grid', '.pob-row-qty,.pob-row-free,.pob-row-rate,.pob-row-disc', function () {
             const idx = Number($(this).closest('tr').data('idx'));
             v33CommitCell(idx);
         });
 
-        $tbody.off('click.v33row').on('click.v33row', 'tr', function() {
+        $tbody.off('click.v33row').on('click.v33row', 'tr', function () {
             const idx = Number($(this).data('idx'));
             if (typeof selectGridRow === 'function') selectGridRow(idx);
             if (typeof navState !== 'undefined') navState.row = idx;
         });
 
-        $tbody.off('click.v33delete').on('click.v33delete', '.pob-row-del', function(e) {
+        $tbody.off('click.v33delete').on('click.v33delete', '.pob-row-del', function (e) {
             e.preventDefault();
             const idx = Number($(this).closest('tr').data('idx'));
             v33DeleteRow(idx);
         });
 
-        $tbody.off('change.v33batch').on('change.v33batch', '.pob-inline-batch', function() {
+        $tbody.off('change.v33batch').on('change.v33batch', '.pob-inline-batch', function () {
             const idx = Number($(this).data('idx'));
             const row = state.items[idx];
             const batch_no = $(this).val();
@@ -1567,18 +1567,18 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
     }
 
     const renderGridLegacyV33 = typeof renderGrid === 'function' ? renderGrid : null;
-    renderGrid = function(focusLast = false) {
+    renderGrid = function (focusLast = false) {
         v33FullRenderGrid(focusLast);
     };
 
     const deleteSelectedLineLegacyV33 = typeof deleteSelectedLine === 'function' ? deleteSelectedLine : null;
-    deleteSelectedLine = function() {
+    deleteSelectedLine = function () {
         const idx = typeof getSelectedGridRow === 'function' ? getSelectedGridRow() : (typeof navState !== 'undefined' ? navState.row : 0);
         v33DeleteRow(idx);
     };
 
     const duplicateSelectedLineLegacyV33 = typeof duplicateSelectedLine === 'function' ? duplicateSelectedLine : null;
-    duplicateSelectedLine = function() {
+    duplicateSelectedLine = function () {
         const idx = typeof getSelectedGridRow === 'function' ? getSelectedGridRow() : (typeof navState !== 'undefined' ? navState.row : 0);
         v33DuplicateRow(idx);
     };
@@ -1614,18 +1614,22 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
         `;
     }
 
+    const _hydratingItems = new Set();
+
     function hydrateSearchBatchesAsyncV323(rows) {
         const topRows = (rows || []).slice(0, 10);
-
         topRows.forEach(row => {
             if (!row || !row.item_code) return;
-
             const warehouse = getCurrentWarehouse ? getCurrentWarehouse() : (state.warehouse || '');
             const cached = getCachedBatchesForItem(row.item_code, warehouse);
-
             if (cached.length) return;
 
+            const key = row.item_code + '::' + warehouse;
+            if (_hydratingItems.has(key)) return;   // ← ADD THIS GUARD
+            _hydratingItems.add(key);
+
             fetchBatchesForItemV323(row.item_code).then(() => {
+                _hydratingItems.delete(key);          // ← AND THIS CLEANUP
                 if ($suggestions.is(':visible')) {
                     const currentText = $search.val();
                     if (currentText && window.PharmaFastBillingV241) {
@@ -1730,7 +1734,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
 
 
 
-    function status(msg, indicator='blue') {
+    function status(msg, indicator = 'blue') {
         $root.find('.pob-status').html(`<span class="indicator ${indicator}">${msg}</span>`);
     }
 
@@ -1772,10 +1776,10 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
             qty += Number(row.qty || 0);
             total += line;
         });
-        return {qty, grand_total: total};
+        return { qty, grand_total: total };
     }
 
-    function renderGrid(focusLast=false) {
+    function renderGrid(focusLast = false) {
         $tbody.empty();
 
         for (let idx = 0; idx < state.items.length; idx++) {
@@ -1835,7 +1839,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
         if (focusLast) $tbody.find('tr:last .pob-row-qty').focus().select();
     }
 
-    function addItem(item, qty=1, batches=[]) {
+    function addItem(item, qty = 1, batches = []) {
         const existing = state.items.find(x => x.item_code === item.item_code);
         const normalizedBatches = cacheBatchesForItem(item.item_code, getCurrentWarehouse ? getCurrentWarehouse() : (state.warehouse || ''), batches || []);
         const selectedBatch = chooseFEFOBatch(normalizedBatches);
@@ -2047,7 +2051,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
         }
     });
 
-    $suggestions.on('click', '.pob-suggestion', function() {
+    $suggestions.on('click', '.pob-suggestion', function () {
         const code = $(this).data('item');
         const item = getMemoryItemSafeV331(code);
 
@@ -2068,7 +2072,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
         });
     });
 
-    $tbody.on('input', 'input', function() {
+    $tbody.on('input', 'input', function () {
         if (typeof v33GridReady !== 'undefined' && v33GridReady) return;
         const tr = $(this).closest('tr');
         const idx = Number(tr.data('idx'));
@@ -2093,24 +2097,24 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
         }
     });
 
-    $tbody.on('click', '.pob-row-del', function() {
+    $tbody.on('click', '.pob-row-del', function () {
         if (typeof v33GridReady !== 'undefined' && v33GridReady) return;
         const idx = Number($(this).closest('tr').data('idx'));
         state.items.splice(idx, 1);
         renderGrid();
     });
 
-    $tbody.on('change', '.pob-inline-batch', function() {
+    $tbody.on('change', '.pob-inline-batch', function () {
         if (typeof v33GridReady !== 'undefined' && v33GridReady) return;
         const idx = Number($(this).data('idx'));
         commitBatchSelectionV323(idx, $(this).val(), true);
     });
 
-    $tbody.on('keydown', '.pob-inline-batch', function(e) {
+    $tbody.on('keydown', '.pob-inline-batch', function (e) {
         if (handleBatchDropdownKeyV323(e)) return;
     });
 
-    $tbody.on('click', 'tr', function() {
+    $tbody.on('click', 'tr', function () {
         selectGridRow(Number($(this).data('idx')));
     });
 
@@ -2132,7 +2136,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
 
             frappe.call({
                 method: 'pharma_quick_sale.pharma_quick_sale.doctype.pharma_quick_sale.pharma_quick_sale.operator_submit_invoice',
-                args: {data: payload, action: 'invoice'},
+                args: { data: payload, action: 'invoice' },
                 freeze: true,
                 freeze_message: 'Submitting invoice...',
                 callback: r => {
@@ -2148,7 +2152,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
     $root.find('.pob-hold').on('click', () => {
         frappe.call({
             method: 'pharma_quick_sale.pharma_quick_sale.doctype.pharma_quick_sale.pharma_quick_sale.operator_save_held_invoice',
-            args: {data: collectPayload()},
+            args: { data: collectPayload() },
             callback: r => status('Held bill saved: ' + r.message, 'green')
         });
     });
@@ -2160,13 +2164,13 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
                 const rows = r.message || [];
                 const html = `<table class="table table-bordered"><tr><th>Held</th><th>Customer</th><th>Total</th><th></th></tr>
                     ${rows.map(x => `<tr><td>${x.name}</td><td>${x.customer || ''}</td><td>${x.grand_total || 0}</td><td><button class="btn btn-xs btn-primary pob-recall-one" data-name="${x.name}">Recall</button></td></tr>`).join('')}</table>`;
-                const d = new frappe.ui.Dialog({title: 'Recall Held Bill', fields: [{fieldname: 'html', fieldtype: 'HTML'}]});
+                const d = new frappe.ui.Dialog({ title: 'Recall Held Bill', fields: [{ fieldname: 'html', fieldtype: 'HTML' }] });
                 d.fields_dict.html.$wrapper.html(html);
                 d.show();
                 d.fields_dict.html.$wrapper.find('.pob-recall-one').on('click', ev => {
                     frappe.call({
                         method: 'pharma_quick_sale.pharma_quick_sale.doctype.pharma_quick_sale.pharma_quick_sale.held_invoice_restore',
-                        args: {held_invoice: $(ev.currentTarget).data('name')},
+                        args: { held_invoice: $(ev.currentTarget).data('name') },
                         callback: rr => {
                             const p = rr.message || {};
                             setCustomer(p.customer || '');
@@ -2198,10 +2202,10 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
     // =============================================================
     // V32.1 keyboard hardening
     // =============================================================
-    $(document).off('keydown.pob32').on('keydown.pob32', function(e) {
-        if (e.key === 'F2' || e.key === 'F6' || e.key === 'F7' || e.key === 'Delete' || (e.ctrlKey && ['l','d','s'].includes(e.key.toLowerCase()))) return;
+    $(document).off('keydown.pob32').on('keydown.pob32', function (e) {
+        if (e.key === 'F2' || e.key === 'F6' || e.key === 'F7' || e.key === 'Delete' || (e.ctrlKey && ['l', 'd', 's'].includes(e.key.toLowerCase()))) return;
         if ($(e.target).closest('.modal').length) return;
-        if (!$(e.target).closest('.pob-root').length && !['F2','F6','Escape'].includes(e.key) && !(e.ctrlKey && ['l','d'].includes(e.key.toLowerCase()))) {
+        if (!$(e.target).closest('.pob-root').length && !['F2', 'F6', 'Escape'].includes(e.key) && !(e.ctrlKey && ['l', 'd'].includes(e.key.toLowerCase()))) {
             return;
         }
 
@@ -2255,7 +2259,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
     });
 
     window.PharmaOperatorBilling = {
-        state, addItem, renderGrid, collectPayload, recallHeld, focusInlineBatch, getSelectedGridRow,  getCustomer:getCurrentCustomer, getCompany, getWarehouse:getCurrentWarehouse, getPriceList, focusCell, focusSearch, focusCustomer, moveCell, v33CommitCell, v33UpdateRowOnly, v33FullRenderGrid,
+        state, addItem, renderGrid, collectPayload, recallHeld, focusInlineBatch, getSelectedGridRow, getCustomer: getCurrentCustomer, getCompany, getWarehouse: getCurrentWarehouse, getPriceList, focusCell, focusSearch, focusCustomer, moveCell, v33CommitCell, v33UpdateRowOnly, v33FullRenderGrid,
         focusSearch: () => $search.focus(),
         focusCustomer: () => customer_control && customer_control.$input.focus(),
         focusQty: () => $tbody.find('tr:last .pob-row-qty').focus().select(),
@@ -2280,7 +2284,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
 
 
 // v27.1 intelligence binding
-(function() {
+(function () {
     function tryLoadOperatorIntelligenceFromRow($row) {
         if (!window.PharmaOperatorIntelligenceV27 || !$row || !$row.length) return;
         const itemText = $row.find('td:nth-child(2) b').first().text();
@@ -2298,15 +2302,15 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
         });
     }
 
-    $(document).off('click.pob27intel', '.pob-grid tbody tr').on('click.pob27intel', '.pob-grid tbody tr', function() {
+    $(document).off('click.pob27intel', '.pob-grid tbody tr').on('click.pob27intel', '.pob-grid tbody tr', function () {
         tryLoadOperatorIntelligenceFromRow($(this));
     });
 
-    $(document).off('focus.pob27intel', '.pob-row-qty, .pob-row-rate, .pob-row-disc').on('focus.pob27intel', '.pob-row-qty, .pob-row-rate, .pob-row-disc', function() {
+    $(document).off('focus.pob27intel', '.pob-row-qty, .pob-row-rate, .pob-row-disc').on('focus.pob27intel', '.pob-row-qty, .pob-row-rate, .pob-row-disc', function () {
         tryLoadOperatorIntelligenceFromRow($(this).closest('tr'));
     });
 
-    $(document).off('keydown.pob27intel').on('keydown.pob27intel', function(e) {
+    $(document).off('keydown.pob27intel').on('keydown.pob27intel', function (e) {
         if (e.key === 'F10') {
             e.preventDefault();
             const $row = $('.pob-grid tbody tr:has(input:focus)').first();
@@ -2317,14 +2321,14 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
 
 
 // v28.1 hardened scheme binding
-$(document).off('keydown.pob28scheme1').on('keydown.pob28scheme1', function(e) {
+$(document).off('keydown.pob28scheme1').on('keydown.pob28scheme1', function (e) {
     if (e.key === 'F4' && window.PharmaOperatorBilling && window.PharmaOperatorBilling.collectPayload) {
         e.preventDefault();
         const payload = window.PharmaOperatorBilling.collectPayload();
         frappe.call({
             method: 'pharma_quick_sale.pharma_quick_sale.doctype.pharma_quick_sale.pharma_quick_sale.apply_advanced_scheme_to_operator_payload',
-            args: {data: payload},
-            callback: function(r) {
+            args: { data: payload },
+            callback: function (r) {
                 const updated = r.message || {};
                 if (updated.advanced_scheme_result && updated.advanced_scheme_result.payload && window.PharmaAdvancedSchemeV28) {
                     window.PharmaAdvancedSchemeV28.render({
@@ -2332,7 +2336,7 @@ $(document).off('keydown.pob28scheme1').on('keydown.pob28scheme1', function(e) {
                         payload: updated.advanced_scheme_result.payload
                     });
                 }
-                frappe.show_alert({message: updated.advanced_scheme_name ? ('Advanced scheme ready: ' + updated.advanced_scheme_name) : 'No eligible advanced scheme', indicator: updated.advanced_scheme_name ? 'green' : 'orange'});
+                frappe.show_alert({ message: updated.advanced_scheme_name ? ('Advanced scheme ready: ' + updated.advanced_scheme_name) : 'No eligible advanced scheme', indicator: updated.advanced_scheme_name ? 'green' : 'orange' });
                 window.__current_pharma_quick_sale_payload = updated;
             }
         });
@@ -2341,14 +2345,14 @@ $(document).off('keydown.pob28scheme1').on('keydown.pob28scheme1', function(e) {
 
 
 // v28.2 complete scheme application binding
-$(document).off('keydown.pob28scheme2').on('keydown.pob28scheme2', function(e) {
+$(document).off('keydown.pob28scheme2').on('keydown.pob28scheme2', function (e) {
     if (e.key === 'F4' && window.PharmaOperatorBilling && window.PharmaOperatorBilling.collectPayload) {
         e.preventDefault();
         const payload = window.PharmaOperatorBilling.collectPayload();
         frappe.call({
             method: 'pharma_quick_sale.pharma_quick_sale.doctype.pharma_quick_sale.pharma_quick_sale.apply_advanced_scheme_to_operator_payload',
-            args: {data: payload},
-            callback: function(r) {
+            args: { data: payload },
+            callback: function (r) {
                 const updated = r.message || {};
                 window.__current_pharma_quick_sale_payload = updated;
 
@@ -2370,9 +2374,9 @@ $(document).off('keydown.pob28scheme2').on('keydown.pob28scheme2', function(e) {
                             window.PharmaOperatorBilling.renderGrid();
                         }
                     }
-                    frappe.show_alert({message: 'Advanced scheme applied: ' + updated.advanced_scheme_name, indicator: 'green'});
+                    frappe.show_alert({ message: 'Advanced scheme applied: ' + updated.advanced_scheme_name, indicator: 'green' });
                 } else {
-                    frappe.show_alert({message: 'No eligible advanced scheme', indicator: 'orange'});
+                    frappe.show_alert({ message: 'No eligible advanced scheme', indicator: 'orange' });
                 }
 
                 if (window.PharmaAdvancedSchemeV28 && updated.advanced_scheme_result) {
