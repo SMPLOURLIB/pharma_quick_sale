@@ -49,567 +49,6 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
     // - Search dropdown is richer and remains under the search box
     // =============================================================
 
-    function inject_v33_5_styles() {
-        if ($('#pob33-5-layout-stabilization').length) return;
-
-        $('head').append(`
-            <style id="pob33-5-layout-stabilization">
-                .pob-root {
-                    height: calc(100vh - 92px) !important;
-                    max-height: calc(100vh - 92px) !important;
-                    display: grid !important;
-                    grid-template-columns: minmax(780px, 1fr) 285px !important;
-                    grid-template-rows: auto minmax(0, 1fr) !important;
-                    column-gap: 12px !important;
-                    overflow: hidden !important;
-                    padding-right: 0 !important;
-                    align-items: stretch !important;
-                }
-
-                .pob-root > .pob-link-controls,
-                .pob-root > .pob-control-ribbon {
-                    grid-column: 1 / 3 !important;
-                    grid-row: 1 !important;
-                }
-
-                .pob-root > :not(.pob-intelligence-panel):not(.pob-operator-intelligence):not(.pob-intel-panel):not(.operator-panel):not(.pob-link-controls):not(.pob-control-ribbon) {
-                    grid-column: 1 !important;
-                }
-
-                .pob-intelligence-panel,
-                .pob-operator-intelligence,
-                .pob-intel-panel,
-                .operator-panel {
-                    grid-column: 2 !important;
-                    grid-row: 2 !important;
-                    position: relative !important;
-                    right: auto !important;
-                    top: auto !important;
-                    width: 285px !important;
-                    max-width: 285px !important;
-                    height: 100% !important;
-                    min-height: 0 !important;
-                    max-height: none !important;
-                    overflow-y: auto !important;
-                    overflow-x: hidden !important;
-                    box-shadow: none !important;
-                    border: 1px solid #cbd5e1 !important;
-                    border-radius: 4px !important;
-                    background: #fff !important;
-                    z-index: 2 !important;
-                    padding: 8px !important;
-                    margin: 0 !important;
-                }
-
-                .pob-grid-shell {
-                    height: calc(100vh - 350px) !important;
-                    max-height: calc(100vh - 350px) !important;
-                    min-height: 320px !important;
-                    overflow: hidden !important;
-                    display: flex !important;
-                    flex-direction: column !important;
-                    border: 1px solid #cbd5e1 !important;
-                    background: #fff !important;
-                }
-
-                .pob-grid-wrap {
-                    flex: 1 1 auto !important;
-                    min-height: 0 !important;
-                    height: auto !important;
-                    overflow-y: auto !important;
-                    overflow-x: auto !important;
-                    border: 0 !important;
-                }
-
-                .pob-grid {
-                    table-layout: fixed !important;
-                    width: 100% !important;
-                    min-width: 860px !important;
-                    margin-bottom: 0 !important;
-                }
-
-                .pob-grid thead th {
-                    position: sticky !important;
-                    top: 0 !important;
-                    z-index: 5 !important;
-                    background: #f8fafc !important;
-                    height: 24px !important;
-                    padding: 2px 5px !important;
-                    border-bottom: 1px solid #cbd5e1 !important;
-                }
-
-                .pob-grid th:nth-child(1), .pob-grid td:nth-child(1) { width: 42px !important; }
-                .pob-grid th:nth-child(2), .pob-grid td:nth-child(2) { width: 170px !important; }
-                .pob-grid th:nth-child(3), .pob-grid td:nth-child(3) { width: 185px !important; }
-                .pob-grid th:nth-child(4), .pob-grid td:nth-child(4) { width: 85px !important; }
-                .pob-grid th:nth-child(5), .pob-grid td:nth-child(5) { width: 70px !important; }
-                .pob-grid th:nth-child(6), .pob-grid td:nth-child(6) { width: 70px !important; }
-                .pob-grid th:nth-child(7), .pob-grid td:nth-child(7) { width: 80px !important; }
-                .pob-grid th:nth-child(8), .pob-grid td:nth-child(8) { width: 70px !important; }
-                .pob-grid th:nth-child(9), .pob-grid td:nth-child(9) { width: 70px !important; }
-                .pob-grid th:nth-child(10), .pob-grid td:nth-child(10) { width: 90px !important; }
-                .pob-grid th:nth-child(11), .pob-grid td:nth-child(11) { width: 44px !important; }
-
-                .pob-grid tbody td {
-                    height: 24px !important;
-                    padding: 1px 5px !important;
-                    line-height: 1.1 !important;
-                    vertical-align: middle !important;
-                }
-
-                .pob-inline-batch {
-                    width: 165px !important;
-                    min-width: 165px !important;
-                    max-width: 165px !important;
-                    height: 22px !important;
-                    font-size: 11px !important;
-                    padding: 0 3px !important;
-                }
-
-                .pob-sticky-totals {
-                    flex: 0 0 30px !important;
-                    position: relative !important;
-                    bottom: auto !important;
-                    height: 30px !important;
-                    display: flex !important;
-                    align-items: center !important;
-                    justify-content: flex-end !important;
-                    gap: 18px !important;
-                    padding: 4px 8px !important;
-                    border-top: 1px solid #cbd5e1 !important;
-                    background: #fff !important;
-                    z-index: 6 !important;
-                    margin: 0 !important;
-                }
-
-                .pob-search-dropdown {
-                    width: 620px !important;
-                    max-width: min(620px, calc(100vw - 340px)) !important;
-                    z-index: 9999 !important;
-                }
-
-                .pob-search-dropdown .pob-suggestion {
-                    padding: 5px 8px !important;
-                }
-
-                .pob-search-dropdown .pob-sug-main {
-                    display: grid !important;
-                    grid-template-columns: 1fr 80px !important;
-                    column-gap: 8px !important;
-                }
-
-                .pob-search-dropdown .pob-sug-meta {
-                    display: grid !important;
-                    grid-template-columns: 72px 72px 72px 92px 92px 72px !important;
-                    column-gap: 6px !important;
-                    row-gap: 2px !important;
-                    font-size: 11px !important;
-                    color: #475569 !important;
-                }
-
-                .pob-intelligence-panel .pob-panel-tabs,
-                .pob-intelligence-panel .pob-panel-tab,
-                .pob-intelligence-panel button,
-                .pob-intelligence-panel .btn-close,
-                .pob-intelligence-panel .close {
-                    display: none !important;
-                }
-
-                .pob-intelligence-panel .pob-suggestions,
-                .pob-intelligence-panel .pob-search-dropdown,
-                .pob-intelligence-panel .pob-search-results,
-                .pob-intelligence-panel .pob-panel-search {
-                    display: none !important;
-                }
-
-                .pob-intelligence-panel h4,
-                .pob-intelligence-panel h5,
-                .pob-intelligence-panel .pob-intel-title {
-                    font-size: 13px !important;
-                    margin: 4px 0 6px !important;
-                    font-weight: 700 !important;
-                }
-
-                .pob-intelligence-panel table {
-                    width: 100% !important;
-                    font-size: 11px !important;
-                }
-
-                body[data-route="pharma-operator-billing"],
-                .page-container,
-                .layout-main-section {
-                    overflow: hidden !important;
-                }
-
-                @media (max-width: 1200px) {
-                    .pob-root {
-                        display: block !important;
-                        height: auto !important;
-                        max-height: none !important;
-                        overflow: visible !important;
-                    }
-
-                    .pob-intelligence-panel,
-                    .pob-operator-intelligence,
-                    .pob-intel-panel,
-                    .operator-panel {
-                        position: static !important;
-                        width: auto !important;
-                        max-width: none !important;
-                        height: auto !important;
-                        margin-top: 8px !important;
-                    }
-
-                    .pob-grid-shell {
-                        height: 420px !important;
-                        max-height: 420px !important;
-                    }
-                }
-            </style>
-        `);
-    }
-
-    function normalizeIntelligenceDockV335() {
-        let $panel = $root.find('.pob-intelligence-panel, .pob-operator-intelligence, .pob-intel-panel, .operator-panel').first();
-
-        if (!$panel.length) {
-            $panel = $('.pob-intelligence-panel, .pob-operator-intelligence, .pob-intel-panel, .operator-panel').first();
-        }
-
-        if (!$panel.length) return;
-
-        $panel
-            .removeClass('modal fade show')
-            .addClass('pob-intelligence-panel')
-            .attr('role', 'complementary');
-
-        $panel.find('button, .btn').filter(function() {
-            const txt = ($(this).text() || '').trim().toLowerCase();
-            return txt === 'search' || txt === 'intel' || txt === 'x';
-        }).remove();
-
-        $panel.find('.pob-suggestions, .pob-search-dropdown, .pob-search-results, .pob-panel-search').remove();
-
-        if (!$panel.find('.pob-intel-title').length && !$panel.find('h3,h4,h5').length) {
-            $panel.prepend('<div class="pob-intel-title">Operator Intelligence</div>');
-        }
-    }
-
-    function stabilizeGridPaneV335() {
-        const $grid = $root.find('.pob-grid');
-        if (!$grid.length) return;
-
-        if (!$grid.closest('.pob-grid-wrap').length) {
-            $grid.wrap('<div class="pob-grid-wrap"></div>');
-        }
-
-        const $wrap = $grid.closest('.pob-grid-wrap');
-
-        if (!$wrap.closest('.pob-grid-shell').length) {
-            $wrap.wrap('<div class="pob-grid-shell"></div>');
-        }
-
-        const $shell = $wrap.closest('.pob-grid-shell');
-        const $totals = $root.find('.pob-sticky-totals').first();
-
-        if ($totals.length && !$totals.parent().is($shell)) {
-            $shell.append($totals);
-        }
-    }
-
-    function initLayoutStabilizationV335() {
-        inject_v33_5_styles();
-        normalizeIntelligenceDockV335();
-        stabilizeGridPaneV335();
-
-        setTimeout(() => {
-            normalizeIntelligenceDockV335();
-            stabilizeGridPaneV335();
-        }, 250);
-
-        setTimeout(() => {
-            normalizeIntelligenceDockV335();
-            stabilizeGridPaneV335();
-        }, 1000);
-    }
-
-
-    // =============================================================
-    // V33.4.5 Fixed Grid Pane
-    // Billing rows must scroll inside a fixed pane and must not expand page.
-    // Header stays fixed. Totals stay fixed.
-    // =============================================================
-
-    function inject_v33_4_5_styles() {
-        if ($('#pob33-4-5-fixed-grid-pane').length) return;
-
-        $('head').append(`
-            <style id="pob33-4-5-fixed-grid-pane">
-                .pob-root {
-                    height: calc(100vh - 96px) !important;
-                    max-height: calc(100vh - 96px) !important;
-                    overflow: hidden !important;
-                    display: flex !important;
-                    flex-direction: column !important;
-                    padding-right: 300px !important;
-                }
-
-                .pob-link-controls {
-                    flex: 0 0 auto !important;
-                }
-
-                .pob-grid-shell {
-                    flex: 1 1 auto !important;
-                    min-height: 280px !important;
-                    max-height: calc(100vh - 330px) !important;
-                    display: flex !important;
-                    flex-direction: column !important;
-                    overflow: hidden !important;
-                    border: 1px solid #d1d5db !important;
-                    background: #fff !important;
-                }
-
-                .pob-grid-wrap {
-                    flex: 1 1 auto !important;
-                    height: auto !important;
-                    max-height: none !important;
-                    min-height: 0 !important;
-                    overflow-y: auto !important;
-                    overflow-x: auto !important;
-                    border: 0 !important;
-                    background: #fff !important;
-                }
-
-                .pob-grid {
-                    width: 100% !important;
-                    min-width: 820px !important;
-                    table-layout: fixed !important;
-                    border-collapse: collapse !important;
-                    margin-bottom: 0 !important;
-                }
-
-                .pob-grid thead th {
-                    position: sticky !important;
-                    top: 0 !important;
-                    z-index: 5 !important;
-                    background: #f8fafc !important;
-                    box-shadow: inset 0 -1px #cbd5e1 !important;
-                }
-
-                .pob-sticky-totals {
-                    flex: 0 0 30px !important;
-                    position: relative !important;
-                    bottom: auto !important;
-                    z-index: 6 !important;
-                    margin-top: 0 !important;
-                    border-top: 1px solid #d1d5db !important;
-                    background: #fff !important;
-                }
-
-                .pob-status,
-                .pob-hotkey-help {
-                    flex: 0 0 auto !important;
-                }
-
-                body[data-route="pharma-operator-billing"],
-                .page-container,
-                .layout-main-section {
-                    overflow: hidden !important;
-                }
-
-                @media (max-width: 1200px) {
-                    .pob-root {
-                        height: auto !important;
-                        max-height: none !important;
-                        overflow: visible !important;
-                        padding-right: 0 !important;
-                    }
-
-                    .pob-grid-shell {
-                        height: 420px !important;
-                        max-height: 420px !important;
-                    }
-                }
-            </style>
-        `);
-    }
-
-    function ensureFixedGridPaneV3345() {
-        const $grid = $root.find('.pob-grid');
-        if (!$grid.length) return;
-
-        if (!$grid.closest('.pob-grid-wrap').length) {
-            $grid.wrap('<div class="pob-grid-wrap"></div>');
-        }
-
-        const $wrap = $grid.closest('.pob-grid-wrap');
-
-        if (!$wrap.closest('.pob-grid-shell').length) {
-            $wrap.wrap('<div class="pob-grid-shell"></div>');
-        }
-
-        const $shell = $wrap.closest('.pob-grid-shell');
-        const $totals = $root.find('.pob-sticky-totals');
-
-        if ($totals.length && !$totals.parent().is($shell)) {
-            $shell.append($totals);
-        }
-    }
-
-    function initFixedGridPaneV3345() {
-        inject_v33_4_5_styles();
-        ensureFixedGridPaneV3345();
-
-        // Re-apply after delayed table/grid construction.
-        setTimeout(ensureFixedGridPaneV3345, 250);
-        setTimeout(ensureFixedGridPaneV3345, 1000);
-    }
-
-
-    // =============================================================
-    // V33.4.4 Operator Intelligence Dock Fix
-    // Operator Intelligence must be a fixed right dock, not a popup/tab panel.
-    // Search results remain under the search box only.
-    // =============================================================
-
-    function inject_v33_4_4_styles() {
-        if ($('#pob33-4-4-intel-dock').length) return;
-
-        $('head').append(`
-            <style id="pob33-4-4-intel-dock">
-                .pob-root {
-                    padding-right: 300px !important;
-                }
-
-                .pob-intelligence-panel,
-                .pob-operator-intelligence,
-                .pob-intel-panel {
-                    position: fixed !important;
-                    right: 8px !important;
-                    top: 96px !important;
-                    width: 285px !important;
-                    max-width: 285px !important;
-                    height: calc(100vh - 112px) !important;
-                    min-height: 300px !important;
-                    background: #fff !important;
-                    border: 1px solid #cbd5e1 !important;
-                    border-radius: 4px !important;
-                    box-shadow: none !important;
-                    z-index: 8 !important;
-                    padding: 8px !important;
-                    overflow-y: auto !important;
-                    overflow-x: hidden !important;
-                    font-size: 12px !important;
-                }
-
-                .pob-intelligence-panel .modal-header,
-                .pob-intelligence-panel .modal-footer,
-                .pob-intelligence-panel .btn-close,
-                .pob-intelligence-panel .close {
-                    display: none !important;
-                }
-
-                .pob-intelligence-panel .modal-content,
-                .pob-intelligence-panel .modal-dialog {
-                    box-shadow: none !important;
-                    border: 0 !important;
-                    margin: 0 !important;
-                    padding: 0 !important;
-                    width: auto !important;
-                    max-width: none !important;
-                    transform: none !important;
-                }
-
-                .pob-intelligence-panel .pob-panel-tabs,
-                .pob-intelligence-panel .pob-panel-tab,
-                .pob-intelligence-panel .pob-intel-tabs,
-                .pob-intelligence-panel button[data-tab="search"] {
-                    display: none !important;
-                }
-
-                .pob-intelligence-panel .pob-panel-search,
-                .pob-intelligence-panel .pob-search-results,
-                .pob-intelligence-panel .pob-suggestions,
-                .pob-intelligence-panel .pob-search-dropdown {
-                    display: none !important;
-                }
-
-                .pob-intelligence-panel h3,
-                .pob-intelligence-panel h4,
-                .pob-intelligence-panel h5 {
-                    font-size: 13px !important;
-                    margin: 2px 0 6px 0 !important;
-                    font-weight: 700 !important;
-                }
-
-                .pob-intelligence-panel table {
-                    width: 100% !important;
-                    font-size: 11px !important;
-                }
-
-                .pob-intelligence-panel th,
-                .pob-intelligence-panel td {
-                    padding: 2px 3px !important;
-                }
-
-                @media (max-width: 1200px) {
-                    .pob-root {
-                        padding-right: 0 !important;
-                    }
-
-                    .pob-intelligence-panel,
-                    .pob-operator-intelligence,
-                    .pob-intel-panel {
-                        position: static !important;
-                        width: auto !important;
-                        max-width: none !important;
-                        height: auto !important;
-                        margin-top: 8px !important;
-                    }
-                }
-            </style>
-        `);
-    }
-
-    function forceOperatorIntelligenceDockV3344() {
-        let $panel = $root.find('.pob-intelligence-panel, .pob-operator-intelligence, .pob-intel-panel, .operator-panel').first();
-
-        if (!$panel.length) {
-            $panel = $('.pob-intelligence-panel, .pob-operator-intelligence, .pob-intel-panel, .operator-panel').first();
-        }
-
-        if (!$panel.length) return;
-
-        $panel
-            .removeClass('modal fade show')
-            .addClass('pob-intelligence-panel')
-            .attr('role', 'complementary');
-
-        // Remove popup/tab controls; this panel is intelligence-only.
-        $panel.find('button, .btn').filter(function() {
-            const txt = ($(this).text() || '').trim().toLowerCase();
-            return txt === 'search' || txt === 'intel' || txt === '×' || txt === 'x';
-        }).remove();
-
-        $panel.find('.pob-suggestions, .pob-search-dropdown, .pob-search-results, .pob-panel-search').remove();
-
-        if (!$panel.find('.pob-intel-title').length) {
-            const titleText = ($panel.find('h3,h4,h5').first().text() || '').trim();
-            if (!titleText) {
-                $panel.prepend('<div class="pob-intel-title"><b>Operator Intelligence</b></div>');
-            }
-        }
-    }
-
-    function initIntelDockV3344() {
-        inject_v33_4_4_styles();
-        forceOperatorIntelligenceDockV3344();
-
-        // Re-apply after any later intelligence-panel redraw.
-        setTimeout(forceOperatorIntelligenceDockV3344, 250);
-        setTimeout(forceOperatorIntelligenceDockV3344, 1000);
-    }
-
 
     // =============================================================
     // V33.4.3 Search Dropdown Fix
@@ -686,6 +125,53 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
                 .operator-panel .pob-search-dropdown {
                     display: none !important;
                 }
+
+                 .pob-grid {
+                    table-layout: fixed !important;
+                    width: 100% !important;
+                    min-width: 860px !important;
+                    margin-bottom: 0 !important;
+                }
+
+                .table { margin-top: 0 }
+                .pob-grid thead th {
+                    position: sticky !important;
+                    top: 0 !important;
+                    z-index: 3 !important;
+                    background: #f8fafc !important;
+                    height: 24px !important;
+                    padding: 2px 5px !important;
+                    border-bottom: 1px solid #cbd5e1 !important;
+                }
+
+                .pob-grid th:nth-child(1), .pob-grid td:nth-child(1) { width: 42px !important; }
+                .pob-grid th:nth-child(2), .pob-grid td:nth-child(2) { width: 170px !important; }
+                .pob-grid th:nth-child(3), .pob-grid td:nth-child(3) { width: 185px !important; }
+                .pob-grid th:nth-child(4), .pob-grid td:nth-child(4) { width: 85px !important; }
+                .pob-grid th:nth-child(5), .pob-grid td:nth-child(5) { width: 70px !important; }
+                .pob-grid th:nth-child(6), .pob-grid td:nth-child(6) { width: 70px !important; }
+                .pob-grid th:nth-child(7), .pob-grid td:nth-child(7) { width: 80px !important; }
+                .pob-grid th:nth-child(8), .pob-grid td:nth-child(8) { width: 70px !important; }
+                .pob-grid th:nth-child(9), .pob-grid td:nth-child(9) { width: 70px !important; }
+                .pob-grid th:nth-child(10), .pob-grid td:nth-child(10) { width: 90px !important; }
+                .pob-grid th:nth-child(11), .pob-grid td:nth-child(11) { width: 44px !important; }
+
+                .pob-grid tbody td {
+                    height: 24px !important;
+                    padding: 1px 5px !important;
+                    line-height: 1.1 !important;
+                    vertical-align: middle !important;
+                }
+
+                .pob-inline-batch {
+                    width: 165px !important;
+                    min-width: 165px !important;
+                    max-width: 165px !important;
+                    height: 22px !important;
+                    font-size: 11px !important;
+                    padding: 0 3px !important;
+                }
+
             </style>
         `);
     }
@@ -825,7 +311,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
         $('head').append(`
             <style id="pob33-4-counter-polish">
                 .pob-root {
-                    height: calc(100vh - 96px);
+                    height: calc(100vh - 115px);
                     overflow: hidden;
                     padding-right: 300px !important;
                 }
@@ -858,7 +344,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
                 }
 
                 .pob-grid-wrap {
-                    height: calc(100vh - 315px);
+                    height: calc(100vh - 375px);
                     min-height: 250px;
                     overflow-y: auto;
                     overflow-x: auto;
@@ -877,7 +363,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
                 .pob-grid thead th {
                     position: sticky;
                     top: 0;
-                    z-index: 4;
+                    z-index: 2;
                     background: #f8fafc !important;
                     border-bottom: 1px solid #cbd5e1 !important;
                     height: 24px !important;
@@ -1185,171 +671,6 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
     // - Grid rows are scrollable
     // =============================================================
 
-    function injectV332InterfaceStyles() {
-        if ($('#pob33-2-interface-style').length) return;
-
-        $('head').append(`
-            <style id="pob33-2-interface-style">
-                .pob-root {
-                    --pob-right-panel-width: 380px;
-                    --pob-grid-scroll-height: calc(100vh - 355px);
-                }
-
-                .pob-root.pob-has-right-panel {
-                    padding-right: calc(var(--pob-right-panel-width) + 14px);
-                }
-
-                .pob-right-panel {
-                    position: fixed;
-                    right: 8px;
-                    top: 92px;
-                    width: var(--pob-right-panel-width);
-                    height: calc(100vh - 112px);
-                    background: var(--fg-color, #fff);
-                    border: 1px solid #d1d5db;
-                    border-radius: 6px;
-                    box-shadow: 0 10px 24px rgba(0,0,0,0.08);
-                    z-index: 15;
-                    display: flex;
-                    flex-direction: column;
-                    overflow: hidden;
-                }
-
-                .pob-right-panel-header {
-                    padding: 6px 8px;
-                    border-bottom: 1px solid #e5e7eb;
-                    font-size: 12px;
-                    font-weight: 700;
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    background: #f8fafc;
-                }
-
-                .pob-right-panel-tabs {
-                    display: flex;
-                    gap: 4px;
-                }
-
-                .pob-right-panel-tab {
-                    border: 1px solid #cbd5e1;
-                    background: #fff;
-                    font-size: 11px;
-                    padding: 2px 6px;
-                    border-radius: 4px;
-                    cursor: pointer;
-                }
-
-                .pob-right-panel-tab.active {
-                    background: #eef2ff;
-                    border-color: #6366f1;
-                    color: #3730a3;
-                    font-weight: 700;
-                }
-
-                .pob-right-panel-body {
-                    flex: 1;
-                    overflow-y: auto;
-                    padding: 4px;
-                }
-
-                .pob-suggestions {
-                    position: static !important;
-                    display: block;
-                    width: 100%;
-                    max-height: none !important;
-                    overflow-y: visible !important;
-                    border: 0 !important;
-                    box-shadow: none !important;
-                    background: transparent !important;
-                    z-index: auto !important;
-                }
-
-                .pob-suggestions:empty::before {
-                    content: 'Search results will appear here';
-                    display: block;
-                    color: #64748b;
-                    font-size: 12px;
-                    padding: 8px;
-                }
-
-                .pob-grid-scroll {
-                    max-height: var(--pob-grid-scroll-height);
-                    overflow-y: auto;
-                    overflow-x: auto;
-                    border: 1px solid #e5e7eb;
-                    border-radius: 4px;
-                }
-
-                .pob-grid-scroll .pob-grid {
-                    margin-bottom: 0;
-                }
-
-                .pob-grid thead th {
-                    position: sticky;
-                    top: 0;
-                    z-index: 4;
-                    background: #f8fafc;
-                    border-bottom: 1px solid #cbd5e1 !important;
-                    box-shadow: 0 1px 0 #e5e7eb;
-                }
-
-                .pob-grid tbody tr:hover td {
-                    background: #f8fafc;
-                }
-
-                @media (max-width: 1200px) {
-                    .pob-root.pob-has-right-panel { padding-right: 0; }
-                    .pob-right-panel {
-                        position: static;
-                        width: auto;
-                        height: 260px;
-                        margin-top: 8px;
-                    }
-                    .pob-grid-scroll { max-height: 420px; }
-                }
-            </style>
-        `);
-    }
-
-    function setupV332RightPanel() {
-        if ($root.find('.pob-right-panel').length) return;
-
-        const $panel = $(`
-            <div class="pob-right-panel">
-                <div class="pob-right-panel-header">
-                    <span>Operator Panel</span>
-                    <div class="pob-right-panel-tabs">
-                        <button type="button" class="pob-right-panel-tab active" data-panel="search">Search</button>
-                        <button type="button" class="pob-right-panel-tab" data-panel="intel">Intel</button>
-                    </div>
-                </div>
-                <div class="pob-right-panel-body pob-right-search-body"></div>
-                <div class="pob-right-panel-body pob-right-intel-body" style="display:none;"></div>
-            </div>
-        `);
-
-        $root.addClass('pob-has-right-panel');
-        $root.append($panel);
-
-        // Move suggestions into the right dock instead of allowing overlay popup behavior.
-        $panel.find('.pob-right-search-body').append($suggestions.detach());
-        $suggestions.show();
-
-        // Move existing intelligence panel into Intel tab when present.
-        const $intel = $root.find('.pob-intelligence-panel, .pob-intelligence, .pob-intel').not($panel).first();
-        if ($intel.length) {
-            $panel.find('.pob-right-intel-body').append($intel.detach().css({position:'static', width:'auto', height:'auto', maxWidth:'none', boxShadow:'none', border:'0'}));
-        }
-
-        $panel.on('click', '.pob-right-panel-tab', function() {
-            const panel = $(this).data('panel');
-            $panel.find('.pob-right-panel-tab').removeClass('active');
-            $(this).addClass('active');
-            $panel.find('.pob-right-search-body').toggle(panel === 'search');
-            $panel.find('.pob-right-intel-body').toggle(panel === 'intel');
-        });
-    }
 
     function setupV332ScrollableGrid() {
         const $grid = $root.find('.pob-grid').first();
@@ -1358,9 +679,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
     }
 
     function initV332InterfaceFix() {
-        injectV332InterfaceStyles();
         setupV332ScrollableGrid();
-        setupV332RightPanel();
     }
 
 
@@ -1639,32 +958,6 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
         make_controls();
     }
 
-    function inject_v32_styles() {
-        if ($('#pob32-counter-ux-style').length) return;
-        $('head').append(`
-            <style id="pob32-counter-ux-style">
-                .pob-root { --pob-row-h: 30px; --pob-font: 12px; font-size: var(--pob-font); }
-                .pob-link-controls { position: sticky; top: 0; z-index: 5; background: var(--fg-color, #fff); padding: 4px 0 6px; border-bottom: 1px solid #e5e7eb; }
-                .pob-root .control-label { font-size: 11px; margin-bottom: 2px; color: #555; }
-                .pob-root .form-control, .pob-root input { height: 28px; min-height: 28px; padding: 3px 6px; font-size: 12px; }
-                .pob-root .btn { padding: 3px 8px; font-size: 12px; line-height: 1.3; }
-                .pob-grid { font-size: 12px; table-layout: fixed; }
-                .pob-grid th, .pob-grid td { padding: 3px 5px !important; vertical-align: middle !important; line-height: 1.2; }
-                .pob-grid tbody tr { height: var(--pob-row-h); }
-                .pob-grid input { height: 24px; padding: 2px 4px; font-size: 12px; }
-                .pob-suggestions { max-height: 320px; overflow-y: auto; border: 1px solid #cbd5e1; box-shadow: 0 10px 24px rgba(0,0,0,0.12); background: var(--fg-color, #fff); z-index: 20; }
-                .pob-suggestion { padding: 5px 8px !important; border-bottom: 1px solid #edf2f7; cursor: pointer; line-height: 1.25; }
-                .pob-suggestion.active, .pob-suggestion:hover { background: #eef2ff; }
-                .pob-sug-main { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; }
-                .pob-sug-code { font-weight: 700; }
-                .pob-sug-meta { font-size: 11px; color: #555; display: flex; gap: 10px; flex-wrap: wrap; }
-                .pob-batch-btn { min-width: 92px; height: 24px; padding: 1px 6px !important; font-size: 11px !important; white-space: nowrap; }
-                .pob32-batch-list .list-group-item { padding: 6px 8px; cursor: pointer; }
-                .pob32-batch-list .list-group-item:hover, .pob32-batch-list .list-group-item.active { background: #eef2ff; }
-            </style>
-        `);
-    }
-
     function safeItemLabel(x) {
         const code = x.item_code || '';
         const name = x.item_name || '';
@@ -1747,7 +1040,6 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
         });
     }
 
-    inject_v32_styles();
 
 
     // =============================================================
@@ -1757,120 +1049,6 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
 
     let selectedGridIndex = 0;
 
-    function inject_v32_1_styles() {
-        if ($('#pob32-1-counter-ux-style').length) return;
-
-        $('head').append(`
-            <style id="pob32-1-counter-ux-style">
-                .pob-sticky-totals {
-                    position: sticky;
-                    bottom: 0;
-                    z-index: 12;
-                    background: var(--fg-color, #fff);
-                    border-top: 1px solid #d1d5db;
-                    padding: 6px 10px;
-                    display: flex;
-                    justify-content: flex-end;
-                    gap: 20px;
-                    font-weight: 600;
-                    box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
-                }
-
-                .pob-inline-batch {
-                    min-width: 135px;
-                    max-width: 180px;
-                    height: 24px !important;
-                    padding: 1px 4px !important;
-                    font-size: 11px !important;
-                }
-
-                .pob-grid tbody tr.pob-selected-row {
-                    outline: 2px solid #4f46e5;
-                    outline-offset: -2px;
-                    background: #f5f7ff;
-                }
-
-                .pob-suggestions {
-                    max-height: 240px !important;
-                }
-
-                .pob-batch-chip {
-                    font-weight: 600;
-                    color: #1d4ed8;
-                }
-
-                .pob-exp-chip {
-                    font-weight: 600;
-                }
-
-                .pob-exp-soon {
-                    color: #b91c1c;
-                    font-weight: 700;
-                }
-
-                .pob-margin-good {
-                    color: #047857;
-                    font-weight: 700;
-                }
-
-                .pob-margin-warning {
-                    color: #b45309;
-                    font-weight: 700;
-                }
-
-                .pob-margin-danger {
-                    color: #b91c1c;
-                    font-weight: 700;
-                }
-
-                .pob-intelligence-panel {
-                    position: fixed;
-                    right: 8px;
-                    top: 90px;
-                    width: 320px;
-                    max-width: 30vw;
-                    height: calc(100vh - 110px);
-                    overflow-y: auto;
-                    background: var(--fg-color, #fff);
-                    border: 1px solid #d1d5db;
-                    z-index: 15;
-                    padding: 8px;
-                    box-shadow: 0 10px 24px rgba(0,0,0,0.08);
-                }
-
-                .pob-root.has-intel-dock {
-                    padding-right: 330px;
-                }
-
-                @media (max-width: 1100px) {
-                    .pob-intelligence-panel {
-                        position: static;
-                        width: auto;
-                        max-width: none;
-                        height: auto;
-                        margin-top: 8px;
-                    }
-                    .pob-root.has-intel-dock {
-                        padding-right: 0;
-                    }
-                }
-            </style>
-        `);
-    }
-
-    function ensureStickyTotals() {
-        if ($root.find('.pob-sticky-totals').length) return;
-
-        const totals = $(`
-            <div class="pob-sticky-totals">
-                <span>Lines: <span class="pob-line-count">0</span></span>
-                <span>Qty: <span class="pob-total-qty">0</span></span>
-                <span>Total: <span class="pob-grand-total">0.00</span></span>
-            </div>
-        `);
-
-        $root.append(totals);
-    }
 
     function ensureIntelligenceDock() {
         const existing = $root.find('.pob-intelligence-panel, .pob-intelligence, .pob-intel').first();
@@ -2032,7 +1210,6 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
         return true;
     }
 
-    inject_v32_1_styles();
 
 
     // =============================================================
@@ -3055,7 +2232,6 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
     addHotkeyHelp();
     bindNoMouseNavigation();
 
-    ensureStickyTotals();
     ensureIntelligenceDock();
 
 
@@ -3583,12 +2759,6 @@ frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
     initCounterPolishV334();
 
     initSearchDropdownV3343();
-
-    initIntelDockV3344();
-
-    initFixedGridPaneV3345();
-
-    initLayoutStabilizationV335();
 
     window.PharmaOperatorBilling = {
         state, addItem, renderGrid, collectPayload, recallHeld, focusInlineBatch, getSelectedGridRow,  getCustomer:getCurrentCustomer, getCompany, getWarehouse:getCurrentWarehouse, getPriceList, focusCell, focusSearch, focusCustomer, moveCell, v33CommitCell, v33UpdateRowOnly, v33FullRenderGrid,

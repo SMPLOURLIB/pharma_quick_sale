@@ -5,3 +5,10 @@
 .poi-body{padding:10px}
 .poi-body table{font-size:11px;margin:6px 0}
 .poi-body td,.poi-body th{padding:3px!important}
+
+.poi-body .poi-item{
+    display: flex;
+  align-content: space-between;
+  justify-content: start;
+  gap: 15px;
+}

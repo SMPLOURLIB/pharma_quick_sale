@@ -11,25 +11,24 @@ window.PharmaOperatorIntelligenceV27 = {
     });
   },
   render(data) {
-    let $panel = $('.pharma-operator-intelligence-panel');
-    if (!$panel.length) $panel = $('<div class="pharma-operator-intelligence-panel"></div>').appendTo('body');
+    let $panel = $('.pob-right-panel-body.pob-right-search-body');
+    if (!$panel.length) $panel = $('<div class="pob-right-panel-body"></div>').appendTo('.pob-right-panel');
     const s = data.decision_summary || {}, margin = data.margin || {};
     const batches = data.batch_history || [], subs = data.substitutes || [];
-    $panel.html(`<div class="poi-head">Operator Intelligence <button class="poi-close">×</button></div>
+    $panel.html(`
       <div class="poi-body">
-        <div><b>Item:</b> ${data.item_code || ''}</div>
-        <div><b>Available Batches:</b> ${s.available_batches || 0}</div>
-        <div><b>Last Sale:</b> ${s.last_sale_rate || '-'}</div>
-        <div><b>Last Purchase:</b> ${s.last_purchase_rate || '-'}</div>
-        <div><b>Margin:</b> ${Number(margin.margin_percent || 0).toFixed(2)}%</div>
-        <div><b>Near Expiry:</b> ${s.near_expiry_count || 0}</div>
-        <div><b>Substitutes:</b> ${s.substitute_count || 0}</div><hr>
+        <div class="poi-item"><b>Item:</b> <span> ${data.item_code || ''}</span></div>
+        <div class="poi-item"><b>Available Batches:</b> <span> ${s.available_batches || 0}</span></div>
+        <div class="poi-item"><b>Last Sale:</b> <span> ${s.last_sale_rate || '-'}</span></div>
+        <div class="poi-item"><b>Last Purchase:</b> <span> ${s.last_purchase_rate || '-'}</span></div>
+        <div class="poi-item"><b>Margin:</b> <span> ${Number(margin.margin_percent || 0).toFixed(2)}%</span></div>
+        <div class="poi-item"><b>Near Expiry:</b> <span> ${s.near_expiry_count || 0}</span></div>
+        <div class="poi-item"><b>Substitutes:</b> <span> ${s.substitute_count || 0}</span></div><hr>
         <b>Batch History</b>
         <table class="table table-condensed"><tr><th>Batch</th><th>Exp</th><th>Qty</th><th>PRate</th><th>LSale</th></tr>
           ${batches.slice(0,5).map(b => `<tr><td>${b.batch_no || ''}</td><td>${b.expiry_date || ''}</td><td>${b.available_qty || 0}</td><td>${b.purchase_rate || '-'}</td><td>${b.last_sale_rate || '-'}</td></tr>`).join('')}
         </table>
         <b>Substitutes</b><ul>${subs.slice(0,5).map(x => `<li>${x.item_code} — Stock ${x.stock_qty || 0}</li>`).join('')}</ul>
       </div>`).show();
-    $panel.find('.poi-close').on('click', () => $panel.hide());
   }
 };

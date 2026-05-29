@@ -9,16 +9,28 @@
     </div>
   </div>
   <div class="pob-header">
-    <div><label>Customer</label><input class="form-control pob-customer" placeholder="F6 Customer / cash customer"></div>
+    <div><label>Customer</label><input class="form-control pob-customer" placeholder="F6 Customer / cash customer">
+    </div>
     <div><label>Company</label><input class="form-control pob-company" placeholder="Company"></div>
     <div><label>Warehouse</label><input class="form-control pob-warehouse" placeholder="Warehouse"></div>
-    <div><label>Search / Barcode</label><input class="form-control pob-search" placeholder="Scan or search item (Ctrl+F)"></div>
+    <div><label>Search / Barcode</label><input class="form-control pob-search"
+        placeholder="Scan or search item (Ctrl+F)"></div>
   </div>
-  <div class="pob-suggestions"></div>
+  <div class="pob-suggestions" style="display: none;"></div>
   <table class="table table-bordered pob-grid">
     <thead>
       <tr>
-        <th>#</th><th>Item</th><th>Batch</th><th>Exp</th><th>Qty</th><th>Free</th><th>Rate</th><th>Disc %</th><th>GST</th><th>Amount</th><th></th>
+        <th>#</th>
+        <th>Item</th>
+        <th>Batch</th>
+        <th>Exp</th>
+        <th>Qty</th>
+        <th>Free</th>
+        <th>Rate</th>
+        <th>Disc %</th>
+        <th>GST</th>
+        <th>Amount</th>
+        <th></th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -31,4 +43,22 @@
       <span>Total: <b class="pob-grand-total">0.00</b></span>
     </div>
   </div>
+
+  <div class="pob-sticky-totals">
+    <span>Lines: <span class="pob-line-count">0</span></span>
+    <span>Qty: <span class="pob-total-qty">0</span></span>
+    <span>Total: <span class="pob-grand-total">0.00</span></span>
+  </div>
+  <div class="pob-right-panel">
+    <div class="pob-right-panel-header">
+        <span>Operator Panel</span>
+        <div class="pob-right-panel-tabs">
+            <button type="button" class="pob-right-panel-tab active" data-panel="intel">Intel</button>
+        </div>
+    </div>
+    <div class="pob-right-panel-body pob-right-search-body"></div>
+    <div class="pob-right-panel-body pob-right-tax-body">
+    Here we have to show total item wise tax, item wise total discount and net and grand total, also option to apply additional discount on total bill
+    </div>
+</div>
 </div>
