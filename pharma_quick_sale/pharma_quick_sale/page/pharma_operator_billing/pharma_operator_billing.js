@@ -1,5 +1,5 @@
 
-frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
+frappe.pages['pharma-operator-billing'].on_page_load = function(wrapper) {
     const page = frappe.ui.make_app_page({
         parent: wrapper,
         title: 'Pharma Operator Billing',
@@ -38,6 +38,1331 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
     const $warehouse = $root.find('.pob-warehouse');
     const $tbody = $root.find('.pob-grid tbody');
     const $suggestions = $root.find('.pob-suggestions');
+
+    // =============================================================
+    // V33.5 Layout Stabilization
+    // Fixes:
+    // - Operator Intelligence is a true right-side dock, not floating/fixed
+    // - Billing grid is a fixed scroll pane
+    // - Totals are anchored below the grid
+    // - Pharma billing columns get stable widths
+    // - Search dropdown is richer and remains under the search box
+    // =============================================================
+
+    function inject_v33_5_styles() {
+        if ($('#pob33-5-layout-stabilization').length) return;
+
+        $('head').append(`
+            <style id="pob33-5-layout-stabilization">
+                .pob-root {
+                    height: calc(100vh - 92px) !important;
+                    max-height: calc(100vh - 92px) !important;
+                    display: grid !important;
+                    grid-template-columns: minmax(780px, 1fr) 285px !important;
+                    grid-template-rows: auto minmax(0, 1fr) !important;
+                    column-gap: 12px !important;
+                    overflow: hidden !important;
+                    padding-right: 0 !important;
+                    align-items: stretch !important;
+                }
+
+                .pob-root > .pob-link-controls,
+                .pob-root > .pob-control-ribbon {
+                    grid-column: 1 / 3 !important;
+                    grid-row: 1 !important;
+                }
+
+                .pob-root > :not(.pob-intelligence-panel):not(.pob-operator-intelligence):not(.pob-intel-panel):not(.operator-panel):not(.pob-link-controls):not(.pob-control-ribbon) {
+                    grid-column: 1 !important;
+                }
+
+                .pob-intelligence-panel,
+                .pob-operator-intelligence,
+                .pob-intel-panel,
+                .operator-panel {
+                    grid-column: 2 !important;
+                    grid-row: 2 !important;
+                    position: relative !important;
+                    right: auto !important;
+                    top: auto !important;
+                    width: 285px !important;
+                    max-width: 285px !important;
+                    height: 100% !important;
+                    min-height: 0 !important;
+                    max-height: none !important;
+                    overflow-y: auto !important;
+                    overflow-x: hidden !important;
+                    box-shadow: none !important;
+                    border: 1px solid #cbd5e1 !important;
+                    border-radius: 4px !important;
+                    background: #fff !important;
+                    z-index: 2 !important;
+                    padding: 8px !important;
+                    margin: 0 !important;
+                }
+
+                .pob-grid-shell {
+                    height: calc(100vh - 350px) !important;
+                    max-height: calc(100vh - 350px) !important;
+                    min-height: 320px !important;
+                    overflow: hidden !important;
+                    display: flex !important;
+                    flex-direction: column !important;
+                    border: 1px solid #cbd5e1 !important;
+                    background: #fff !important;
+                }
+
+                .pob-grid-wrap {
+                    flex: 1 1 auto !important;
+                    min-height: 0 !important;
+                    height: auto !important;
+                    overflow-y: auto !important;
+                    overflow-x: auto !important;
+                    border: 0 !important;
+                }
+
+                .pob-grid {
+                    table-layout: fixed !important;
+                    width: 100% !important;
+                    min-width: 860px !important;
+                    margin-bottom: 0 !important;
+                }
+
+                .pob-grid thead th {
+                    position: sticky !important;
+                    top: 0 !important;
+                    z-index: 5 !important;
+                    background: #f8fafc !important;
+                    height: 24px !important;
+                    padding: 2px 5px !important;
+                    border-bottom: 1px solid #cbd5e1 !important;
+                }
+
+                .pob-grid th:nth-child(1), .pob-grid td:nth-child(1) { width: 42px !important; }
+                .pob-grid th:nth-child(2), .pob-grid td:nth-child(2) { width: 170px !important; }
+                .pob-grid th:nth-child(3), .pob-grid td:nth-child(3) { width: 185px !important; }
+                .pob-grid th:nth-child(4), .pob-grid td:nth-child(4) { width: 85px !important; }
+                .pob-grid th:nth-child(5), .pob-grid td:nth-child(5) { width: 70px !important; }
+                .pob-grid th:nth-child(6), .pob-grid td:nth-child(6) { width: 70px !important; }
+                .pob-grid th:nth-child(7), .pob-grid td:nth-child(7) { width: 80px !important; }
+                .pob-grid th:nth-child(8), .pob-grid td:nth-child(8) { width: 70px !important; }
+                .pob-grid th:nth-child(9), .pob-grid td:nth-child(9) { width: 70px !important; }
+                .pob-grid th:nth-child(10), .pob-grid td:nth-child(10) { width: 90px !important; }
+                .pob-grid th:nth-child(11), .pob-grid td:nth-child(11) { width: 44px !important; }
+
+                .pob-grid tbody td {
+                    height: 24px !important;
+                    padding: 1px 5px !important;
+                    line-height: 1.1 !important;
+                    vertical-align: middle !important;
+                }
+
+                .pob-inline-batch {
+                    width: 165px !important;
+                    min-width: 165px !important;
+                    max-width: 165px !important;
+                    height: 22px !important;
+                    font-size: 11px !important;
+                    padding: 0 3px !important;
+                }
+
+                .pob-sticky-totals {
+                    flex: 0 0 30px !important;
+                    position: relative !important;
+                    bottom: auto !important;
+                    height: 30px !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    justify-content: flex-end !important;
+                    gap: 18px !important;
+                    padding: 4px 8px !important;
+                    border-top: 1px solid #cbd5e1 !important;
+                    background: #fff !important;
+                    z-index: 6 !important;
+                    margin: 0 !important;
+                }
+
+                .pob-search-dropdown {
+                    width: 620px !important;
+                    max-width: min(620px, calc(100vw - 340px)) !important;
+                    z-index: 9999 !important;
+                }
+
+                .pob-search-dropdown .pob-suggestion {
+                    padding: 5px 8px !important;
+                }
+
+                .pob-search-dropdown .pob-sug-main {
+                    display: grid !important;
+                    grid-template-columns: 1fr 80px !important;
+                    column-gap: 8px !important;
+                }
+
+                .pob-search-dropdown .pob-sug-meta {
+                    display: grid !important;
+                    grid-template-columns: 72px 72px 72px 92px 92px 72px !important;
+                    column-gap: 6px !important;
+                    row-gap: 2px !important;
+                    font-size: 11px !important;
+                    color: #475569 !important;
+                }
+
+                .pob-intelligence-panel .pob-panel-tabs,
+                .pob-intelligence-panel .pob-panel-tab,
+                .pob-intelligence-panel button,
+                .pob-intelligence-panel .btn-close,
+                .pob-intelligence-panel .close {
+                    display: none !important;
+                }
+
+                .pob-intelligence-panel .pob-suggestions,
+                .pob-intelligence-panel .pob-search-dropdown,
+                .pob-intelligence-panel .pob-search-results,
+                .pob-intelligence-panel .pob-panel-search {
+                    display: none !important;
+                }
+
+                .pob-intelligence-panel h4,
+                .pob-intelligence-panel h5,
+                .pob-intelligence-panel .pob-intel-title {
+                    font-size: 13px !important;
+                    margin: 4px 0 6px !important;
+                    font-weight: 700 !important;
+                }
+
+                .pob-intelligence-panel table {
+                    width: 100% !important;
+                    font-size: 11px !important;
+                }
+
+                body[data-route="pharma-operator-billing"],
+                .page-container,
+                .layout-main-section {
+                    overflow: hidden !important;
+                }
+
+                @media (max-width: 1200px) {
+                    .pob-root {
+                        display: block !important;
+                        height: auto !important;
+                        max-height: none !important;
+                        overflow: visible !important;
+                    }
+
+                    .pob-intelligence-panel,
+                    .pob-operator-intelligence,
+                    .pob-intel-panel,
+                    .operator-panel {
+                        position: static !important;
+                        width: auto !important;
+                        max-width: none !important;
+                        height: auto !important;
+                        margin-top: 8px !important;
+                    }
+
+                    .pob-grid-shell {
+                        height: 420px !important;
+                        max-height: 420px !important;
+                    }
+                }
+            </style>
+        `);
+    }
+
+    function normalizeIntelligenceDockV335() {
+        let $panel = $root.find('.pob-intelligence-panel, .pob-operator-intelligence, .pob-intel-panel, .operator-panel').first();
+
+        if (!$panel.length) {
+            $panel = $('.pob-intelligence-panel, .pob-operator-intelligence, .pob-intel-panel, .operator-panel').first();
+        }
+
+        if (!$panel.length) return;
+
+        $panel
+            .removeClass('modal fade show')
+            .addClass('pob-intelligence-panel')
+            .attr('role', 'complementary');
+
+        $panel.find('button, .btn').filter(function() {
+            const txt = ($(this).text() || '').trim().toLowerCase();
+            return txt === 'search' || txt === 'intel' || txt === 'x';
+        }).remove();
+
+        $panel.find('.pob-suggestions, .pob-search-dropdown, .pob-search-results, .pob-panel-search').remove();
+
+        if (!$panel.find('.pob-intel-title').length && !$panel.find('h3,h4,h5').length) {
+            $panel.prepend('<div class="pob-intel-title">Operator Intelligence</div>');
+        }
+    }
+
+    function stabilizeGridPaneV335() {
+        const $grid = $root.find('.pob-grid');
+        if (!$grid.length) return;
+
+        if (!$grid.closest('.pob-grid-wrap').length) {
+            $grid.wrap('<div class="pob-grid-wrap"></div>');
+        }
+
+        const $wrap = $grid.closest('.pob-grid-wrap');
+
+        if (!$wrap.closest('.pob-grid-shell').length) {
+            $wrap.wrap('<div class="pob-grid-shell"></div>');
+        }
+
+        const $shell = $wrap.closest('.pob-grid-shell');
+        const $totals = $root.find('.pob-sticky-totals').first();
+
+        if ($totals.length && !$totals.parent().is($shell)) {
+            $shell.append($totals);
+        }
+    }
+
+    function initLayoutStabilizationV335() {
+        inject_v33_5_styles();
+        normalizeIntelligenceDockV335();
+        stabilizeGridPaneV335();
+
+        setTimeout(() => {
+            normalizeIntelligenceDockV335();
+            stabilizeGridPaneV335();
+        }, 250);
+
+        setTimeout(() => {
+            normalizeIntelligenceDockV335();
+            stabilizeGridPaneV335();
+        }, 1000);
+    }
+
+
+    // =============================================================
+    // V33.4.5 Fixed Grid Pane
+    // Billing rows must scroll inside a fixed pane and must not expand page.
+    // Header stays fixed. Totals stay fixed.
+    // =============================================================
+
+    function inject_v33_4_5_styles() {
+        if ($('#pob33-4-5-fixed-grid-pane').length) return;
+
+        $('head').append(`
+            <style id="pob33-4-5-fixed-grid-pane">
+                .pob-root {
+                    height: calc(100vh - 96px) !important;
+                    max-height: calc(100vh - 96px) !important;
+                    overflow: hidden !important;
+                    display: flex !important;
+                    flex-direction: column !important;
+                    padding-right: 300px !important;
+                }
+
+                .pob-link-controls {
+                    flex: 0 0 auto !important;
+                }
+
+                .pob-grid-shell {
+                    flex: 1 1 auto !important;
+                    min-height: 280px !important;
+                    max-height: calc(100vh - 330px) !important;
+                    display: flex !important;
+                    flex-direction: column !important;
+                    overflow: hidden !important;
+                    border: 1px solid #d1d5db !important;
+                    background: #fff !important;
+                }
+
+                .pob-grid-wrap {
+                    flex: 1 1 auto !important;
+                    height: auto !important;
+                    max-height: none !important;
+                    min-height: 0 !important;
+                    overflow-y: auto !important;
+                    overflow-x: auto !important;
+                    border: 0 !important;
+                    background: #fff !important;
+                }
+
+                .pob-grid {
+                    width: 100% !important;
+                    min-width: 820px !important;
+                    table-layout: fixed !important;
+                    border-collapse: collapse !important;
+                    margin-bottom: 0 !important;
+                }
+
+                .pob-grid thead th {
+                    position: sticky !important;
+                    top: 0 !important;
+                    z-index: 5 !important;
+                    background: #f8fafc !important;
+                    box-shadow: inset 0 -1px #cbd5e1 !important;
+                }
+
+                .pob-sticky-totals {
+                    flex: 0 0 30px !important;
+                    position: relative !important;
+                    bottom: auto !important;
+                    z-index: 6 !important;
+                    margin-top: 0 !important;
+                    border-top: 1px solid #d1d5db !important;
+                    background: #fff !important;
+                }
+
+                .pob-status,
+                .pob-hotkey-help {
+                    flex: 0 0 auto !important;
+                }
+
+                body[data-route="pharma-operator-billing"],
+                .page-container,
+                .layout-main-section {
+                    overflow: hidden !important;
+                }
+
+                @media (max-width: 1200px) {
+                    .pob-root {
+                        height: auto !important;
+                        max-height: none !important;
+                        overflow: visible !important;
+                        padding-right: 0 !important;
+                    }
+
+                    .pob-grid-shell {
+                        height: 420px !important;
+                        max-height: 420px !important;
+                    }
+                }
+            </style>
+        `);
+    }
+
+    function ensureFixedGridPaneV3345() {
+        const $grid = $root.find('.pob-grid');
+        if (!$grid.length) return;
+
+        if (!$grid.closest('.pob-grid-wrap').length) {
+            $grid.wrap('<div class="pob-grid-wrap"></div>');
+        }
+
+        const $wrap = $grid.closest('.pob-grid-wrap');
+
+        if (!$wrap.closest('.pob-grid-shell').length) {
+            $wrap.wrap('<div class="pob-grid-shell"></div>');
+        }
+
+        const $shell = $wrap.closest('.pob-grid-shell');
+        const $totals = $root.find('.pob-sticky-totals');
+
+        if ($totals.length && !$totals.parent().is($shell)) {
+            $shell.append($totals);
+        }
+    }
+
+    function initFixedGridPaneV3345() {
+        inject_v33_4_5_styles();
+        ensureFixedGridPaneV3345();
+
+        // Re-apply after delayed table/grid construction.
+        setTimeout(ensureFixedGridPaneV3345, 250);
+        setTimeout(ensureFixedGridPaneV3345, 1000);
+    }
+
+
+    // =============================================================
+    // V33.4.4 Operator Intelligence Dock Fix
+    // Operator Intelligence must be a fixed right dock, not a popup/tab panel.
+    // Search results remain under the search box only.
+    // =============================================================
+
+    function inject_v33_4_4_styles() {
+        if ($('#pob33-4-4-intel-dock').length) return;
+
+        $('head').append(`
+            <style id="pob33-4-4-intel-dock">
+                .pob-root {
+                    padding-right: 300px !important;
+                }
+
+                .pob-intelligence-panel,
+                .pob-operator-intelligence,
+                .pob-intel-panel {
+                    position: fixed !important;
+                    right: 8px !important;
+                    top: 96px !important;
+                    width: 285px !important;
+                    max-width: 285px !important;
+                    height: calc(100vh - 112px) !important;
+                    min-height: 300px !important;
+                    background: #fff !important;
+                    border: 1px solid #cbd5e1 !important;
+                    border-radius: 4px !important;
+                    box-shadow: none !important;
+                    z-index: 8 !important;
+                    padding: 8px !important;
+                    overflow-y: auto !important;
+                    overflow-x: hidden !important;
+                    font-size: 12px !important;
+                }
+
+                .pob-intelligence-panel .modal-header,
+                .pob-intelligence-panel .modal-footer,
+                .pob-intelligence-panel .btn-close,
+                .pob-intelligence-panel .close {
+                    display: none !important;
+                }
+
+                .pob-intelligence-panel .modal-content,
+                .pob-intelligence-panel .modal-dialog {
+                    box-shadow: none !important;
+                    border: 0 !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    width: auto !important;
+                    max-width: none !important;
+                    transform: none !important;
+                }
+
+                .pob-intelligence-panel .pob-panel-tabs,
+                .pob-intelligence-panel .pob-panel-tab,
+                .pob-intelligence-panel .pob-intel-tabs,
+                .pob-intelligence-panel button[data-tab="search"] {
+                    display: none !important;
+                }
+
+                .pob-intelligence-panel .pob-panel-search,
+                .pob-intelligence-panel .pob-search-results,
+                .pob-intelligence-panel .pob-suggestions,
+                .pob-intelligence-panel .pob-search-dropdown {
+                    display: none !important;
+                }
+
+                .pob-intelligence-panel h3,
+                .pob-intelligence-panel h4,
+                .pob-intelligence-panel h5 {
+                    font-size: 13px !important;
+                    margin: 2px 0 6px 0 !important;
+                    font-weight: 700 !important;
+                }
+
+                .pob-intelligence-panel table {
+                    width: 100% !important;
+                    font-size: 11px !important;
+                }
+
+                .pob-intelligence-panel th,
+                .pob-intelligence-panel td {
+                    padding: 2px 3px !important;
+                }
+
+                @media (max-width: 1200px) {
+                    .pob-root {
+                        padding-right: 0 !important;
+                    }
+
+                    .pob-intelligence-panel,
+                    .pob-operator-intelligence,
+                    .pob-intel-panel {
+                        position: static !important;
+                        width: auto !important;
+                        max-width: none !important;
+                        height: auto !important;
+                        margin-top: 8px !important;
+                    }
+                }
+            </style>
+        `);
+    }
+
+    function forceOperatorIntelligenceDockV3344() {
+        let $panel = $root.find('.pob-intelligence-panel, .pob-operator-intelligence, .pob-intel-panel, .operator-panel').first();
+
+        if (!$panel.length) {
+            $panel = $('.pob-intelligence-panel, .pob-operator-intelligence, .pob-intel-panel, .operator-panel').first();
+        }
+
+        if (!$panel.length) return;
+
+        $panel
+            .removeClass('modal fade show')
+            .addClass('pob-intelligence-panel')
+            .attr('role', 'complementary');
+
+        // Remove popup/tab controls; this panel is intelligence-only.
+        $panel.find('button, .btn').filter(function() {
+            const txt = ($(this).text() || '').trim().toLowerCase();
+            return txt === 'search' || txt === 'intel' || txt === '×' || txt === 'x';
+        }).remove();
+
+        $panel.find('.pob-suggestions, .pob-search-dropdown, .pob-search-results, .pob-panel-search').remove();
+
+        if (!$panel.find('.pob-intel-title').length) {
+            const titleText = ($panel.find('h3,h4,h5').first().text() || '').trim();
+            if (!titleText) {
+                $panel.prepend('<div class="pob-intel-title"><b>Operator Intelligence</b></div>');
+            }
+        }
+    }
+
+    function initIntelDockV3344() {
+        inject_v33_4_4_styles();
+        forceOperatorIntelligenceDockV3344();
+
+        // Re-apply after any later intelligence-panel redraw.
+        setTimeout(forceOperatorIntelligenceDockV3344, 250);
+        setTimeout(forceOperatorIntelligenceDockV3344, 1000);
+    }
+
+
+    // =============================================================
+    // V33.4.3 Search Dropdown Fix
+    // Search results belong under the search box, not in Operator Panel.
+    // Operator Panel remains reserved for intelligence only.
+    // =============================================================
+
+    function ensureSearchDropdownPlacementV3343() {
+        if (!$suggestions.length || !$search.length) return;
+
+        const $searchParent = $search.parent();
+
+        $suggestions
+            .removeClass('pob-operator-panel-list pob-panel-search-list')
+            .addClass('pob-search-dropdown')
+            .detach();
+
+        $searchParent.css('position', 'relative');
+        $searchParent.append($suggestions);
+    }
+
+    function inject_v33_4_3_styles() {
+        if ($('#pob33-4-3-search-dropdown').length) return;
+
+        $('head').append(`
+            <style id="pob33-4-3-search-dropdown">
+                .pob-search-dropdown {
+                    position: absolute !important;
+                    top: 100% !important;
+                    left: 0 !important;
+                    width: 520px !important;
+                    max-width: calc(100vw - 340px) !important;
+                    max-height: 260px !important;
+                    overflow-y: auto !important;
+                    background: #fff !important;
+                    border: 1px solid #94a3b8 !important;
+                    box-shadow: 0 8px 20px rgba(0,0,0,0.16) !important;
+                    z-index: 9999 !important;
+                    margin-top: 2px !important;
+                }
+
+                .pob-search-dropdown .pob-suggestion {
+                    display: block !important;
+                    padding: 5px 8px !important;
+                    border-bottom: 1px solid #e5e7eb !important;
+                    cursor: pointer !important;
+                    background: #fff;
+                }
+
+                .pob-search-dropdown .pob-suggestion.active,
+                .pob-search-dropdown .pob-suggestion:hover {
+                    background: #dbeafe !important;
+                }
+
+                .pob-search-dropdown .pob-sug-main {
+                    display: flex !important;
+                    justify-content: space-between !important;
+                    gap: 8px !important;
+                    line-height: 1.2 !important;
+                }
+
+                .pob-search-dropdown .pob-sug-meta {
+                    display: flex !important;
+                    gap: 8px !important;
+                    flex-wrap: wrap !important;
+                    font-size: 11px !important;
+                    color: #475569 !important;
+                    line-height: 1.2 !important;
+                }
+
+                .pob-intelligence-panel .pob-suggestions,
+                .pob-intelligence-panel .pob-search-dropdown,
+                .operator-panel .pob-suggestions,
+                .operator-panel .pob-search-dropdown {
+                    display: none !important;
+                }
+            </style>
+        `);
+    }
+
+    function initSearchDropdownV3343() {
+        inject_v33_4_3_styles();
+        ensureSearchDropdownPlacementV3343();
+    }
+
+
+    // =============================================================
+    // V33.4.2 Batch Submit Logic Fix
+    // Fixes submit rejection when UI has stock and selected batch but
+    // backend receives incomplete/mismatched batch allocation payload.
+    // =============================================================
+
+    function getSelectedBatchForRowV3342(row) {
+        if (!row) return null;
+
+        const existing = (row.batch_rows || [])[0];
+        if (existing && existing.batch_no) return existing;
+
+        if (row.batch_no && row.available_batches && row.available_batches.length) {
+            const found = row.available_batches.find(b => b.batch_no === row.batch_no);
+            if (found) return found;
+        }
+
+        if (row.available_batches && row.available_batches.length) {
+            const fefo = typeof chooseFEFOBatch === 'function'
+                ? chooseFEFOBatch(row.available_batches)
+                : row.available_batches[0];
+
+            if (fefo && fefo.batch_no) return fefo;
+        }
+
+        return null;
+    }
+
+    function syncRowBatchForSubmitV3342(row) {
+
+        if (!row) return row;
+    
+        const batch = getSelectedBatchForRowV3342(row);
+    
+        if (batch && batch.batch_no) {
+            row.batch_no = batch.batch_no;
+            row.expiry_date = batch.expiry_date || row.expiry_date || null;
+            row.batch_rows = [batch];
+    
+            // SAFE: no recursion now
+            row.batch_allocations = buildRowBatchAllocationsV3342(row);
+        }
+        return row;
+    }
+
+    function buildRowBatchAllocationsV3342(row) {
+
+        if (!row || !row.batch_no) return [];
+        const qty = Number(row.qty || 0);
+        if (qty <= 0) return [];
+    
+        return [{
+            item_code: row.item_code,
+            batch_no: row.batch_no,
+            qty: qty,
+            expiry_date:
+                row.expiry_date ||
+                ((row.batch_rows || [])[0] || {}).expiry_date ||
+                null,
+            warehouse:
+                typeof getCurrentWarehouse === 'function'
+                    ? getCurrentWarehouse()
+                    : (state.warehouse || null)
+        }];
+    }
+
+    function syncAllBatchesForSubmitV3342() {
+        (state.items || []).forEach(row => {
+            syncRowBatchForSubmitV3342(row);
+            row.batch_allocations = buildRowBatchAllocationsV3342(row);
+        });
+    }
+
+    function buildPayloadBatchAllocationsV3342(items) {
+        const allocations = [];
+
+        (items || []).forEach(row => {
+            buildRowBatchAllocationsV3342(row).forEach(x => allocations.push(x));
+        });
+
+        return allocations;
+    }
+
+    function hasMissingBatchRowsV3342() {
+        return (state.items || []).some(row => {
+            const requiresBatch = row.has_batch_no || row.batch_required || (row.available_batches && row.available_batches.length);
+            const batch = getSelectedBatchForRowV3342(row);
+            return requiresBatch && (!batch || !batch.batch_no);
+        });
+    }
+
+    function validateBatchQtyForSubmitV3342() {
+        const errors = [];
+
+        (state.items || []).forEach(row => {
+            const batch = getSelectedBatchForRowV3342(row);
+
+            if (!batch || !batch.batch_no) return;
+
+            const requested = Number(row.qty || 0);
+            const available = Number(batch.available_qty || batch.actual_qty || batch.qty || 0);
+
+            if (available > 0 && requested > available) {
+                errors.push(`${row.item_code}: selected batch ${batch.batch_no} has only ${available}, requested ${requested}`);
+            }
+        });
+
+        return errors;
+    }
+
+
+    // =============================================================
+    // V33.4 Counter UX Polish + Stable Suggestion Selection
+    // Fixes:
+    // - compact Marg-style grid density
+    // - fixed table heading with scrollable rows
+    // - compact batch selector cell
+    // - right panel sizing
+    // - search suggestions selectable while text remains in search box
+    // =============================================================
+
+    let suppressSearchBlurV334 = false;
+
+    function inject_v33_4_styles() {
+        if ($('#pob33-4-counter-polish').length) return;
+
+        $('head').append(`
+            <style id="pob33-4-counter-polish">
+                .pob-root {
+                    height: calc(100vh - 96px);
+                    overflow: hidden;
+                    padding-right: 300px !important;
+                }
+
+                .pob-root .pob-link-controls {
+                    margin-bottom: 4px !important;
+                    padding-bottom: 4px !important;
+                }
+
+                .pob-root .form-control,
+                .pob-root input,
+                .pob-root select {
+                    height: 24px !important;
+                    min-height: 24px !important;
+                    padding: 1px 5px !important;
+                    font-size: 12px !important;
+                    line-height: 1.1 !important;
+                }
+
+                .pob-root label,
+                .pob-root .control-label {
+                    font-size: 11px !important;
+                    margin-bottom: 1px !important;
+                }
+
+                .pob-root h3,
+                .pob-root h4 {
+                    margin: 6px 0 4px !important;
+                    font-size: 15px !important;
+                }
+
+                .pob-grid-wrap {
+                    height: calc(100vh - 315px);
+                    min-height: 250px;
+                    overflow-y: auto;
+                    overflow-x: auto;
+                    border: 1px solid #d1d5db;
+                    background: #fff;
+                }
+
+                .pob-grid {
+                    width: 100%;
+                    border-collapse: collapse;
+                    table-layout: fixed;
+                    margin-bottom: 0 !important;
+                    font-size: 12px !important;
+                }
+
+                .pob-grid thead th {
+                    position: sticky;
+                    top: 0;
+                    z-index: 4;
+                    background: #f8fafc !important;
+                    border-bottom: 1px solid #cbd5e1 !important;
+                    height: 24px !important;
+                    padding: 2px 5px !important;
+                    font-size: 12px !important;
+                    line-height: 1.1 !important;
+                }
+
+                .pob-grid tbody td {
+                    padding: 1px 5px !important;
+                    height: 24px !important;
+                    line-height: 1.1 !important;
+                    vertical-align: middle !important;
+                    border-bottom: 1px solid #eef2f7;
+                }
+
+                .pob-grid tbody tr {
+                    height: 24px !important;
+                }
+
+                .pob-grid small {
+                    font-size: 10px !important;
+                    line-height: 1 !important;
+                }
+
+                .pob-inline-batch {
+                    min-width: 88px !important;
+                    max-width: 128px !important;
+                    width: 120px !important;
+                    height: 22px !important;
+                    padding: 0 3px !important;
+                    font-size: 11px !important;
+                }
+
+                .pob-row-qty,
+                .pob-row-free,
+                .pob-row-rate,
+                .pob-row-disc {
+                    height: 22px !important;
+                    padding: 0 4px !important;
+                    font-size: 12px !important;
+                }
+
+                .pob-row-del {
+                    height: 22px !important;
+                    min-width: 24px !important;
+                    padding: 0 6px !important;
+                    line-height: 1 !important;
+                }
+
+                .pob-sticky-totals {
+                    position: sticky;
+                    bottom: 0;
+                    z-index: 6;
+                    height: 30px;
+                    padding: 4px 8px !important;
+                    font-size: 12px !important;
+                    background: #fff;
+                    border-top: 1px solid #d1d5db;
+                    justify-content: flex-end;
+                    gap: 18px;
+                }
+
+                .pob-status,
+                .pob-hotkey-help {
+                    font-size: 11px !important;
+                    line-height: 1.15 !important;
+                }
+
+                .pob-hotkey-help {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 4px 8px;
+                    color: #475569;
+                    max-width: 850px;
+                }
+
+                .pob-hotkey-help span,
+                .pob-hotkey-help .pob-key {
+                    display: inline-block;
+                    padding: 1px 4px;
+                    border: 1px solid #d1d5db;
+                    border-radius: 3px;
+                    background: #f8fafc;
+                }
+
+                .pob-intelligence-panel {
+                    right: 8px !important;
+                    top: 82px !important;
+                    width: 285px !important;
+                    max-width: 285px !important;
+                    height: calc(100vh - 100px) !important;
+                    font-size: 12px !important;
+                    padding: 8px !important;
+                    overflow-y: auto !important;
+                    z-index: 20 !important;
+                }
+
+                .pob-intelligence-panel h4,
+                .pob-intelligence-panel h5 {
+                    font-size: 13px !important;
+                    margin: 4px 0 !important;
+                }
+
+                .pob-intelligence-panel table {
+                    font-size: 11px !important;
+                }
+
+                .pob-suggestions {
+                    max-height: 245px !important;
+                    overflow-y: auto !important;
+                    border: 1px solid #94a3b8 !important;
+                    background: #fff !important;
+                    z-index: 30 !important;
+                }
+
+                .pob-suggestion {
+                    padding: 4px 7px !important;
+                    cursor: pointer !important;
+                    user-select: none !important;
+                }
+
+                .pob-suggestion.active,
+                .pob-suggestion:hover {
+                    background: #dbeafe !important;
+                }
+
+                @media (max-width: 1200px) {
+                    .pob-root {
+                        padding-right: 0 !important;
+                        height: auto;
+                        overflow: visible;
+                    }
+                    .pob-intelligence-panel {
+                        position: static !important;
+                        width: auto !important;
+                        max-width: none !important;
+                        height: auto !important;
+                        margin-top: 8px;
+                    }
+                    .pob-grid-wrap {
+                        height: 420px;
+                    }
+                }
+            </style>
+        `);
+    }
+
+    function wrapGridForFixedHeaderV334() {
+        if ($root.find('.pob-grid-wrap').length) return;
+
+        const $grid = $root.find('.pob-grid');
+        if (!$grid.length) return;
+
+        $grid.wrap('<div class="pob-grid-wrap"></div>');
+    }
+
+    function normalizeHotkeyHelpV334() {
+        const $help = $root.find('.pob-hotkey-help');
+        if (!$help.length) return;
+
+        const text = $help.text()
+            .replace(/[^A-Za-z0-9+|: ]/g, '|')
+            .replace(/\s*\|\s*/g, '|');
+
+        const parts = text.split('|').map(x => x.trim()).filter(Boolean);
+        if (!parts.length) return;
+
+        $help.html(parts.map(p => `<span class="pob-key">${p}</span>`).join(' '));
+    }
+
+    function initCounterPolishV334() {
+        inject_v33_4_styles();
+        wrapGridForFixedHeaderV334();
+        normalizeHotkeyHelpV334();
+    }
+
+
+    // =============================================================
+    // V33.3 Search Selection Stabilization
+    // Fixes:
+    // - search input infinite loop / repeated re-render
+    // - inability to select from suggestion list
+    // - stale cache item lookup crash
+    // =============================================================
+
+    let searchSeqV333 = 0;
+    let searchRenderingV333 = false;
+    let selectingSuggestionV333 = false;
+    let lastSuggestionRowsV333 = [];
+
+    function normalizeSearchTextV333(value) {
+        return String(value || '').trim();
+    }
+
+    function isExactSearchMatchV333(txt, row) {
+        const q = normalizeSearchTextV333(txt).toLowerCase();
+        if (!q || !row) return false;
+        return (
+            String(row.barcode || '').toLowerCase() === q ||
+            String(row.item_code || '').toLowerCase() === q
+        );
+    }
+
+    function setSearchSuggestionsV333(rows, queryText) {
+        searchRenderingV333 = true;
+        lastSuggestionRowsV333 = rows || [];
+        renderSuggestions(rows || []);
+        setTimeout(() => {
+            searchRenderingV333 = false;
+        }, 0);
+    }
+
+    function getSuggestionRowByCodeV333(code) {
+        return (lastSuggestionRowsV333 || []).find(r => r.item_code === code || r.barcode === code) || null;
+    }
+
+    function addSuggestionRowV333(row) {
+        if (!row || !row.item_code) {
+            status('Invalid item selected', 'orange');
+            return;
+        }
+
+        selectingSuggestionV333 = true;
+
+        const done = (batches) => {
+            addItem(row, 1, batches || []);
+            $suggestions.hide().empty();
+            $search.val('').focus();
+            selectingSuggestionV333 = false;
+            status('Added: ' + row.item_code, 'green');
+        };
+
+        if (typeof fetchBatchesForItemV323 === 'function') {
+            fetchBatchesForItemV323(row.item_code).then(done).catch(() => done([]));
+        } else if (window.PharmaFastBillingV241 && window.PharmaFastBillingV241.localFEFO) {
+            done(window.PharmaFastBillingV241.localFEFO(row.item_code, getCurrentWarehouse(), 999));
+        } else {
+            done([]);
+        }
+    }
+
+    function selectSuggestionByCodeV333(code) {
+        const row = getSuggestionRowByCodeV333(code);
+
+        if (row) {
+            addSuggestionRowV333(row);
+            return;
+        }
+
+        const cached = typeof getMemoryItemSafeV331 === 'function'
+            ? getMemoryItemSafeV331(code)
+            : (window.PharmaFastBillingV241 && window.PharmaFastBillingV241.memory && window.PharmaFastBillingV241.memory.itemIndex ? window.PharmaFastBillingV241.memory.itemIndex[code] : null);
+
+        if (cached && cached.item_code) {
+            addSuggestionRowV333(cached);
+            return;
+        }
+
+        if (typeof fetchSingleItemServerV331 === 'function') {
+            fetchSingleItemServerV331(code, serverItem => {
+                if (!serverItem || !serverItem.item_code) {
+                    status('Item not found: ' + code, 'orange');
+                    return;
+                }
+                addSuggestionRowV333(serverItem);
+            });
+        }
+    }
+
+    function maybeExactAutoAddV333(txt, rows) {
+        const exact = (rows || []).find(r => isExactSearchMatchV333(txt, r));
+        if (!exact) return false;
+        addSuggestionRowV333(exact);
+        return true;
+    }
+
+    function serverSearchV333(txt, seq) {
+        frappe.call({
+            method: 'pharma_quick_sale.pharma_quick_sale.doctype.pharma_quick_sale.pharma_quick_sale.fast_item_search_v30',
+            args: {
+                query: txt,
+                warehouse: typeof getCurrentWarehouse === 'function' ? getCurrentWarehouse() : ($warehouse.val() || null),
+                price_list: typeof getPriceList === 'function' ? getPriceList() : (state.price_list || 'Standard Selling')
+            },
+            callback: r => {
+                if (seq !== searchSeqV333) return;
+                const rows = r.message || [];
+                if (maybeExactAutoAddV333(txt, rows)) return;
+                setSearchSuggestionsV333(rows, txt);
+                if (!rows.length) status('No item found: ' + txt, 'orange');
+            },
+            error: () => {
+                if (seq !== searchSeqV333) return;
+                status('Item search failed. Check server log.', 'red');
+            }
+        });
+    }
+
+
+    // =============================================================
+    // V33.2 Interface Fix
+    // - Search suggestions are right-docked, not popup-overlay style
+    // - Spreadsheet/grid header remains fixed
+    // - Grid rows are scrollable
+    // =============================================================
+
+    function injectV332InterfaceStyles() {
+        if ($('#pob33-2-interface-style').length) return;
+
+        $('head').append(`
+            <style id="pob33-2-interface-style">
+                .pob-root {
+                    --pob-right-panel-width: 380px;
+                    --pob-grid-scroll-height: calc(100vh - 355px);
+                }
+
+                .pob-root.pob-has-right-panel {
+                    padding-right: calc(var(--pob-right-panel-width) + 14px);
+                }
+
+                .pob-right-panel {
+                    position: fixed;
+                    right: 8px;
+                    top: 92px;
+                    width: var(--pob-right-panel-width);
+                    height: calc(100vh - 112px);
+                    background: var(--fg-color, #fff);
+                    border: 1px solid #d1d5db;
+                    border-radius: 6px;
+                    box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+                    z-index: 15;
+                    display: flex;
+                    flex-direction: column;
+                    overflow: hidden;
+                }
+
+                .pob-right-panel-header {
+                    padding: 6px 8px;
+                    border-bottom: 1px solid #e5e7eb;
+                    font-size: 12px;
+                    font-weight: 700;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    background: #f8fafc;
+                }
+
+                .pob-right-panel-tabs {
+                    display: flex;
+                    gap: 4px;
+                }
+
+                .pob-right-panel-tab {
+                    border: 1px solid #cbd5e1;
+                    background: #fff;
+                    font-size: 11px;
+                    padding: 2px 6px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                }
+
+                .pob-right-panel-tab.active {
+                    background: #eef2ff;
+                    border-color: #6366f1;
+                    color: #3730a3;
+                    font-weight: 700;
+                }
+
+                .pob-right-panel-body {
+                    flex: 1;
+                    overflow-y: auto;
+                    padding: 4px;
+                }
+
+                .pob-suggestions {
+                    position: static !important;
+                    display: block;
+                    width: 100%;
+                    max-height: none !important;
+                    overflow-y: visible !important;
+                    border: 0 !important;
+                    box-shadow: none !important;
+                    background: transparent !important;
+                    z-index: auto !important;
+                }
+
+                .pob-suggestions:empty::before {
+                    content: 'Search results will appear here';
+                    display: block;
+                    color: #64748b;
+                    font-size: 12px;
+                    padding: 8px;
+                }
+
+                .pob-grid-scroll {
+                    max-height: var(--pob-grid-scroll-height);
+                    overflow-y: auto;
+                    overflow-x: auto;
+                    border: 1px solid #e5e7eb;
+                    border-radius: 4px;
+                }
+
+                .pob-grid-scroll .pob-grid {
+                    margin-bottom: 0;
+                }
+
+                .pob-grid thead th {
+                    position: sticky;
+                    top: 0;
+                    z-index: 4;
+                    background: #f8fafc;
+                    border-bottom: 1px solid #cbd5e1 !important;
+                    box-shadow: 0 1px 0 #e5e7eb;
+                }
+
+                .pob-grid tbody tr:hover td {
+                    background: #f8fafc;
+                }
+
+                @media (max-width: 1200px) {
+                    .pob-root.pob-has-right-panel { padding-right: 0; }
+                    .pob-right-panel {
+                        position: static;
+                        width: auto;
+                        height: 260px;
+                        margin-top: 8px;
+                    }
+                    .pob-grid-scroll { max-height: 420px; }
+                }
+            </style>
+        `);
+    }
+
+    function setupV332RightPanel() {
+        if ($root.find('.pob-right-panel').length) return;
+
+        const $panel = $(`
+            <div class="pob-right-panel">
+                <div class="pob-right-panel-header">
+                    <span>Operator Panel</span>
+                    <div class="pob-right-panel-tabs">
+                        <button type="button" class="pob-right-panel-tab active" data-panel="search">Search</button>
+                        <button type="button" class="pob-right-panel-tab" data-panel="intel">Intel</button>
+                    </div>
+                </div>
+                <div class="pob-right-panel-body pob-right-search-body"></div>
+                <div class="pob-right-panel-body pob-right-intel-body" style="display:none;"></div>
+            </div>
+        `);
+
+        $root.addClass('pob-has-right-panel');
+        $root.append($panel);
+
+        // Move suggestions into the right dock instead of allowing overlay popup behavior.
+        $panel.find('.pob-right-search-body').append($suggestions.detach());
+        $suggestions.show();
+
+        // Move existing intelligence panel into Intel tab when present.
+        const $intel = $root.find('.pob-intelligence-panel, .pob-intelligence, .pob-intel').not($panel).first();
+        if ($intel.length) {
+            $panel.find('.pob-right-intel-body').append($intel.detach().css({position:'static', width:'auto', height:'auto', maxWidth:'none', boxShadow:'none', border:'0'}));
+        }
+
+        $panel.on('click', '.pob-right-panel-tab', function() {
+            const panel = $(this).data('panel');
+            $panel.find('.pob-right-panel-tab').removeClass('active');
+            $(this).addClass('active');
+            $panel.find('.pob-right-search-body').toggle(panel === 'search');
+            $panel.find('.pob-right-intel-body').toggle(panel === 'intel');
+        });
+    }
+
+    function setupV332ScrollableGrid() {
+        const $grid = $root.find('.pob-grid').first();
+        if (!$grid.length || $grid.parent().hasClass('pob-grid-scroll')) return;
+        $grid.wrap('<div class="pob-grid-scroll"></div>');
+    }
+
+    function initV332InterfaceFix() {
+        injectV332InterfaceStyles();
+        setupV332ScrollableGrid();
+        setupV332RightPanel();
+    }
+
 
     // =============================================================
     // V33.1 IndexedDB + stale-search safety hotfix
@@ -96,7 +1421,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
                 msg.includes('object store') ||
                 msg.includes('IDBDatabase.transaction')
             ) {
-                status('Repairing local billing cacheâ€¦', 'orange');
+                status('Repairing local billing cache…', 'orange');
 
                 await resetFastBillingIndexedDBV331();
 
@@ -633,11 +1958,11 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
 
             const exp = b.expiry_date || '-';
             const qty = b.available_qty || b.qty || 0;
-            const near = isNearExpiry(exp) ? ' âš ' : '';
+            const near = isNearExpiry(exp) ? ' !' : '';
 
             return `
                 <option value="${b.batch_no}" ${selected}>
-                    ${b.batch_no} | ${exp}${near} | Qty ${qty}
+                    ${b.batch_no} | ${exp} | ${qty}
                 </option>
             `;
         }).join('');
@@ -907,7 +2232,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
 
         $root.find('.pob-status').after(`
             <div class="pob-hotkey-help">
-                Ctrl+Shift+R Clear Cache Â· F3 Customer Â· F5 Search Â· F2 Batch Â· F6 Qty Â· F7 Disc Â· Ctrl+S Invoice Â· F8 Hold Â· F9 Recall Â· Del Delete Â· Ctrl+D Duplicate Â· Esc Search
+                Ctrl+Shift+R Clear Cache · F3 Customer · F5 Search · F2 Batch · F6 Qty · F7 Disc · Ctrl+S Invoice · F8 Hold · F9 Recall · Del Delete · Ctrl+D Duplicate · Esc Search
             </div>
         `);
     }
@@ -992,8 +2317,10 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
     }
 
     function bindNoMouseNavigation() {
-        $(document).off('keydown.pob32nav').on('keydown.pob32nav', function (e) {
+        $(document).off('keydown.pob32nav').on('keydown.pob32nav', function(e) {
             const $target = $(e.target);
+            const inSuggestions = $target.closest('.pob-suggestions').length > 0;
+            if (inSuggestions) return;
             const inOperator = $target.closest('.pob-root').length > 0;
             const inModal = $target.closest('.modal').length > 0;
 
@@ -1344,6 +2671,8 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
             .toggleClass('pob-exp-soon', typeof isNearExpiry === 'function' ? isNearExpiry(expValue) : false);
 
         v33UpdateTotalsOnly();
+        if (typeof stabilizeGridPaneV335 === 'function') stabilizeGridPaneV335();
+        if (typeof ensureFixedGridPaneV3345 === 'function') ensureFixedGridPaneV3345();
     }
 
     function v33ReadRowInputs(idx) {
@@ -1355,7 +2684,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
         const rawQty = $row.find('.pob-row-qty').val();
         const parsedQty = typeof parseQuickQty === 'function'
             ? parseQuickQty(rawQty)
-            : { qty: Number(rawQty || 0), uom: null };
+            : {qty: Number(rawQty || 0), uom: null};
 
         row.qty = Number(parsedQty.qty || 0);
         row.uom_hint = parsedQty.uom;
@@ -1366,6 +2695,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
         if (row.batch_no && row.available_batches && row.available_batches.length) {
             const selected = row.available_batches.find(b => b.batch_no === row.batch_no);
             if (selected) row.batch_rows = [selected];
+                row.batch_allocations = buildRowBatchAllocationsV3342(row);
         }
     }
 
@@ -1415,7 +2745,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
             <td><input class="form-control input-xs pob-row-disc" value="${row.discount_percentage || 0}"></td>
             <td>${row.item_tax_template || ''}</td>
             <td class="pob-row-amount ${marginCls}">${v33Money(row.amount)}</td>
-            <td><button class="btn btn-xs btn-danger pob-row-del">Ã—</button></td>
+            <td><button class="btn btn-xs btn-danger pob-row-del">x</button></td>
         </tr>`;
     }
 
@@ -1461,7 +2791,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
     }
 
     function v33ReindexGrid() {
-        $tbody.find('tr').each(function (idx) {
+        $tbody.find('tr').each(function(idx) {
             $(this).attr('data-idx', idx);
             $(this).find('td:first').text(idx + 1);
             $(this).find('.pob-inline-batch').attr('data-idx', idx);
@@ -1520,30 +2850,30 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
         if (v33GridReady) return;
         v33GridReady = true;
 
-        $tbody.off('input.v33grid').on('input.v33grid', '.pob-row-qty,.pob-row-free,.pob-row-rate,.pob-row-disc', function () {
+        $tbody.off('input.v33grid').on('input.v33grid', '.pob-row-qty,.pob-row-free,.pob-row-rate,.pob-row-disc', function() {
             const idx = Number($(this).closest('tr').data('idx'));
             v33ReadRowInputs(idx);
             v33UpdateRowOnly(idx);
         });
 
-        $tbody.off('change.v33grid').on('change.v33grid', '.pob-row-qty,.pob-row-free,.pob-row-rate,.pob-row-disc', function () {
+        $tbody.off('change.v33grid').on('change.v33grid', '.pob-row-qty,.pob-row-free,.pob-row-rate,.pob-row-disc', function() {
             const idx = Number($(this).closest('tr').data('idx'));
             v33CommitCell(idx);
         });
 
-        $tbody.off('click.v33row').on('click.v33row', 'tr', function () {
+        $tbody.off('click.v33row').on('click.v33row', 'tr', function() {
             const idx = Number($(this).data('idx'));
             if (typeof selectGridRow === 'function') selectGridRow(idx);
             if (typeof navState !== 'undefined') navState.row = idx;
         });
 
-        $tbody.off('click.v33delete').on('click.v33delete', '.pob-row-del', function (e) {
+        $tbody.off('click.v33delete').on('click.v33delete', '.pob-row-del', function(e) {
             e.preventDefault();
             const idx = Number($(this).closest('tr').data('idx'));
             v33DeleteRow(idx);
         });
 
-        $tbody.off('change.v33batch').on('change.v33batch', '.pob-inline-batch', function () {
+        $tbody.off('change.v33batch').on('change.v33batch', '.pob-inline-batch', function() {
             const idx = Number($(this).data('idx'));
             const row = state.items[idx];
             const batch_no = $(this).val();
@@ -1567,18 +2897,18 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
     }
 
     const renderGridLegacyV33 = typeof renderGrid === 'function' ? renderGrid : null;
-    renderGrid = function (focusLast = false) {
+    renderGrid = function(focusLast = false) {
         v33FullRenderGrid(focusLast);
     };
 
     const deleteSelectedLineLegacyV33 = typeof deleteSelectedLine === 'function' ? deleteSelectedLine : null;
-    deleteSelectedLine = function () {
+    deleteSelectedLine = function() {
         const idx = typeof getSelectedGridRow === 'function' ? getSelectedGridRow() : (typeof navState !== 'undefined' ? navState.row : 0);
         v33DeleteRow(idx);
     };
 
     const duplicateSelectedLineLegacyV33 = typeof duplicateSelectedLine === 'function' ? duplicateSelectedLine : null;
-    duplicateSelectedLine = function () {
+    duplicateSelectedLine = function() {
         const idx = typeof getSelectedGridRow === 'function' ? getSelectedGridRow() : (typeof navState !== 'undefined' ? navState.row : 0);
         v33DuplicateRow(idx);
     };
@@ -1608,28 +2938,24 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
             ${mrp ? `<span>MRP ${mrp}</span>` : ''}
             <span>Qty ${stock}</span>
             ${batch ? `<span class="pob-batch-chip">Batch ${batch}</span>` : ''}
-            ${exp ? `<span class="pob-exp-chip ${expSoon ? 'pob-exp-soon' : ''}">Exp ${exp}${expSoon ? ' âš ' : ''}</span>` : ''}
+            ${exp ? `<span class="pob-exp-chip ${expSoon ? 'pob-exp-soon' : ''}">Exp ${exp}${expSoon ? ' !' : ''}</span>` : ''}
             ${last ? `<span>Last ${last}</span>` : ''}
             ${marginHtml}
         `;
     }
 
-    const _hydratingItems = new Set();
-
     function hydrateSearchBatchesAsyncV323(rows) {
         const topRows = (rows || []).slice(0, 10);
+
         topRows.forEach(row => {
             if (!row || !row.item_code) return;
+
             const warehouse = getCurrentWarehouse ? getCurrentWarehouse() : (state.warehouse || '');
             const cached = getCachedBatchesForItem(row.item_code, warehouse);
+
             if (cached.length) return;
 
-            const key = row.item_code + '::' + warehouse;
-            if (_hydratingItems.has(key)) return;   // ← ADD THIS GUARD
-            _hydratingItems.add(key);
-
             fetchBatchesForItemV323(row.item_code).then(() => {
-                _hydratingItems.delete(key);          // ← AND THIS CLEANUP
                 if ($suggestions.is(':visible')) {
                     const currentText = $search.val();
                     if (currentText && window.PharmaFastBillingV241) {
@@ -1734,7 +3060,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
 
 
 
-    function status(msg, indicator = 'blue') {
+    function status(msg, indicator='blue') {
         $root.find('.pob-status').html(`<span class="indicator ${indicator}">${msg}</span>`);
     }
 
@@ -1743,30 +3069,42 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
     }
 
     function collectPayload() {
-        return {
-            customer: state.customer || getCurrentCustomer(),
-            company: state.company || getCompany(),
-            warehouse: state.warehouse || getCurrentWarehouse(),
-            price_list: getPriceList(),
-            posting_date: frappe.datetime.get_today(),
-            grand_total: calcTotals().grand_total,
-            items: state.items.map(row => ({
-                row_id: row.row_id, 
+        syncAllBatchesForSubmitV3342();
+
+        const items = (state.items || []).map(row => {
+            syncRowBatchForSubmitV3342(row);
+
+            const qty = Number(row.qty || 0);
+            const rate = Number(row.rate || 0);
+            const discount = Number(row.discount_percentage || 0);
+            const amount = Number(row.amount || ((qty * rate) - ((qty * rate) * discount / 100)) || 0);
+
+            return {
                 item_code: row.item_code,
                 item_name: row.item_name,
-                qty: Number(row.qty || 0),
+                qty: qty,
                 free_qty: Number(row.free_qty || 0),
-                rate: Number(row.rate || 0),
-                discount_percentage: Number(row.discount_percentage || 0),
-                batch_rows: row.batch_rows || []
-            })),
-            batch_allocations: state.items.flatMap(row => (row.batch_rows || []).map(b => ({
-                item_row_id: row.row_id, 
-                item_code: row.item_code,
-                batch_no: b.batch_no,
-                qty: b.qty,
-                free_qty: 0
-            })))
+                rate: rate,
+                discount_percentage: discount,
+                amount: amount,
+                item_tax_template: row.item_tax_template || '',
+                has_batch_no: row.has_batch_no,
+                batch_no: row.batch_no || null,
+                expiry_date: row.expiry_date || null,
+                batch_rows: row.batch_rows || [],
+                batch_allocations: row.batch_allocations || buildRowBatchAllocationsV3342(row)
+            };
+        });
+
+        return {
+            company: typeof getCompany === 'function' ? getCompany() : (state.company || $company.val() || null),
+            customer: typeof getCurrentCustomer === 'function' ? getCurrentCustomer() : (state.customer || $customer.val() || null),
+            warehouse: typeof getCurrentWarehouse === 'function' ? getCurrentWarehouse() : (state.warehouse || $warehouse.val() || null),
+            price_list: typeof getPriceList === 'function' ? getPriceList() : (state.price_list || 'Standard Selling'),
+            tax_category: typeof getTaxCategory === 'function' ? getTaxCategory() : (state.tax_category || null),
+            items: items,
+            batch_allocations: buildPayloadBatchAllocationsV3342(items),
+            grand_total: items.reduce((s, x) => s + Number(x.amount || 0), 0)
         };
     }
 
@@ -1778,10 +3116,10 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
             qty += Number(row.qty || 0);
             total += line;
         });
-        return { qty, grand_total: total };
+        return {qty, grand_total: total};
     }
 
-    function renderGrid(focusLast = false) {
+    function renderGrid(focusLast=false) {
         $tbody.empty();
 
         for (let idx = 0; idx < state.items.length; idx++) {
@@ -1822,7 +3160,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
                 <td><input class="form-control input-xs pob-row-disc" value="${row.discount_percentage || 0}"></td>
                 <td>${row.item_tax_template || ''}</td>
                 <td class="pob-row-amount ${marginCls}">${money(row.amount)}</td>
-                <td><button class="btn btn-xs btn-danger pob-row-del">Ã—</button></td>
+                <td><button class="btn btn-xs btn-danger pob-row-del">x</button></td>
             </tr>`);
 
             $tbody.append(tr);
@@ -1841,7 +3179,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
         if (focusLast) $tbody.find('tr:last .pob-row-qty').focus().select();
     }
 
-    function addItem(item, qty = 1, batches = []) {
+    function addItem(item, qty=1, batches=[]) {
         const existing = state.items.find(x => x.item_code === item.item_code);
         const normalizedBatches = cacheBatchesForItem(item.item_code, getCurrentWarehouse ? getCurrentWarehouse() : (state.warehouse || ''), batches || []);
         const selectedBatch = chooseFEFOBatch(normalizedBatches);
@@ -1867,7 +3205,6 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
         }
 
         const newRow = {
-            row_id: frappe.utils.get_random(10),
             item_code: item.item_code,
             item_name: item.item_name,
             qty: qty,
@@ -1926,9 +3263,11 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
             </div>`;
         }).join('');
 
+        ensureSearchDropdownPlacementV3343();
         $suggestions.html(html).show();
+        $root.find('.pob-right-panel-tab[data-panel="search"]').click();
         highlightSuggestion();
-        hydrateSearchBatchesAsyncV323(rows);
+        // V33.3: hydration rerender disabled while suggestions are active.
     }
 
     async function loadCache() {
@@ -1944,63 +3283,56 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
     }
 
     async function scanOrSearch(value) {
-        const txt = (value || '').trim();
-        if (!txt) return;
-        state.warehouse = getCurrentWarehouse();
+        const txt = normalizeSearchTextV333(value);
+        if (!txt || selectingSuggestionV333 || searchRenderingV333) return;
 
-        let item = window.PharmaFastBillingV241 ? window.PharmaFastBillingV241.resolveBarcode(txt) : null;
-        if (item && item.item_code) {
-            const batches = window.PharmaFastBillingV241.localFEFO(item.item_code, state.warehouse || getCurrentWarehouse(), 999);
-            addItem(item, 1, batches);
-            status('Scanned: ' + item.item_code, 'green');
+        const seq = ++searchSeqV333;
+
+        state.warehouse = typeof getCurrentWarehouse === 'function'
+            ? getCurrentWarehouse()
+            : ($warehouse.val() || state.warehouse || '');
+
+        let item = window.PharmaFastBillingV241 && window.PharmaFastBillingV241.resolveBarcode
+            ? window.PharmaFastBillingV241.resolveBarcode(txt)
+            : null;
+
+        if (item && item.item_code && isExactSearchMatchV333(txt, item)) {
+            addSuggestionRowV333(item);
             return;
         }
 
-        const rows = window.PharmaFastBillingV241 ? window.PharmaFastBillingV241.searchItems(txt, 20) : [];
+        const rows = window.PharmaFastBillingV241 && window.PharmaFastBillingV241.searchItems
+            ? window.PharmaFastBillingV241.searchItems(txt, 20)
+            : [];
+
+        if (seq !== searchSeqV333) return;
 
         if (rows && rows.length) {
-            const exactLocalV323 = shouldAutoAddExactV323(txt, rows);
-            if (exactLocalV323) {
-                addExactItemWithBatchesV323(exactLocalV323);
-                return;
-            }
-            renderSuggestions(rows);
-
-            if (rows.length === 1) {
-                const batches = window.PharmaFastBillingV241.localFEFO(rows[0].item_code, getCurrentWarehouse(), 999);
-                addItem(rows[0], 1, batches);
-            }
+            if (maybeExactAutoAddV333(txt, rows)) return;
+            setSearchSuggestionsV333(rows, txt);
             return;
         }
 
-        frappe.call({
-            method: 'pharma_quick_sale.pharma_quick_sale.doctype.pharma_quick_sale.pharma_quick_sale.fast_item_search_v30',
-            args: {
-                query: txt,
-                warehouse: getCurrentWarehouse(),
-                price_list: getPriceList()
-            },
-            callback: r => {
-                const serverRows = r.message || [];
-                const exactServerV323 = shouldAutoAddExactV323(txt, serverRows);
-                if (exactServerV323) {
-                    addExactItemWithBatchesV323(exactServerV323);
-                    return;
-                }
-                renderSuggestions(serverRows);
-                if (!serverRows.length) status('No item found: ' + txt, 'orange');
-            },
-            error: () => status('Item search failed. Check server log.', 'red')
-        });
+        serverSearchV333(txt, seq);
     }
 
     $root.find('.pob-load-cache').on('click', loadCache);
 
-    $search.on('input', frappe.utils.debounce(() => {
-        scanOrSearch($search.val());
-    }, 120));
+    $search.off('input.pob33search').on('input.pob33search', frappe.utils.debounce(() => {
+        if (searchRenderingV333 || selectingSuggestionV333) return;
 
-    $search.on('keydown', e => {
+        const txt = normalizeSearchTextV333($search.val());
+
+        if (!txt) {
+            $suggestions.hide().empty();
+            lastSuggestionRowsV333 = [];
+            return;
+        }
+
+        scanOrSearch(txt);
+    }, 160));
+
+    $search.off('keydown.pob33search').on('keydown.pob33search', e => {
         const $items = $suggestions.find('.pob-suggestion');
 
         if (e.key === 'ArrowDown') {
@@ -2025,57 +3357,30 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
 
         if (e.key === 'Enter') {
             e.preventDefault();
-
             const $selected = $items.eq(selectedSuggestionIndex);
-            const first = $selected.length ? $selected.data('item') : $suggestions.find('.pob-suggestion:first').data('item');
-
-            if (first && window.PharmaFastBillingV241) {
-                const item = getMemoryItemSafeV331(first);
-
-                if (item && item.item_code) {
-                    const batches = window.PharmaFastBillingV241.localFEFO(item.item_code, getCurrentWarehouse(), 999);
-                    addItem(item, 1, batches);
-                    $suggestions.hide();
-                    return;
-                }
-
-                fetchSingleItemServerV331(first, serverItem => {
-                    if (!serverItem || !serverItem.item_code) {
-                        status('Item not found in cache/server: ' + first, 'orange');
-                        return;
-                    }
-                    addExactItemWithBatchesV323(serverItem);
-                    $suggestions.hide();
-                });
+            const code = $selected.length ? $selected.data('item') : null;
+            if (code) {
+                selectSuggestionByCodeV333(code);
                 return;
             }
-
             scanOrSearch($search.val());
         }
     });
 
-    $suggestions.on('click', '.pob-suggestion', function () {
-        const code = $(this).data('item');
-        const item = getMemoryItemSafeV331(code);
-
-        if (item && item.item_code) {
-            const batches = window.PharmaFastBillingV241.localFEFO(item.item_code, getCurrentWarehouse(), 999);
-            addItem(item, 1, batches);
-            $suggestions.hide();
-            return;
-        }
-
-        fetchSingleItemServerV331(code, serverItem => {
-            if (!serverItem || !serverItem.item_code) {
-                status('Item not found in cache/server: ' + code, 'orange');
-                return;
-            }
-            addExactItemWithBatchesV323(serverItem);
-            $suggestions.hide();
+    $suggestions.off('mousedown.pob33suggest click.pob33suggest')
+        .on('mousedown.pob33suggest', '.pob-suggestion', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            suppressSearchBlurV334 = true;
+            const code = $(this).data('item');
+            selectSuggestionByCodeV333(code);
+            setTimeout(() => { suppressSearchBlurV334 = false; }, 80);
+        })
+        .on('click.pob33suggest', '.pob-suggestion', function(e) {
+            e.preventDefault();
         });
-    });
 
-    $tbody.on('input', 'input', function () {
+    $tbody.on('input', 'input', function() {
         if (typeof v33GridReady !== 'undefined' && v33GridReady) return;
         const tr = $(this).closest('tr');
         const idx = Number(tr.data('idx'));
@@ -2100,24 +3405,24 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
         }
     });
 
-    $tbody.on('click', '.pob-row-del', function () {
+    $tbody.on('click', '.pob-row-del', function() {
         if (typeof v33GridReady !== 'undefined' && v33GridReady) return;
         const idx = Number($(this).closest('tr').data('idx'));
         state.items.splice(idx, 1);
         renderGrid();
     });
 
-    $tbody.on('change', '.pob-inline-batch', function () {
+    $tbody.on('change', '.pob-inline-batch', function() {
         if (typeof v33GridReady !== 'undefined' && v33GridReady) return;
         const idx = Number($(this).data('idx'));
         commitBatchSelectionV323(idx, $(this).val(), true);
     });
 
-    $tbody.on('keydown', '.pob-inline-batch', function (e) {
+    $tbody.on('keydown', '.pob-inline-batch', function(e) {
         if (handleBatchDropdownKeyV323(e)) return;
     });
 
-    $tbody.on('click', 'tr', function () {
+    $tbody.on('click', 'tr', function() {
         selectGridRow(Number($(this).data('idx')));
     });
 
@@ -2129,7 +3434,13 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
 
         const payload = collectPayload();
 
-        if (hasMissingBatchRows()) {
+        const batchQtyErrorsV3342 = validateBatchQtyForSubmitV3342();
+        if (batchQtyErrorsV3342.length) {
+            frappe.msgprint(batchQtyErrorsV3342.join('<br>'));
+            return;
+        }
+
+        if (hasMissingBatchRowsV3342()) {
             frappe.msgprint('One or more batch-controlled items do not have a selected batch/lot.');
             return;
         }
@@ -2139,7 +3450,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
 
             frappe.call({
                 method: 'pharma_quick_sale.pharma_quick_sale.doctype.pharma_quick_sale.pharma_quick_sale.operator_submit_invoice',
-                args: { data: payload, action: 'invoice' },
+                args: {data: payload, action: 'invoice'},
                 freeze: true,
                 freeze_message: 'Submitting invoice...',
                 callback: r => {
@@ -2151,11 +3462,10 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
         });
     });
 
-
     $root.find('.pob-hold').on('click', () => {
         frappe.call({
             method: 'pharma_quick_sale.pharma_quick_sale.doctype.pharma_quick_sale.pharma_quick_sale.operator_save_held_invoice',
-            args: { data: collectPayload() },
+            args: {data: collectPayload()},
             callback: r => status('Held bill saved: ' + r.message, 'green')
         });
     });
@@ -2167,13 +3477,13 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
                 const rows = r.message || [];
                 const html = `<table class="table table-bordered"><tr><th>Held</th><th>Customer</th><th>Total</th><th></th></tr>
                     ${rows.map(x => `<tr><td>${x.name}</td><td>${x.customer || ''}</td><td>${x.grand_total || 0}</td><td><button class="btn btn-xs btn-primary pob-recall-one" data-name="${x.name}">Recall</button></td></tr>`).join('')}</table>`;
-                const d = new frappe.ui.Dialog({ title: 'Recall Held Bill', fields: [{ fieldname: 'html', fieldtype: 'HTML' }] });
+                const d = new frappe.ui.Dialog({title: 'Recall Held Bill', fields: [{fieldname: 'html', fieldtype: 'HTML'}]});
                 d.fields_dict.html.$wrapper.html(html);
                 d.show();
                 d.fields_dict.html.$wrapper.find('.pob-recall-one').on('click', ev => {
                     frappe.call({
                         method: 'pharma_quick_sale.pharma_quick_sale.doctype.pharma_quick_sale.pharma_quick_sale.held_invoice_restore',
-                        args: { held_invoice: $(ev.currentTarget).data('name') },
+                        args: {held_invoice: $(ev.currentTarget).data('name')},
                         callback: rr => {
                             const p = rr.message || {};
                             setCustomer(p.customer || '');
@@ -2205,21 +3515,21 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
     // =============================================================
     // V32.1 keyboard hardening
     // =============================================================
-    $(document).off('keydown.pob32').on('keydown.pob32', function (e) {
-        if (e.key === 'F2' || e.key === 'F6' || e.key === 'F7' || e.key === 'Delete' || (e.ctrlKey && ['l', 'd', 's'].includes(e.key.toLowerCase()))) return;
+    $(document).off('keydown.pob32').on('keydown.pob32', function(e) {
+        if (e.key === 'F2' || e.key === 'F6' || e.key === 'F7' || e.key === 'Delete' || (e.ctrlKey && ['l','d','s'].includes(e.key.toLowerCase()))) return;
         if ($(e.target).closest('.modal').length) return;
-        if (!$(e.target).closest('.pob-root').length && !['F2', 'F6', 'Escape'].includes(e.key) && !(e.ctrlKey && ['l', 'd'].includes(e.key.toLowerCase()))) {
+        if (!$(e.target).closest('.pob-root').length && !['F2','F6','Escape'].includes(e.key) && !(e.ctrlKey && ['l','d'].includes(e.key.toLowerCase()))) {
             return;
         }
 
-        // F2 â†’ focus batch selector for selected row.
+        // F2 → focus batch selector for selected row.
         if (e.key === 'F2') {
             e.preventDefault();
             focusInlineBatch(getSelectedGridRow());
             return;
         }
 
-        // F6 â†’ focus quantity for selected row.
+        // F6 → focus quantity for selected row.
         if (e.key === 'F6') {
             e.preventDefault();
             const idx = getSelectedGridRow();
@@ -2229,13 +3539,13 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
             return;
         }
 
-        // ESC â†’ clear suggestions.
+        // ESC → clear suggestions.
         if (e.key === 'Escape') {
             $suggestions.hide().empty();
             return;
         }
 
-        // Ctrl+L â†’ delete selected line.
+        // Ctrl+L → delete selected line.
         if (e.ctrlKey && e.key.toLowerCase() === 'l') {
             e.preventDefault();
             const idx = getSelectedGridRow();
@@ -2246,7 +3556,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
             return;
         }
 
-        // Ctrl+D â†’ duplicate selected line.
+        // Ctrl+D → duplicate selected line.
         if (e.ctrlKey && e.key.toLowerCase() === 'd') {
             e.preventDefault();
             const idx = getSelectedGridRow();
@@ -2261,8 +3571,27 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
         }
     });
 
+
+    $search.off('blur.pob334search focusout.pob334search')
+        .on('blur.pob334search focusout.pob334search', function(e) {
+            if (suppressSearchBlurV334) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+    initCounterPolishV334();
+
+    initSearchDropdownV3343();
+
+    initIntelDockV3344();
+
+    initFixedGridPaneV3345();
+
+    initLayoutStabilizationV335();
+
     window.PharmaOperatorBilling = {
-        state, addItem, renderGrid, collectPayload, recallHeld, focusInlineBatch, getSelectedGridRow, getCustomer: getCurrentCustomer, getCompany, getWarehouse: getCurrentWarehouse, getPriceList, focusCell, focusSearch, focusCustomer, moveCell, v33CommitCell, v33UpdateRowOnly, v33FullRenderGrid,
+        state, addItem, renderGrid, collectPayload, recallHeld, focusInlineBatch, getSelectedGridRow,  getCustomer:getCurrentCustomer, getCompany, getWarehouse:getCurrentWarehouse, getPriceList, focusCell, focusSearch, focusCustomer, moveCell, v33CommitCell, v33UpdateRowOnly, v33FullRenderGrid,
         focusSearch: () => $search.focus(),
         focusCustomer: () => customer_control && customer_control.$input.focus(),
         focusQty: () => $tbody.find('tr:last .pob-row-qty').focus().select(),
@@ -2282,12 +3611,13 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
             });
     }
 
+    initV332InterfaceFix();
     status('Ready', 'green');
 };
 
 
 // v27.1 intelligence binding
-(function () {
+(function() {
     function tryLoadOperatorIntelligenceFromRow($row) {
         if (!window.PharmaOperatorIntelligenceV27 || !$row || !$row.length) return;
         const itemText = $row.find('td:nth-child(2) b').first().text();
@@ -2305,15 +3635,15 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
         });
     }
 
-    $(document).off('click.pob27intel', '.pob-grid tbody tr').on('click.pob27intel', '.pob-grid tbody tr', function () {
+    $(document).off('click.pob27intel', '.pob-grid tbody tr').on('click.pob27intel', '.pob-grid tbody tr', function() {
         tryLoadOperatorIntelligenceFromRow($(this));
     });
 
-    $(document).off('focus.pob27intel', '.pob-row-qty, .pob-row-rate, .pob-row-disc').on('focus.pob27intel', '.pob-row-qty, .pob-row-rate, .pob-row-disc', function () {
+    $(document).off('focus.pob27intel', '.pob-row-qty, .pob-row-rate, .pob-row-disc').on('focus.pob27intel', '.pob-row-qty, .pob-row-rate, .pob-row-disc', function() {
         tryLoadOperatorIntelligenceFromRow($(this).closest('tr'));
     });
 
-    $(document).off('keydown.pob27intel').on('keydown.pob27intel', function (e) {
+    $(document).off('keydown.pob27intel').on('keydown.pob27intel', function(e) {
         if (e.key === 'F10') {
             e.preventDefault();
             const $row = $('.pob-grid tbody tr:has(input:focus)').first();
@@ -2324,14 +3654,14 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
 
 
 // v28.1 hardened scheme binding
-$(document).off('keydown.pob28scheme1').on('keydown.pob28scheme1', function (e) {
+$(document).off('keydown.pob28scheme1').on('keydown.pob28scheme1', function(e) {
     if (e.key === 'F4' && window.PharmaOperatorBilling && window.PharmaOperatorBilling.collectPayload) {
         e.preventDefault();
         const payload = window.PharmaOperatorBilling.collectPayload();
         frappe.call({
             method: 'pharma_quick_sale.pharma_quick_sale.doctype.pharma_quick_sale.pharma_quick_sale.apply_advanced_scheme_to_operator_payload',
-            args: { data: payload },
-            callback: function (r) {
+            args: {data: payload},
+            callback: function(r) {
                 const updated = r.message || {};
                 if (updated.advanced_scheme_result && updated.advanced_scheme_result.payload && window.PharmaAdvancedSchemeV28) {
                     window.PharmaAdvancedSchemeV28.render({
@@ -2339,7 +3669,7 @@ $(document).off('keydown.pob28scheme1').on('keydown.pob28scheme1', function (e) 
                         payload: updated.advanced_scheme_result.payload
                     });
                 }
-                frappe.show_alert({ message: updated.advanced_scheme_name ? ('Advanced scheme ready: ' + updated.advanced_scheme_name) : 'No eligible advanced scheme', indicator: updated.advanced_scheme_name ? 'green' : 'orange' });
+                frappe.show_alert({message: updated.advanced_scheme_name ? ('Advanced scheme ready: ' + updated.advanced_scheme_name) : 'No eligible advanced scheme', indicator: updated.advanced_scheme_name ? 'green' : 'orange'});
                 window.__current_pharma_quick_sale_payload = updated;
             }
         });
@@ -2348,14 +3678,14 @@ $(document).off('keydown.pob28scheme1').on('keydown.pob28scheme1', function (e) 
 
 
 // v28.2 complete scheme application binding
-$(document).off('keydown.pob28scheme2').on('keydown.pob28scheme2', function (e) {
+$(document).off('keydown.pob28scheme2').on('keydown.pob28scheme2', function(e) {
     if (e.key === 'F4' && window.PharmaOperatorBilling && window.PharmaOperatorBilling.collectPayload) {
         e.preventDefault();
         const payload = window.PharmaOperatorBilling.collectPayload();
         frappe.call({
             method: 'pharma_quick_sale.pharma_quick_sale.doctype.pharma_quick_sale.pharma_quick_sale.apply_advanced_scheme_to_operator_payload',
-            args: { data: payload },
-            callback: function (r) {
+            args: {data: payload},
+            callback: function(r) {
                 const updated = r.message || {};
                 window.__current_pharma_quick_sale_payload = updated;
 
@@ -2377,9 +3707,9 @@ $(document).off('keydown.pob28scheme2').on('keydown.pob28scheme2', function (e) 
                             window.PharmaOperatorBilling.renderGrid();
                         }
                     }
-                    frappe.show_alert({ message: 'Advanced scheme applied: ' + updated.advanced_scheme_name, indicator: 'green' });
+                    frappe.show_alert({message: 'Advanced scheme applied: ' + updated.advanced_scheme_name, indicator: 'green'});
                 } else {
-                    frappe.show_alert({ message: 'No eligible advanced scheme', indicator: 'orange' });
+                    frappe.show_alert({message: 'No eligible advanced scheme', indicator: 'orange'});
                 }
 
                 if (window.PharmaAdvancedSchemeV28 && updated.advanced_scheme_result) {
@@ -2392,4 +3722,3 @@ $(document).off('keydown.pob28scheme2').on('keydown.pob28scheme2', function (e) 
         });
     }
 });
-
