@@ -1751,6 +1751,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
             posting_date: frappe.datetime.get_today(),
             grand_total: calcTotals().grand_total,
             items: state.items.map(row => ({
+                row_id: row.row_id, 
                 item_code: row.item_code,
                 item_name: row.item_name,
                 qty: Number(row.qty || 0),
@@ -1760,6 +1761,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
                 batch_rows: row.batch_rows || []
             })),
             batch_allocations: state.items.flatMap(row => (row.batch_rows || []).map(b => ({
+                item_row_id: row.row_id, 
                 item_code: row.item_code,
                 batch_no: b.batch_no,
                 qty: b.qty,
@@ -1865,6 +1867,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
         }
 
         const newRow = {
+            row_id: frappe.utils.get_random(10),
             item_code: item.item_code,
             item_name: item.item_name,
             qty: qty,

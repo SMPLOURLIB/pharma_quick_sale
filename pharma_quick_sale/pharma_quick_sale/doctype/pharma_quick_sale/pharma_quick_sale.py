@@ -46,7 +46,7 @@ class PharmaQuickSale(Document):
 
         for row in self.items:
             if not row.row_id:
-                frappe.throw("Each item row must have a row_id.")
+                row.row_id = frappe.generate_hash(length=10)
             if not row.item_code:
                 frappe.throw("Item is required.")
             item = frappe.get_doc("Item", row.item_code)
