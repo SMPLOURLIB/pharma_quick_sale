@@ -3420,31 +3420,90 @@ def bulk_batch_lookup(warehouse=None, item_codes=None, modified_after=None, limi
     if isinstance(item_codes, str):
         item_codes = frappe.parse_json(item_codes)
 
-    conditions = ["IFNULL(sle.batch_no, '') != ''"]
-    values = []
-    if warehouse:
-        conditions.append("sle.warehouse = %s")
-        values.append(warehouse)
-    if item_codes:
-        conditions.append("sle.item_code IN %s")
-        values.append(tuple(item_codes))
-    if modified_after:
-        conditions.append("sle.modified >= %s")
-        values.append(modified_after)
-    values.append(int(limit or 50000))
+    # Check if is_cancelled column exists
+    sle_columns = [r[0] for r in frappe.db.sql("SHOW COLUMNS FROM `tabStock Ledger Entry`")]
+    has_is_cancelled = "is_cancelled" in sle_columns
+    cancelled_filter = "AND sle.is_cancelled = 0" if has_is_cancelled else ""
 
-    return frappe.db.sql(f"""
-        SELECT sle.item_code, sle.warehouse, sle.batch_no, b.expiry_date,
-               SUM(sle.actual_qty) AS actual_qty
+    # ── SLE-based rows (batches with stock movements) ──────────────────
+    sle_conditions = ["IFNULL(sle.batch_no, '') != ''"]
+    sle_values = []
+
+    if warehouse:
+        sle_conditions.append("sle.warehouse = %s")
+        sle_values.append(warehouse)
+
+    if item_codes:
+        sle_conditions.append("sle.item_code IN %s")
+        sle_values.append(tuple(item_codes))
+
+    if modified_after:
+        sle_conditions.append("sle.modified >= %s")
+        sle_values.append(modified_after)
+
+    sle_values.append(int(limit or 50000))
+
+    sle_rows = frappe.db.sql(f"""
+        SELECT
+            sle.item_code,
+            sle.warehouse,
+            sle.batch_no,
+            b.expiry_date,
+            SUM(sle.actual_qty) AS actual_qty
         FROM `tabStock Ledger Entry` sle
         LEFT JOIN `tabBatch` b ON b.name = sle.batch_no
-        WHERE {' AND '.join(conditions)}
+        WHERE {' AND '.join(sle_conditions)}
+          {cancelled_filter}
         GROUP BY sle.item_code, sle.warehouse, sle.batch_no, b.expiry_date
         HAVING SUM(sle.actual_qty) > 0
         ORDER BY sle.item_code ASC, b.expiry_date ASC
         LIMIT %s
-    """, tuple(values), as_dict=True)
+    """, tuple(sle_values), as_dict=True)
 
+    # Build a set of (item_code, batch_no) already covered by SLE
+    sle_keys = {(r.item_code, r.batch_no) for r in sle_rows}
+
+    # ── tabBatch fallback (manually created batches with no SLE) ───────
+    batch_conditions = [
+        "b.disabled = 0",
+        "IFNULL(b.batch_qty, 0) > 0"
+    ]
+    batch_values = []
+
+    if item_codes:
+        batch_conditions.append("b.item IN %s")
+        batch_values.append(tuple(item_codes))
+
+    batch_rows = frappe.db.sql(f"""
+        SELECT
+            b.item AS item_code,
+            b.name AS batch_no,
+            b.expiry_date,
+            b.batch_qty AS actual_qty
+        FROM `tabBatch` b
+        WHERE {' AND '.join(batch_conditions)}
+        ORDER BY b.item ASC, b.expiry_date ASC
+    """, tuple(batch_values) if batch_values else (), as_dict=True)
+
+    # Merge: skip batch rows already present in SLE results
+    # For warehouse, echo back the requested warehouse since tabBatch has no warehouse
+    for r in batch_rows:
+        if (r.item_code, r.batch_no) not in sle_keys:
+            sle_rows.append({
+                "item_code": r.item_code,
+                "warehouse": warehouse,       # echo requested warehouse
+                "batch_no": r.batch_no,
+                "expiry_date": r.expiry_date,
+                "actual_qty": flt(r.actual_qty)
+            })
+
+    # Sort combined list: item_code ASC, expiry_date ASC (FEFO order)
+    sle_rows.sort(key=lambda x: (
+        str(x.get("item_code") or ""),
+        str(x.get("expiry_date") or "9999-12-31")
+    ))
+
+    return sle_rows
 
 @frappe.whitelist()
 def get_operator_benchmark_targets():
