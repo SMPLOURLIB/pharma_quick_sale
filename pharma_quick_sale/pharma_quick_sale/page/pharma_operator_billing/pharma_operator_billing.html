@@ -43,12 +43,6 @@
       <span>Total: <b class="pob-grand-total">0.00</b></span>
     </div>
   </div>
-
-  <div class="pob-sticky-totals">
-    <span>Lines: <span class="pob-line-count">0</span></span>
-    <span>Qty: <span class="pob-total-qty">0</span></span>
-    <span>Total: <span class="pob-grand-total">0.00</span></span>
-  </div>
   <div class="pob-right-panel">
     <div class="pob-right-panel-header">
         <span>Operator Panel</span>
@@ -56,9 +50,39 @@
             <button type="button" class="pob-right-panel-tab active" data-panel="intel">Intel</button>
         </div>
     </div>
-    <div class="pob-right-panel-body pob-right-search-body"></div>
+    <div class="pob-right-panel-body pob-right-search-body">
+
+      <div class="poi-body">
+        
+        <table>
+        <tr><th><b>Item:</b></th><td></td></tr>
+        <tr><th><b>Available Batches:</b></th><td></td></tr>
+        <tr><th><b>Last Sale:</b> <span> </th><td></td></tr>
+        <tr><th><b>Last Purchase:</b> </th><td></td></tr>
+        <tr><th><b>Margin:</b> </th><td></td></tr>
+        <tr><th><b>Near Expiry:</b> </th><td></td></tr>
+        <tr><th><b>Substitutes:</b> </th><td></td></tr>
+        </table>
+        <hr>
+        <b>Batch History</b>
+        <table class="table table-condensed"><tr><th>Batch</th><th>Exp</th><th>Qty</th><th>PRate</th><th>LSale</th></tr>
+        </table>
+        <b>Substitutes</b>
+      </div>
+
+    </div>
     <div class="pob-right-panel-body pob-right-tax-body">
-    Here we have to show total item wise tax, item wise total discount and net and grand total, also option to apply additional discount on total bill
+
+      <div class="pqs-card">
+        <h4>Tax Summary</h4>
+        <div id="pqs-tax-summary">
+            <div class="pqs-info-line"><span>Net</span><strong>₹ <span id="pqs-side-net">0.00</span></strong></div>
+            <div class="pqs-info-line"><span>Taxes</span><strong>₹ <span id="pqs-side-tax">0.00</span></strong></div>
+            <div class="pqs-info-line"><span>Grand Total</span><strong>₹ <span id="pqs-side-grand">0.00</span></strong></div>
+            <div id="pqs-tax-lines" class="pqs-muted" style="margin-top:8px;"></div>
+        </div>
+    </div>
+    
     </div>
 </div>
 </div>

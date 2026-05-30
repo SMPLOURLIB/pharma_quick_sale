@@ -17,13 +17,16 @@ window.PharmaOperatorIntelligenceV27 = {
     const batches = data.batch_history || [], subs = data.substitutes || [];
     $panel.html(`
       <div class="poi-body">
-        <div class="poi-item"><b>Item:</b> <span> ${data.item_code || ''}</span></div>
-        <div class="poi-item"><b>Available Batches:</b> <span> ${s.available_batches || 0}</span></div>
-        <div class="poi-item"><b>Last Sale:</b> <span> ${s.last_sale_rate || '-'}</span></div>
-        <div class="poi-item"><b>Last Purchase:</b> <span> ${s.last_purchase_rate || '-'}</span></div>
-        <div class="poi-item"><b>Margin:</b> <span> ${Number(margin.margin_percent || 0).toFixed(2)}%</span></div>
-        <div class="poi-item"><b>Near Expiry:</b> <span> ${s.near_expiry_count || 0}</span></div>
-        <div class="poi-item"><b>Substitutes:</b> <span> ${s.substitute_count || 0}</span></div><hr>
+      <table>
+        <tr><th><b>Item:</b></th><td>${data.item_code || ''}</td></tr>
+        <tr><th><b>Available Batches:</b></th><td>${s.available_batches || 0}</td></tr>
+        <tr><th><b>Last Sale:</b> <span> </th><td>${s.last_sale_rate || '-'}</td></tr>
+        <tr><th><b>Last Purchase:</b> </th><td>${s.last_purchase_rate || '-'}</td></tr>
+        <tr><th><b>Margin:</b> </th><td>${Number(margin.margin_percent || 0).toFixed(2)}%</td></tr>
+        <tr><th><b>Near Expiry:</b> </th><td>${s.near_expiry_count || 0}</td></tr>
+        <tr><th><b>Substitutes:</b> </th><td>${s.substitute_count || 0}</td></tr>
+        </table> 
+      <hr>
         <b>Batch History</b>
         <table class="table table-condensed"><tr><th>Batch</th><th>Exp</th><th>Qty</th><th>PRate</th><th>LSale</th></tr>
           ${batches.slice(0,5).map(b => `<tr><td>${b.batch_no || ''}</td><td>${b.expiry_date || ''}</td><td>${b.available_qty || 0}</td><td>${b.purchase_rate || '-'}</td><td>${b.last_sale_rate || '-'}</td></tr>`).join('')}

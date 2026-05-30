@@ -1,15 +1,15 @@
 
-    page.add_inner_button('v24.1 Speed Mode', async () => {
-        if (!window.PharmaFastBillingV241) {
-            frappe.msgprint('Fast billing helper is not loaded.');
-            return;
-        }
-        const warehouse = this && this.warehouse ? this.warehouse.get_value() : null;
-        await window.PharmaFastBillingV241.bootstrapFromServer({warehouse, price_list: 'Standard Selling'});
-        $('body').addClass('pqs-dense-mode');
-        frappe.show_alert({message: 'v24.1 IndexedDB cache loaded and dense mode enabled.', indicator: 'green'});
-    });
-frappe.pages['pharma-quick-sale'].on_page_load = function(wrapper) {
+//     page.add_inner_button('v24.1 Speed Mode', async () => {
+//         if (!window.PharmaFastBillingV241) {
+//             frappe.msgprint('Fast billing helper is not loaded.');
+//             return;
+//         }
+//         const warehouse = this && this.warehouse ? this.warehouse.get_value() : null;
+//         await window.PharmaFastBillingV241.bootstrapFromServer({warehouse, price_list: 'Standard Selling'});
+//         $('body').addClass('pqs-dense-mode');
+//         frappe.show_alert({message: 'v24.1 IndexedDB cache loaded and dense mode enabled.', indicator: 'green'});
+//     });
+frappe.pages['pharma_quick_sale'].on_page_load = function(wrapper) {
     new PharmaQuickSalePage(wrapper);
 };
 
