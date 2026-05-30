@@ -4287,55 +4287,87 @@ def get_executive_cockpit(from_date=None, to_date=None):
 
 @frappe.whitelist()
 def get_batch_history(item_code, warehouse=None, customer=None):
-    conditions = [
-        "sle.item_code = %s",
-        "IFNULL(sle.batch_no, '') != ''",
-        "sle.is_cancelled = 0"          # ← was missing: cancelled entries corrupt qty
-    ]
-    values = [item_code]
+    # Check if is_cancelled column exists
+    sle_columns = [r[0] for r in frappe.db.sql("SHOW COLUMNS FROM `tabStock Ledger Entry`")]
+    has_is_cancelled = "is_cancelled" in sle_columns
+
+    cancelled_filter = "AND sle.is_cancelled = 0" if has_is_cancelled else ""
+
+    warehouse_filter = ""
+    warehouse_having = ""
+    values = {"item_code": item_code}
 
     if warehouse:
-        conditions.append("sle.warehouse = %s")
-        values.append(warehouse)
+        warehouse_filter = "AND sle.warehouse = %(warehouse)s"
+        values["warehouse"] = warehouse
 
-    rows = frappe.db.sql(f"""
+    # Primary: batches with SLE stock movements
+    sle_rows = frappe.db.sql(f"""
         SELECT
             sle.batch_no,
             b.expiry_date,
+            b.batch_qty,
             SUM(sle.actual_qty) AS available_qty
         FROM `tabStock Ledger Entry` sle
         LEFT JOIN `tabBatch` b ON b.name = sle.batch_no
-        WHERE {' AND '.join(conditions)}
+        WHERE sle.item_code = %(item_code)s
+          AND IFNULL(sle.batch_no, '') != ''
+          {cancelled_filter}
+          {warehouse_filter}
         GROUP BY sle.batch_no, b.expiry_date
         HAVING SUM(sle.actual_qty) > 0
         ORDER BY b.expiry_date ASC, sle.batch_no ASC
-    """, tuple(values), as_dict=True)
+    """, values, as_dict=True)
+
+    sle_batch_nos = {r.batch_no for r in sle_rows}
+
+    # Fallback: batches from tabBatch that have no SLE yet (manually created)
+    batch_only_rows = frappe.db.sql("""
+        SELECT
+            b.name AS batch_no,
+            b.expiry_date,
+            b.batch_qty AS available_qty
+        FROM `tabBatch` b
+        WHERE b.item = %(item_code)s
+          AND b.disabled = 0
+          AND IFNULL(b.batch_qty, 0) > 0
+        ORDER BY b.expiry_date ASC, b.name ASC
+    """, {"item_code": item_code}, as_dict=True)
+
+    # Merge: SLE rows take priority; add batch-only rows not already in SLE results
+    combined = list(sle_rows)
+    for r in batch_only_rows:
+        if r.batch_no not in sle_batch_nos:
+            combined.append(r)
+
+    # Sort final combined list by expiry
+    combined.sort(key=lambda x: str(x.get("expiry_date") or "9999-12-31"))
 
     out = []
-    for row in rows:
+    for row in combined:
         lp = frappe.db.sql("""
             SELECT pri.parent AS purchase_receipt, pr.supplier,
                    pr.posting_date, pri.rate
             FROM `tabPurchase Receipt Item` pri
             INNER JOIN `tabPurchase Receipt` pr ON pr.name = pri.parent
-            WHERE pri.item_code = %s
-              AND IFNULL(pri.batch_no, '') = %s
+            WHERE pri.item_code = %(item_code)s
+              AND IFNULL(pri.batch_no, '') = %(batch_no)s
               AND pr.docstatus = 1
             ORDER BY pr.posting_date DESC, pr.modified DESC
             LIMIT 1
-        """, (item_code, row.batch_no), as_dict=True)
+        """, {"item_code": item_code, "batch_no": row.batch_no}, as_dict=True)
 
         ls = frappe.db.sql("""
             SELECT sii.parent AS sales_invoice, si.customer,
                    si.posting_date, sii.rate, sii.discount_percentage
             FROM `tabSales Invoice Item` sii
             INNER JOIN `tabSales Invoice` si ON si.name = sii.parent
-            WHERE sii.item_code = %s
-              AND IFNULL(sii.batch_no, '') = %s
+            WHERE sii.item_code = %(item_code)s
+              AND IFNULL(sii.batch_no, '') = %(batch_no)s
               AND si.docstatus = 1
             ORDER BY si.posting_date DESC, si.modified DESC
             LIMIT 1
-        """, (item_code, row.batch_no), as_dict=True)
+        """, {"item_code": item_code, "batch_no": row.batch_no}, as_dict=True)
 
         p = lp[0] if lp else {}
         s = ls[0] if ls else {}
@@ -4346,16 +4378,16 @@ def get_batch_history(item_code, warehouse=None, customer=None):
 
         out.append({
             "batch_no": row.batch_no,
-            "expiry_date": row.expiry_date,
-            "warehouse": warehouse,           # echo back the filter warehouse
+            "expiry_date": str(row.expiry_date) if row.expiry_date else None,
+            "warehouse": warehouse,
             "available_qty": flt(row.available_qty),
             "purchase_rate": flt(p.get("rate")),
             "supplier": p.get("supplier"),
-            "purchase_date": p.get("posting_date"),
+            "purchase_date": str(p.get("posting_date")) if p.get("posting_date") else None,
             "last_sale_rate": flt(s.get("rate")),
             "last_sale_discount": flt(s.get("discount_percentage")),
             "last_sale_customer": s.get("customer"),
-            "last_sale_date": s.get("posting_date"),
+            "last_sale_date": str(s.get("posting_date")) if s.get("posting_date") else None,
             "days_to_expiry": days,
             "near_expiry": bool(days is not None and days <= 90)
         })
