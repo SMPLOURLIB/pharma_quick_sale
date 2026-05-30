@@ -1943,8 +1943,11 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
     function collectPayload() {
         syncAllBatchesForSubmitV3342();
 
-        const items = (state.items || []).map(row => {
+        const items = (state.items || []).map((row, idx) => {
             syncRowBatchForSubmitV3342(row);
+
+            const row_id = row.row_id || `pob_row_${idx}`;
+            row.row_id = row_id;
 
             const qty = Number(row.qty || 0);
             const rate = Number(row.rate || 0);
@@ -1952,6 +1955,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
             const amount = Number(row.amount || ((qty * rate) - ((qty * rate) * discount / 100)) || 0);
 
             return {
+                row_id,
                 item_code: row.item_code,
                 item_name: row.item_name,
                 qty: qty,
@@ -1966,6 +1970,21 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
                 batch_rows: row.batch_rows || [],
                 batch_allocations: row.batch_allocations || buildRowBatchAllocationsV3342(row)
             };
+        });
+
+        const batch_allocations = [];
+        items.forEach(row => {
+            (row.batch_allocations || []).forEach(alloc => {
+                batch_allocations.push({
+                    item_row_id: row.row_id,   // ← KEY FIELD the Python reads
+                    item_code: alloc.item_code,
+                    batch_no: alloc.batch_no,
+                    qty: alloc.qty,
+                    free_qty: alloc.free_qty || 0,
+                    expiry_date: alloc.expiry_date || null,
+                    warehouse: alloc.warehouse || null
+                });
+            });
         });
 
         return {
@@ -2016,7 +2035,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
             error: (err) => {
                 // Silently fail — operator billing should not block on tax errors
                 console.log(err);
-                
+
             }
         });
     }
