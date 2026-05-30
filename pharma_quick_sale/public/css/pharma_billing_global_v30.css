@@ -791,3 +791,7 @@
 .pqs-info-line strong {
     color: #111827;
 }
+
+.pob-row-del.pob-nav-focus{
+    background: none !important
+}

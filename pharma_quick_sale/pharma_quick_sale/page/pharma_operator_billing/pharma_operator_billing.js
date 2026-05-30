@@ -906,7 +906,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
     // V32.2 No-Mouse Navigation Engine for Marg-style operators
     // =============================================================
 
-    const NAV_COLUMNS = ['batch', 'qty', 'free', 'rate', 'disc'];
+    const NAV_COLUMNS = ['batch', 'qty', 'free', 'rate', 'disc', 'del'];
     let navState = {
         mode: 'search',
         row: 0,
@@ -957,6 +957,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
         if (column === 'free') return `.pob-grid tbody tr[data-idx="${row}"] .pob-row-free`;
         if (column === 'rate') return `.pob-grid tbody tr[data-idx="${row}"] .pob-row-rate`;
         if (column === 'disc') return `.pob-grid tbody tr[data-idx="${row}"] .pob-row-disc`;
+        if (column === 'del') return `.pob-grid tbody tr[data-idx="${row}"] .pob-row-del`;
 
         return `.pob-grid tbody tr[data-idx="${row}"] .pob-row-qty`;
     }
@@ -1061,9 +1062,15 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
             $active.hasClass('pob-row-free') ||
             $active.hasClass('pob-row-rate') ||
             $active.hasClass('pob-row-disc') ||
-            $active.hasClass('pob-inline-batch')) {
+            $active.hasClass('pob-inline-batch') ||
+            $active.hasClass('pob-row-del')) {
             $active.trigger('change');
         }
+
+        // Delete button: Enter/Space on focused del button triggers delete
+        // if ($active.hasClass('pob-row-del')) {
+        //     $active.trigger('click');
+        // }
     }
 
     function deleteSelectedLine() {
@@ -1120,10 +1127,17 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
     }
 
     function handleGridKey(e) {
+        const $active = $(document.activeElement);
+        
         if (e.key === 'Enter') {
             e.preventDefault();
             commitFocusedCell();
-            moveCell(0, 1);
+            // Don't moveCell after delete — row is gone
+            if ($active.hasClass('pob-row-del')) {
+                $active.trigger('click');
+            }else{
+                moveCell(0, 1);
+            }
             return true;
         }
 
@@ -1277,7 +1291,8 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
                 $target.hasClass('pob-row-free') ||
                 $target.hasClass('pob-row-rate') ||
                 $target.hasClass('pob-row-disc') ||
-                $target.hasClass('pob-inline-batch')
+                $target.hasClass('pob-inline-batch') ||
+                $target.hasClass('pob-row-del')
             ) {
                 if (handleGridKey(e)) return;
             }
