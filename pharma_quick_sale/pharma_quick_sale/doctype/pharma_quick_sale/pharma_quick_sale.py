@@ -2636,10 +2636,10 @@ def validate_party_license_for_transaction(customer=None, supplier=None, posting
 
     messages = []
 
-    if customer:
-        status = check_drug_license_status("Customer", customer, posting_date)
-        if not status.get("valid"):
-            messages.append(status.get("message"))
+    # if customer:
+    #     status = check_drug_license_status("Customer", customer, posting_date)
+    #     if not status.get("valid"):
+    #         messages.append(status.get("message"))
 
     if supplier:
         status = check_drug_license_status("Supplier", supplier, posting_date)
