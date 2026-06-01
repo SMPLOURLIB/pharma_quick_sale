@@ -1,3 +1,5 @@
+# pharma_quick_sale/pharma_quick_sale/doctype/pharma_quick_sale/pharma_quick_sale.py
+
 import frappe
 from frappe.model.document import Document
 from frappe.utils import flt, getdate, nowdate, now_datetime, add_days, cint, get_datetime, add_to_date

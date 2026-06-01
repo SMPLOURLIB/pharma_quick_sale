@@ -1,3 +1,4 @@
+// pharma_quick_sale/pharma_quick_sale/page/pharma_operator_billing/pharma_operator_billing.js
 
 frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
     const page = frappe.ui.make_app_page({
@@ -9,8 +10,9 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
     $(frappe.render_template('pharma_operator_billing')).appendTo(page.body);
 
     const $templateRoot = $(page.body).find('.pob-root');
+    const $templateRootHead = $(page.body).find('.pob-left-area');
     if (!$templateRoot.find('#pob-company-control').length) {
-        $templateRoot.prepend(`
+        $templateRootHead.prepend(`
             <div class="pob-link-controls row pob32-ribbon" style="margin-bottom: 8px;">
                 <div class="col-md-3" id="pob-company-control"></div>
                 <div class="col-md-3" id="pob-customer-control"></div>
@@ -18,7 +20,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
                 <div class="col-md-3" id="pob-price-list-control"></div>
             </div>
         `);
-        $templateRoot.find('.pob-company,.pob-customer,.pob-warehouse')
+        $templateRootHead.find('.pob-company,.pob-customer,.pob-warehouse')
             .closest('.form-group, div')
             .hide();
     }
@@ -201,15 +203,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
     let suppressSearchBlurV334 = false;
 
 
-    function wrapGridForFixedHeaderV334() {
-        if ($root.find('.pob-grid-wrap').length) return;
-
-        const $grid = $root.find('.pob-grid');
-        if (!$grid.length) return;
-
-        $grid.wrap('<div class="pob-grid-wrap"></div>');
-    }
-
+   
     function normalizeHotkeyHelpV334() {
         const $help = $root.find('.pob-hotkey-help');
         if (!$help.length) return;
@@ -225,7 +219,6 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
     }
 
     function initCounterPolishV334() {
-        wrapGridForFixedHeaderV334();
         normalizeHotkeyHelpV334();
     }
 
@@ -914,30 +907,6 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
         lastFocusSelector: '.pob-search'
     };
 
-    function inject_v32_2_styles() {
-        if ($('#pob32-2-nav-style').length) return;
-
-        $('head').append(`
-            <style id="pob32-2-nav-style">
-                .pob-nav-focus {
-                    outline: 2px solid #2563eb !important;
-                    outline-offset: -1px;
-                    background: #eff6ff !important;
-                }
-                .pob-grid tbody tr.pob-selected-row td {
-                    background: #f8fafc;
-                }
-                .pob-hotkey-help {
-                    font-size: 11px;
-                    color: #475569;
-                    border-top: 1px solid #e5e7eb;
-                    padding-top: 4px;
-                    margin-top: 4px;
-                }
-            </style>
-        `);
-    }
-
     function navClamp() {
         if (!state.items.length) {
             navState.row = 0;
@@ -1128,17 +1097,34 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
 
     function handleGridKey(e) {
         const $active = $(document.activeElement);
-        
+        const onBatch = $active.hasClass('pob-inline-batch');
+        const onDel = $active.hasClass('pob-row-del');
+
         if (e.key === 'Enter') {
             e.preventDefault();
-            commitFocusedCell();
-            // Don't moveCell after delete — row is gone
-            if ($active.hasClass('pob-row-del')) {
+
+            if (onDel) {
+                // Enter on delete button fires the delete
                 $active.trigger('click');
-            }else{
-                moveCell(0, 1);
+                return true;
             }
+
+            if (onBatch) {
+                // Let the native select dropdown open via Space instead
+                // Enter confirms current selection and moves right
+                commitFocusedCell();
+                moveCell(0, 1);
+                return true;
+            }
+
+            commitFocusedCell();
+            moveCell(0, 1);
             return true;
+        }
+
+        if (e.key === ' ' && onBatch) {
+            // Space opens the native select dropdown — don't intercept
+            return false;
         }
 
         if (e.key === 'Tab') {
@@ -1146,6 +1132,30 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
             commitFocusedCell();
             moveCell(0, e.shiftKey ? -1 : 1);
             return true;
+        }
+
+        // Arrow keys: don't intercept left/right on batch select (it changes option)
+        // Only intercept up/down for row navigation
+        if (e.key === 'ArrowRight' && onBatch) {
+            // Only move away if at last option
+            const sel = $active[0];
+            if (sel && sel.selectedIndex >= sel.options.length - 1) {
+                e.preventDefault();
+                commitFocusedCell();
+                moveCell(0, 1);
+                return true;
+            }
+            return false;
+        }
+
+        if (e.key === 'ArrowLeft' && onBatch) {
+            if ($active[0] && $active[0].selectedIndex <= 0) {
+                e.preventDefault();
+                commitFocusedCell();
+                moveCell(0, -1);
+                return true;
+            }
+            return false;
         }
 
         if (e.key === 'ArrowRight') {
@@ -1298,8 +1308,6 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
             }
         });
     }
-
-    inject_v32_2_styles();
 
     // =============================================================
     // V32.3 Batch + Search Intelligence Stabilization
@@ -1621,13 +1629,13 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
                 ${(!row.available_batches || !row.available_batches.length) ? '<small class="text-warning">No lot</small>' : ''}
             </td>
             <td class="${expClass}">${expValue || ''}</td>
-            <td><input class="form-control input-xs pob-row-qty" value="${row.qty || 1}"></td>
-            <td><input class="form-control input-xs pob-row-free" value="${row.free_qty || 0}"></td>
-            <td><input class="form-control input-xs pob-row-rate" value="${row.rate || 0}"></td>
+            <td><input type="number" min="0" step="1" class="form-control input-xs pob-row-qty" value="${row.qty || 1}"></td>
+            <td><input type="number" min="0" step="1" class="form-control input-xs pob-row-free" value="${row.free_qty || 0}"></td>
+            <td><input type="number" min="0" step="0.01" class="form-control input-xs pob-row-rate" value="${row.rate || 0}"></td>
             <td><input class="form-control input-xs pob-row-disc" value="${row.discount_percentage || 0}"></td>
             <td>${row.item_tax_template || ''}</td>
             <td class="pob-row-amount ${marginCls}">${v33Money(row.amount)}</td>
-            <td><button class="btn btn-xs btn-danger pob-row-del">x</button></td>
+            <td><button class="btn btn-xs btn-danger pob-row-del" tabindex="0">x</button></td>
         </tr>`;
     }
 
@@ -1689,16 +1697,28 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
         v33UpdateTotalsOnly();
         scheduleLiveCalculation();
 
-        if (typeof navState !== 'undefined') {
-            navState.row = Math.max(0, Math.min(idx, state.items.length - 1));
-            navState.col = 1;
+        if (!state.items.length) {
+            if (typeof navState !== 'undefined') {
+                navState.row = 0;
+                navState.col = 1;
+            }
+            if (typeof focusSearch === 'function') focusSearch();
+            return;
         }
 
-        if (state.items.length && typeof focusCell === 'function') {
-            focusCell(navState.row, navState.col, true);
-        } else if (typeof focusSearch === 'function') {
-            focusSearch();
+        // Stay on del column of nearest row
+        const nextRow = Math.max(0, Math.min(idx, state.items.length - 1));
+        const delCol = NAV_COLUMNS.indexOf('del');
+
+        if (typeof navState !== 'undefined') {
+            navState.row = nextRow;
+            navState.col = delCol;
         }
+
+        // Small delay to let DOM settle after reindex
+        setTimeout(() => {
+            if (typeof focusCell === 'function') focusCell(nextRow, delCol, false);
+        }, 20);
     }
 
     function v33DuplicateRow(idx) {
@@ -1753,7 +1773,10 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
 
         $tbody.off('click.v33delete').on('click.v33delete', '.pob-row-del', function (e) {
             e.preventDefault();
+            e.stopPropagation(); // prevent tr click from updating navState after delete
             const idx = Number($(this).closest('tr').data('idx'));
+            navState.row = idx; // sync before delete
+            navState.col = NAV_COLUMNS.indexOf('del');
             v33DeleteRow(idx);
         });
 
@@ -1937,6 +1960,23 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
         `);
     }
 
+    function bindRightPanelToggle() {
+        // Start collapsed on mobile
+        if (window.innerWidth <= 860) {
+            $root.find('.pob-right-panel-body').hide();
+            $root.find('.pob-right-panel-toggle').text('▼');
+        } else {
+            $root.find('.pob-right-panel-toggle').text('▲');
+        }
+    
+        $root.on('click', '.pob-right-panel-toggle', function () {
+            const $bodies = $root.find('.pob-right-panel-body');
+            const isHidden = $bodies.first().is(':hidden');
+            $bodies.toggle();
+            $(this).text(isHidden ? '▲' : '▼');
+        });
+    }
+
     inject_v32_3_styles();
 
 
@@ -1944,7 +1984,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
     bindNoMouseNavigation();
 
     ensureIntelligenceDock();
-
+    bindRightPanelToggle()
 
 
     function status(msg, indicator = 'blue') {
@@ -2120,9 +2160,9 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
                     ${(!row.available_batches || !row.available_batches.length) ? '<small class="text-warning">No lot</small>' : ''}
                 </td>
                 <td class="${expClass}">${expValue || ''}</td>
-                <td><input class="form-control input-xs pob-row-qty" value="${row.qty || 1}"></td>
-                <td><input class="form-control input-xs pob-row-free" value="${row.free_qty || 0}"></td>
-                <td><input class="form-control input-xs pob-row-rate" value="${row.rate || 0}"></td>
+                <td><input type="number" min="0" step="1"  class="form-control input-xs pob-row-qty" value="${row.qty || 1}"></td>
+                <td><input type="number" min="0" step="1"  class="form-control input-xs pob-row-free" value="${row.free_qty || 0}"></td>
+                <td><input type="number" min="0" step="0.01" class="form-control input-xs pob-row-rate" value="${row.rate || 0}"></td>
                 <td><input class="form-control input-xs pob-row-disc" value="${row.discount_percentage || 0}"></td>
                 <td>${row.item_tax_template || ''}</td>
                 <td class="pob-row-amount ${marginCls}">${money(row.amount)}</td>
@@ -2549,9 +2589,7 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
             }
         });
 
-    initCounterPolishV334();
-
-    initSearchDropdownV3343();
+    
 
     window.PharmaOperatorBilling = {
         state, addItem, renderGrid, collectPayload, recallHeld, focusInlineBatch, getSelectedGridRow, getCustomer: getCurrentCustomer, getCompany, getWarehouse: getCurrentWarehouse, getPriceList, focusCell, focusSearch, focusCustomer, moveCell, v33CommitCell, v33UpdateRowOnly, v33FullRenderGrid,
@@ -2576,8 +2614,15 @@ frappe.pages['pharma-operator-billing'].on_page_load = function (wrapper) {
             });
     }
 
+    initCounterPolishV334();
+    initSearchDropdownV3343();
     initV332InterfaceFix();
-    status('Ready', 'green');
+
+
+    status('Loading cache...', 'blue');
+    setTimeout(async () => {
+        await loadCache();
+    }, 500);
 
 };
 
